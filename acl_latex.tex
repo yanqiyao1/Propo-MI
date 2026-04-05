@@ -412,61 +412,6 @@ To address this limitation, we introduce \textit{PropLogic-MI}, a highly control
 % \end{table*}
 
 
-\begin{table*}[t]
-\centering
-\small
-\renewcommand{\arraystretch}{0.9}
-\setlength{\tabcolsep}{6pt}
-\begin{tabularx}{\textwidth}{@{} l c X @{}}
-\toprule
-% \textbf{Category} & \textbf{Formal Definitions (Duals)} & \textbf{Example Prompt Templates} \\
-\textbf{Category} & \textbf{Formal Definitions} & \textbf{Example Prompt Templates (One-Hop)} \\
-\midrule
-% --- Basic Laws ---
-Identity
-    & $P \land \top \equiv P, \quad P \lor \bot \equiv P$
-    & \texttt{"A is T, A and T is"}, \quad \texttt{"A is F, A or F is"} \\
-Domination
-    & $P \land \bot \equiv \bot, \quad P \lor \top \equiv \top$
-    & \texttt{"A is T, A and F is"}, \quad \texttt{"A is F, A or T is"} \\
-Idempotent
-    & $P \land P \equiv P, \quad P \lor P \equiv P$
-    & \texttt{"A is T, A and A is"}, \quad \texttt{"A is F, A or A is"} \\
-\midrule
-% --- Negation Laws ---
-Dbl. Negation
-    & $\lnot(\lnot P) \equiv P$
-    & \texttt{"A is T, ($\lnot$($\lnot$A)) is"} \\
-Excluded Mid.
-    & $P \lor \lnot P \equiv \top$
-    & \texttt{"A is T, A or $\lnot$A is"} \\
-Contradiction
-    & $P \land \lnot P \equiv \bot$
-    & \texttt{"A is F, A and $\lnot$A is"} \\
-\midrule
-% --- Multi-Variable Laws ---
-Commutative
-    & $P \land Q \equiv Q \land P$
-    & \texttt{"A is T, B is F, A and B is"} \\
-Associative
-    & $(P \land Q) \land R \equiv P \land (Q \land R)$
-    & \texttt{"A is T, B is T, C is F, (A and B) and C is"} \\
-Distributive
-    & $P \land (Q \lor R) \equiv (P \land Q) \lor (P \land R)$
-    & \texttt{"A is T, B is F, C is T, A and (B or C) is"} \\
-De Morgan
-    & $\lnot(P \land Q) \equiv \lnot P \lor \lnot Q$
-    & \texttt{"A is T, B is F, ($\lnot$A or $\lnot$B) is"} \\
-Absorption
-    & $P \land (P \lor Q) \equiv P$
-    & \texttt{"A is T, B is F, A and (A or B) is"} \\
-\bottomrule
-\end{tabularx}
-% \caption{\textbf{Rule coverage.} We cover 11 fundamental categories. For rules with dual forms (Identity, Domination, Idempotent), both formulas and example templates are shown with horizontal spacing. For each rule covers its formal Boolean algebra definition and a corresponding template. Variables \{A, B, C\} are instantiated with truth values (True/False). T/F denotes True/False.}
-\caption{\textbf{Rule coverage.} \textit{PropLogic-MI} systematically covers 11 fundamental rule categories. Each rule includes its formal Boolean algebra definition and a corresponding template. Variables \{\texttt{A, B, ..., Z}\} are instantiated with truth values (\texttt{True}/\texttt{False}). T/F denotes \texttt{True}/\texttt{False}.}
-\vspace{-1.0em}
-\label{tab:rule_coverage}
-\end{table*}
 
 
 
@@ -482,40 +427,6 @@ where the model is expected to predict the correct truth value (\texttt{True} in
 We construct prompts under two complexity settings: (1) One-Hop Reasoning, where the query is directly derived from facts via a single rule, and (2) Two-Hop Reasoning, where an intermediate conclusion must first be derived before predicting the final answer. Representative examples are provided in Table~\ref{tab:reasoning_depth}. 
 % (Appendix~\ref{sec:appendix_dataset}).
 
-
-\begin{table}[t]
-\centering
-\small
-\renewcommand{\arraystretch}{0.9}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\columnwidth}{@{}lX@{}}
-\toprule
-\textbf{Depth} & \textbf{Prompt Template \& Reasoning Process} \\
-\midrule
-\multirow{3.5}{*}{\textbf{One-Hop}}
-& \texttt{"A is True, B is False, (A and B) is"} \newline
-  \color{gray}\textit{\footnotesize $\hookrightarrow$ Logic: $A \land B$} \\
-\addlinespace[0.4em]
-& \texttt{"A is True, ($\lnot$($\lnot$A)) is"} \newline
-  \color{gray}\textit{\footnotesize $\hookrightarrow$ Logic: $\lnot(\lnot A) \equiv A$} \\
-\addlinespace[0.4em]
-& \texttt{"A is True, B is False, ($\lnot$A or $\lnot$B) is"} \newline
-  \color{gray}\textit{\footnotesize $\hookrightarrow$ Logic: De Morgan ($\lnot A \lor \lnot B$)} \\
-\midrule
-\multirow{5}{*}{\textbf{Two-Hop}}
-& \texttt{"A is T, B is A and T, C is F, B and C is"} \newline
-  \color{gray}\textit{ \footnotesize $\hookrightarrow$ Chain: $(A \land \top) \to B; \quad (B \land C) \to \text{Ans}$} \\
-\addlinespace[0.4em]
-& \texttt{"A is T, B is F, C is $\lnot$(A and B), D is T, C or D is"} \newline
-  \color{gray}\textit{\footnotesize $\hookrightarrow$ Chain: $\text{NAND}(A,B) \to C; \quad (C \lor D) \to \text{Ans}$} \\
-\addlinespace[0.4em]
-& \texttt{"A is T, B is F, C is A and B, D is T, C or D is"} \newline
-  \color{gray}\textit{\footnotesize $\hookrightarrow$ Chain: $(A \land B) \to C; \quad (C \lor D) \to \text{Ans}$} \\
-\bottomrule
-\end{tabularx}
-\caption{\textbf{Probing prompts across reasoning depths.} We probe the model with queries requiring direct rule application (One-Hop) versus those necessitating intermediate latent variable derivation (Two-Hop).}
-\label{tab:reasoning_depth}
-\end{table}
 
 % \paragraph{Evaluation Protocol.}
 % We analyze pre-trained models in a zero-shot setting without fine-tuning. For each prompt, we measure the model's logit difference (Eq.~\ref{eq:logit_diff}) to assess reasoning performance and conduct activation patching experiments to identify causally important components.
@@ -545,14 +456,6 @@ We construct paired inputs for this counterfactual setup: a \emph{clean} input $
 We first perform a forward pass on $X_{\text{clean}}$ to cache activations $h_{l,t}$ (or $h_{l,h,t}$ for attention head $h$) at layer $l$ and token position $t$. And then we perform a forward pass on $X_{corrupt}$ and get $Y_{corrupt}$. We again run a forward pass on $X_{\text{corrupt}}$, at this time we intervene by replacing the target activation with its cached clean counterpart and get $Y_{patched}$.
 % We first perform a forward pass on $x_{\text{clean}}$ to cache the activations $h_{l,i}$ at layer $l$ and position $i$. During a forward pass on $x_{\text{corrupt}}$, we intervene by replacing the activation at $(l, i)$ with the cached $h_{l,i}$.
 In some experiments, we also apply mean ablation (i.e., replacing the output with its mean activation) to selected model components to evaluate their functional roles, such as MLP outputs and attention head outputs.
-\begin{figure}[!h]
-\centering
-\includegraphics[width=\columnwidth]{./figures/method_metric.pdf}
-% \caption{\textbf{Activation patching procedure.} We perform a forward pass on the clean input $x_{\text{clean}}$ to cache activations at component $(l,i)$. During execution of the corrupted input $x_{\text{corrupt}}$, we replace the activation at the targeted component with the cached clean activation. The resulting shift in logit difference $\Delta \text{Logits}$ quantifies the causal importance of that component for steering the model toward the correct prediction.}
-\caption{Activation patching procedure. We focus on the logits difference between \texttt{True} token and \texttt{False} token in $Y_{patched}$ output logits.}
-\vspace{-0.5em}
-\label{fig:activate_patching}
-\end{figure}
 
 \noindent We quantify the causal effect of this intervention using the \textit{Probability Difference} (PD) metric. Let $w_{\texttt{True}}$ and $w_{\texttt{False}}$ denote the tokens for the two truth values(assume that \texttt{True} is the correct answer on $X_{clean}$, while \texttt{False} is the correct answer on $X_{corrupt}$, normally the two are mutually exclusive). The PD on the patched output is:
 % $LogitDiff = Logits(w_{true})-Logits(w_{false}$
@@ -841,16 +744,6 @@ These findings establish that information transmission in \textit{Qwen3} follows
 % We observed that Qwen3-8B spontaneously decomposes logical-reasoning prompts into a sequence of staged, hierarchical computations. Across prompt variants the precise layer boundaries of these stages shift slightly, but the same qualitative pattern recurs: early layers primarily process fact tokens, middle layers operate on expression (calculation / reasoning) tokens, and late layers integrate final-token information to produce the model's output. Importantly, interventions applied to the MLP outputs reveal that MLPs are a major driver of this staged computation.
 
 % \paragraph*{Layered/staged computation} When analyzing information flow through Qwen3-8B on a range of logically structured prompts, we find that the model performs reasoning in a sequence of stages localized to different depth ranges. Early layers (approximately layers 0–10) are causally important for processing tokens that carry facts; intervening on MLP outputs at these token positions substantially alters final outputs. Middle layers (about 10–18) are similarly critical for tokens that encode intermediate expressions or transformations, and perturbations to these MLP outputs lead to large downstream effects. Finally, layers beyond about 20 are primarily involved in integrating the final token(s); perturbing the MLP output at the last-token position in these late layers also strongly affects model outputs. Across alternative prompts the numeric boundaries shift slightly, but the qualitative staging is robust.
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{./figures/corporate_heads.pdf}
-	\caption{Schematic illustration of Specialized Attention Heads.
-The input sequence is segmented into semantic regions (Clauses and Logical Expression).
-Color coding indicates functional roles: Splitting Heads (blue) detect semantic boundaries at delimiters;
-Entity-Binding and Transmission Heads (orange) associate variables with values and aggregate information within regions;
-Fact-Retrieval Heads (green) access truth values from earlier contexts.}
-    \vspace{-0.5em}
-	\label{fig:corporate_heads}
-\end{figure}
 
 \begin{figure*}[t]
     \centering
@@ -1121,7 +1014,14 @@ All experiments are conducted on NVIDIA H100 GPUs with 96GB memory. The large me
 
 \paragraph{Software Environment.}
 We use PyTorch 2.0 with CUDA 11.8. Activation patching experiments are implemented using the TransformerLens library \citep{nanda2022transformerlens}, which provides convenient hooks for accessing and modifying intermediate activations in transformer models.
-
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\columnwidth]{./figures/method_metric.pdf}
+% \caption{\textbf{Activation patching procedure.} We perform a forward pass on the clean input $x_{\text{clean}}$ to cache activations at component $(l,i)$. During execution of the corrupted input $x_{\text{corrupt}}$, we replace the activation at the targeted component with the cached clean activation. The resulting shift in logit difference $\Delta \text{Logits}$ quantifies the causal importance of that component for steering the model toward the correct prediction.}
+\caption{Activation patching procedure. We focus on the logits difference between \texttt{True} token and \texttt{False} token in $Y_{patched}$ output logits.}
+\vspace{-0.5em}
+\label{fig:activate_patching}
+\end{figure}
 \subsection{Implementation Details}
 \label{sec:appendix_implementation} 
 
@@ -1298,6 +1198,96 @@ A single residual stream patching experiment (36 layers $\times$ approximately 1
 \label{sec:appendix_reproducibility}       
 
 Code and data will be made available upon publication. Our implementation is based on publicly available models from Hugging Face and the open-source TransformerLens library, ensuring that all experiments can be reproduced by the community.
+
+\begin{table*}[t]
+\centering
+\small
+\renewcommand{\arraystretch}{0.9}
+\setlength{\tabcolsep}{6pt}
+\begin{tabularx}{\textwidth}{@{} l c X @{}}
+\toprule
+% \textbf{Category} & \textbf{Formal Definitions (Duals)} & \textbf{Example Prompt Templates} \\
+\textbf{Category} & \textbf{Formal Definitions} & \textbf{Example Prompt Templates (One-Hop)} \\
+\midrule
+% --- Basic Laws ---
+Identity
+    & $P \land \top \equiv P, \quad P \lor \bot \equiv P$
+    & \texttt{"A is T, A and T is"}, \quad \texttt{"A is F, A or F is"} \\
+Domination
+    & $P \land \bot \equiv \bot, \quad P \lor \top \equiv \top$
+    & \texttt{"A is T, A and F is"}, \quad \texttt{"A is F, A or T is"} \\
+Idempotent
+    & $P \land P \equiv P, \quad P \lor P \equiv P$
+    & \texttt{"A is T, A and A is"}, \quad \texttt{"A is F, A or A is"} \\
+\midrule
+% --- Negation Laws ---
+Dbl. Negation
+    & $\lnot(\lnot P) \equiv P$
+    & \texttt{"A is T, ($\lnot$($\lnot$A)) is"} \\
+Excluded Mid.
+    & $P \lor \lnot P \equiv \top$
+    & \texttt{"A is T, A or $\lnot$A is"} \\
+Contradiction
+    & $P \land \lnot P \equiv \bot$
+    & \texttt{"A is F, A and $\lnot$A is"} \\
+\midrule
+% --- Multi-Variable Laws ---
+Commutative
+    & $P \land Q \equiv Q \land P$
+    & \texttt{"A is T, B is F, A and B is"} \\
+Associative
+    & $(P \land Q) \land R \equiv P \land (Q \land R)$
+    & \texttt{"A is T, B is T, C is F, (A and B) and C is"} \\
+Distributive
+    & $P \land (Q \lor R) \equiv (P \land Q) \lor (P \land R)$
+    & \texttt{"A is T, B is F, C is T, A and (B or C) is"} \\
+De Morgan
+    & $\lnot(P \land Q) \equiv \lnot P \lor \lnot Q$
+    & \texttt{"A is T, B is F, ($\lnot$A or $\lnot$B) is"} \\
+Absorption
+    & $P \land (P \lor Q) \equiv P$
+    & \texttt{"A is T, B is F, A and (A or B) is"} \\
+\bottomrule
+\end{tabularx}
+% \caption{\textbf{Rule coverage.} We cover 11 fundamental categories. For rules with dual forms (Identity, Domination, Idempotent), both formulas and example templates are shown with horizontal spacing. For each rule covers its formal Boolean algebra definition and a corresponding template. Variables \{A, B, C\} are instantiated with truth values (True/False). T/F denotes True/False.}
+\caption{\textbf{Rule coverage.} \textit{PropLogic-MI} systematically covers 11 fundamental rule categories. Each rule includes its formal Boolean algebra definition and a corresponding template. Variables \{\texttt{A, B, ..., Z}\} are instantiated with truth values (\texttt{True}/\texttt{False}). T/F denotes \texttt{True}/\texttt{False}.}
+\vspace{-1.0em}
+\label{tab:rule_coverage}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\small
+\renewcommand{\arraystretch}{0.9}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\columnwidth}{@{}lX@{}}
+\toprule
+\textbf{Depth} & \textbf{Prompt Template \& Reasoning Process} \\
+\midrule
+\multirow{3.5}{*}{\textbf{One-Hop}}
+& \texttt{"A is True, B is False, (A and B) is"} \newline
+  \color{gray}\textit{\footnotesize $\hookrightarrow$ Logic: $A \land B$} \\
+\addlinespace[0.4em]
+& \texttt{"A is True, ($\lnot$($\lnot$A)) is"} \newline
+  \color{gray}\textit{\footnotesize $\hookrightarrow$ Logic: $\lnot(\lnot A) \equiv A$} \\
+\addlinespace[0.4em]
+& \texttt{"A is True, B is False, ($\lnot$A or $\lnot$B) is"} \newline
+  \color{gray}\textit{\footnotesize $\hookrightarrow$ Logic: De Morgan ($\lnot A \lor \lnot B$)} \\
+\midrule
+\multirow{5}{*}{\textbf{Two-Hop}}
+& \texttt{"A is T, B is A and T, C is F, B and C is"} \newline
+  \color{gray}\textit{ \footnotesize $\hookrightarrow$ Chain: $(A \land \top) \to B; \quad (B \land C) \to \text{Ans}$} \\
+\addlinespace[0.4em]
+& \texttt{"A is T, B is F, C is $\lnot$(A and B), D is T, C or D is"} \newline
+  \color{gray}\textit{\footnotesize $\hookrightarrow$ Chain: $\text{NAND}(A,B) \to C; \quad (C \lor D) \to \text{Ans}$} \\
+\addlinespace[0.4em]
+& \texttt{"A is T, B is F, C is A and B, D is T, C or D is"} \newline
+  \color{gray}\textit{\footnotesize $\hookrightarrow$ Chain: $(A \land B) \to C; \quad (C \lor D) \to \text{Ans}$} \\
+\bottomrule
+\end{tabularx}
+\caption{\textbf{Probing prompts across reasoning depths.} We probe the model with queries requiring direct rule application (One-Hop) versus those necessitating intermediate latent variable derivation (Two-Hop).}
+\label{tab:reasoning_depth}
+\end{table}
 
 \subsection{Dataset Details}
 \label{sec:appendix_dataset}
@@ -2052,6 +2042,17 @@ Taken together, the Llama and Mistral extensions strengthen the claim that the h
 \label{sec:failure_analysis}
 
 We analyze cases where the model produces incorrect outputs despite exhibiting the same functional head profiles observed in successful reasoning. This analysis reveals that failures are not due to a breakdown in head specialization, but rather to limitations in downstream integration.
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{./figures/corporate_heads.pdf}
+	\caption{Schematic illustration of Specialized Attention Heads.
+The input sequence is segmented into semantic regions (Clauses and Logical Expression).
+Color coding indicates functional roles: Splitting Heads (blue) detect semantic boundaries at delimiters;
+Entity-Binding and Transmission Heads (orange) associate variables with values and aggregate information within regions;
+Fact-Retrieval Heads (green) access truth values from earlier contexts.}
+    \vspace{-0.5em}
+	\label{fig:corporate_heads}
+\end{figure}
 
 \paragraph{Persistent Head Specialization.}
 Even when the model fails on logical reasoning tasks involving excessive reasoning depth or element overload, attention heads continue to exhibit their characteristic functional profiles: Splitting Heads still concentrate on delimiters, Transmission Heads still aggregate within regions, and Fact-Retrieval Heads still attend to truth values. This persistence suggests that the identified mechanisms represent robust architectural properties rather than task-contingent behaviors.
