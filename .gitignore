@@ -6,5 +6,6 @@ tests/
 artifacts_*/
 reports_*/
 dataset_*/
+figures*/
 logs/
 *.pyc
