@@ -1,0 +1,33 @@
+bash scripts/MLP_region_patching.sh \
+    --model_id "Qwen/Qwen3-8B" \
+    --model_source "huggingface" \
+    --prompt_style "symbolic" \
+    --device "cuda:1" \
+    --max_samples 3000 \
+    --progress_every 100 \
+    --split "all" \
+    --source_input "artifacts/filtered_dual_correct_Qwen3-8b.jsonl" \
+    --one_hop_input "dataset/mlp_8b_one_hop.jsonl" \
+    --two_hop_input "dataset/mlp_8b_two_hop.jsonl" \
+    --split_summary "reports/mlp_analysis/8b_dual_correct_split.json" \
+    --output_root "reports/mlp_analysis" \
+    --auto_split 1 \
+    --make_plots 1 \
+    --plot_output_dir "reports/mlp_analysis/comparison"
+
+bash scripts/MLP_region_patching.sh \
+    --model_id "Qwen/Qwen3-14B" \
+    --model_source "huggingface" \
+    --prompt_style "symbolic" \
+    --device "cuda:1" \
+    --max_samples 3000 \
+    --progress_every 100 \
+    --split "all" \
+    --source_input "artifacts/filtered_dual_correct_Qwen3-14b.jsonl" \
+    --one_hop_input "dataset/mlp_14b_one_hop.jsonl" \
+    --two_hop_input "dataset/mlp_14b_two_hop.jsonl" \
+    --split_summary "reports/mlp_analysis/14b_dual_correct_split.json" \
+    --output_root "reports/mlp_analysis" \
+    --auto_split 1 \
+    --make_plots 1 \
+    --plot_output_dir "reports/mlp_analysis/comparison_14B"

@@ -1,0 +1,10 @@
+dataset/
+reports/
+artifacts/
+__pycache__/
+tests/
+artifacts_*/
+reports_*/
+dataset_*/
+logs/
+*.pyc
