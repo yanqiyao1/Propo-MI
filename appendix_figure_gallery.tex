@@ -1,19 +1,15 @@
 \subsection{Additional Band-Composition and Region Galleries}
 \label{sec:appendix_extra_region_gallery}
 
-\makeatletter
-% This gallery is included after \onecolumn, so a regular figure already spans
-% the full page width. Routing figure* through the normal float queue avoids
-% exhausting the double-float queue under XeLaTeX.
-\renewenvironment{figure*}{\@float{figure}}{\end@float}
-\makeatother
-
 \captionsetup[figure]{font=small}
 \captionsetup[subfigure]{font=small}
 
 The saved outputs in \path{figures_experiments/} contain a more complete atlas of band-composition summaries and region-wise curves than we could place in the main text. We prioritize two diagnostic families here. First, the stacked-BCR summaries expose how each branch redistributes early/middle/late mass within each semantic region. Second, the omitted \texttt{expr\_first} region galleries show the full one-hop/two-hop curves rather than only the comparison panels. Together, these figures make the prompt-order effect more concrete: under \texttt{expr\_first}, the Expression Region moves earlier, the Facts Region becomes less purely early-layer dominated, and the Query Region remains the main integration sink.
 
 This reallocation is branch-dependent rather than arbitrary. In the saved Qwen3 BCR matrices, one-hop \textit{Qwen3-14B} MLP ablation shifts the Expression Region early-band BCR from $0.68$ under \texttt{facts\_first} to $0.84$ under \texttt{expr\_first}, while the Facts Region early-band BCR falls from $0.82$ to $0.60$. The attention branch makes the same intervention more structural: in one-hop \textit{Qwen3-14B}, the Facts Region becomes middle-dominant ($0.53$) while the Expression Region remains strongly early-dominant ($0.72$). The joint attention+MLP branch partially restores a cleaner early-layer concentration, with one-hop \textit{Qwen3-14B} \texttt{expr\_first} early-band BCRs of $0.71$ for Facts and $0.89$ for Expression. The additional galleries below therefore function as branch-specific evidence for the same high-level claim made in the main text: prompt reordering changes allocation, not the existence, of staged computation.
+
+\paragraph{How to read these region figures.}
+Two summary views recur throughout this subsection. In the \textbf{stacked BCR} charts, each bar sums to $1$ within a region, so the figure should be read as a depth decomposition: a larger early segment means that most of the region's total causal mass is spent early, whereas a larger middle or late segment means that the same region stays active deeper into the network. In the \textbf{band-metric panels}, BMI captures average strength within a band, BCR captures depth allocation, and SBI restores direction. The full region galleries then show the underlying layer-by-layer curves, which are most useful for seeing whether a band-level pattern comes from one sharp peak or from a broad plateau.
 
 \begin{figure*}[p]
     \centering
@@ -445,6 +441,9 @@ This reallocation is branch-dependent rather than arbitrary. In the saved Qwen3 
     \label{fig:cross_model_bcr_stacked_expr}
 \end{figure*}
 
+\paragraph{How to compare the cross-model region figures.}
+In the cross-model panels below, the safest comparison is to hold the branch fixed and then compare families: first compare Qwen3/Llama/Mistral within MLP, then within attention, then within the joint branch. A family with more late Query mass is relying more heavily on query-facing scaffolding during final integration, whereas a family with cleaner early Facts and middle Expression concentration is implementing a sharper staged decomposition. The stacked-BCR figures are particularly helpful here because they isolate \emph{where} the mass sits even when total magnitude differs across models.
+
 The full cross-model MLP galleries sharpen the same qualitative point. In Llama, even the core MLP branch allocates unusually large mass to the Query Region: the one-hop \texttt{facts\_first} query BCR is split across early ($0.51$), middle ($0.27$), and late ($0.22$) bands rather than being primarily a late aggregator. Mistral looks somewhat cleaner than Llama, but still remains more query-heavy than Qwen3, with one-hop \texttt{facts\_first} query BCRs of $0.48$ / $0.37$ / $0.15$ (early / middle / late). The full curves below make these differences visible at layer resolution rather than only through band summaries.
 
 \begin{figure*}[p]
@@ -624,6 +623,9 @@ The full cross-model MLP galleries sharpen the same qualitative point. In Llama,
 \label{sec:appendix_extra_token_gallery}
 
 The unused token-analysis figures clarify two points that are only summarized in the main appendix. First, the refined mean and signed plots show whether a category's contribution is merely large in magnitude or also directionally aligned with the correct answer. Second, the raw heatmaps expose whether the same effect is sharply localized in layer depth. Qwen3 remains the most fact-heavy family in signed mass, while Llama and Mistral shift more mass toward query-facing categories. Concretely, in the refined sum statistics, \textit{Qwen3-14B} under \texttt{expr\_first} assigns $3.44$ total mass to \texttt{facts\_value} against $1.82$ for \texttt{query\_token}; in contrast, Llama and Mistral are query-dominant in all four released settings (for example, Llama \texttt{expr\_first}: $2.05$ vs. $1.23$; Mistral \texttt{facts\_first}: $1.04$ vs. $0.75$).
+
+\paragraph{How to read these token figures.}
+The raw heatmaps are the most local representation: they show \emph{which category lights up at which layer range}. The refined \textbf{sum} plots answer a total-contribution question and therefore reward categories that accumulate substantial mass over multiple tokens, whereas the refined \textbf{mean} plots normalize by category size and answer a per-token-importance question. Signed variants preserve whether the intervention shifts the model in the correct direction, so a category can be large in unsigned magnitude but less dominant once directional consistency is required.
 
 \begin{figure*}[p]
     \centering
@@ -879,6 +881,9 @@ The unused token-analysis figures clarify two points that are only summarized in
 
 The unused head-analysis figures complement the taxonomy line charts already shown in the appendix. The Step~1 discovery maps reveal whether the candidate heads are already spatially clustered before taxonomy assignment. The retained Step~3 plots focus on the two views that are most useful for the paper narrative: the absolute-ratio curves and the raw dPD-shift curves. Together they show both how harmful the targeted ablations are in magnitude and whether they move the model in the expected negative direction. For Qwen3, these diagnostics line up cleanly: candidate heads concentrate in the same early/middle/late bands later recovered by Step~2, and the role-targeted curves remain much more damaging than \textit{Random-Outside}. For Llama and Mistral, by contrast, the same supplementary diagnostics reveal weaker separation and stronger side effects from the random baseline.
 
+\paragraph{How to read these head figures.}
+The discovery maps should be read as \emph{candidate density over layers and heads}: clustering means that promising heads are already spatially organized before the taxonomy rules are applied. The absolute-ratio validation curves answer ``how damaging is this ablation relative to the model's original margin?'', so higher curves are worse. The raw dPD-shift curves add direction: more negative values mean the ablation pushes the model farther away from the correct answer, while values near zero indicate weak causal effect.
+
 \begin{figure*}[p]
     \centering
     \begin{subfigure}[b]{0.44\textwidth}
@@ -1008,6 +1013,9 @@ The unused head-analysis figures complement the taxonomy line charts already sho
 \label{sec:appendix_further_atlas}
 
 This second atlas consumes the remaining diagnostic families that were still absent after the first appendix gallery. These figures are intentionally exhaustive rather than selective. They serve two roles. First, they close the gap between the saved report artifacts and the paper by exposing the branch-specific curves that were previously only summarized numerically. Second, they separate signed-direction effects from raw magnitude effects via the omitted absolute-dPD galleries and token simple plots. The result is a larger but more faithful appendix-level representation of the full experiment snapshot stored in \path{figures_experiments/}.
+
+\paragraph{How to read the magnitude atlases.}
+These plots are most useful when a signed figure and an unsigned figure seem to tell slightly different stories. Signed curves reveal whether an intervention is directionally harmful or helpful; absolute-dPD curves ignore sign and therefore answer a different question, namely where the model is \emph{sensitive} even if positive and negative effects partially cancel. When the same region stays prominent in both views, it is both large in magnitude and directionally important; when it is prominent only in the absolute view, it is better interpreted as a mixed or internally canceling intervention site.
 
 \paragraph{Qwen3 facts-first supplements.}
 The remaining Qwen3 figures are primarily facts-first diagnostics that complement the main staged-computation story. The omitted two-hop attention and joint galleries show that two-hop reasoning preserves the same coarse region order while broadening the Query Region. The absolute-dPD MLP figures then distinguish where a region is large in magnitude from where it is directionally dominant. This matters because the raw dPD plots in the main appendix mix sign and magnitude; the absolute variants show that even when signed effects partially cancel, the same semantic regions remain the main intervention sites.
@@ -1716,12 +1724,12 @@ The remaining cross-model region figures are mostly full attention and joint-reg
     \label{fig:mistral_expr_remaining_band_panels}
 \end{figure*}
 
-\begin{figure}[p]
+\begin{figure*}[p]
     \centering
-    \includegraphics[width=0.78\columnwidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+    \includegraphics[width=\textwidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
     \caption{\textbf{Mistral facts-first joint attention+MLP band summary.} This final omitted branch-level summary completes the Mistral band-panel atlas. The joint intervention preserves the same broad staged template as the MLP branch, but still places comparatively strong mass on the Query Region throughout the back half of the network.}
     \label{fig:mistral_attn_mlp_facts_band_panel}
-\end{figure}
+\end{figure*}
 
 \begin{figure*}[p]
     \centering
