@@ -18,6 +18,7 @@ from transformer_lens import utils
 from src.eval.io_utils import count_by_field
 from src.model_loading import add_model_source_arg
 from src.progress import log_event, make_tqdm, resolve_log_path, setup_file_logger
+from src.plot_style import stylize_axis
 
 from .common import (
     ROLE_COLOR,
@@ -678,8 +679,19 @@ def _plot_pd_curves(
 ) -> None:
     if not aggregated_rows:
         return
-    apply_paper_style({"axes.grid": True, "grid.alpha": 0.22})
-    fig, ax = plt.subplots(figsize=(10.8, 6.4))
+    apply_paper_style(
+        {
+            "axes.grid": True,
+            "grid.alpha": 0.22,
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.5,
+            "ytick.labelsize": 12.5,
+            "legend.fontsize": 12.0,
+        }
+    )
+    fig, ax = plt.subplots(figsize=(11.6, 6.8))
 
     any_data = False
     for strategy_id in STRATEGY_ORDER:
@@ -693,7 +705,15 @@ def _plot_pd_curves(
         color = STRATEGY_COLOR.get(strategy_id, "#4D4D4D")
         marker = STRATEGY_MARKER.get(strategy_id, "o")
         linestyle = "--" if strategy_id == "random_outside_selected" else "-"
-        ax.plot(xs, ys, color=color, marker=marker, linestyle=linestyle, linewidth=2.0, label=STRATEGY_LABEL.get(strategy_id, strategy_id))
+        ax.plot(
+            xs,
+            ys,
+            color=color,
+            marker=marker,
+            linestyle=linestyle,
+            linewidth=2.35,
+            label=STRATEGY_LABEL.get(strategy_id, strategy_id),
+        )
         if any(sems):
             xs_arr = np.asarray(xs, dtype=np.float64)
             ys_arr = np.asarray(ys, dtype=np.float64)
@@ -710,6 +730,7 @@ def _plot_pd_curves(
     ax.set_ylabel(ylabel)
     ax.set_xticks(list(k_values))
     ax.legend(loc="best", ncol=2, frameon=True)
+    stylize_axis(ax)
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, dpi=320)

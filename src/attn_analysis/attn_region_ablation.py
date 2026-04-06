@@ -16,7 +16,7 @@ from src.eval.io_utils import balanced_sample_by_rule, count_by_field, read_json
 from src.model_loading import add_model_source_arg, resolve_model_prompt
 from src.progress import log_event, make_tqdm, resolve_log_path, setup_file_logger
 from src.mech.tl_utils import load_hooked_transformer, resolve_true_false_token_ids, to_tokens
-from src.plot_style import apply_paper_style
+from src.plot_style import apply_paper_style, stylize_axis
 from src.mlp_analysis.common import (
     build_region_char_spans,
     compute_margin_for_label,
@@ -324,24 +324,26 @@ def _compute_band_metrics(scores: Sequence[float], signed_scores: Sequence[float
 def _plot_bar(output_png: Path, layers: List[int], scores: List[float]) -> None:
     apply_paper_style(
         {
-            "font.size": 13.0,
-            "axes.titlesize": 15.0,
-            "axes.labelsize": 13.0,
-            "xtick.labelsize": 11.5,
-            "ytick.labelsize": 11.5,
+            "font.size": 14.5,
+            "axes.titlesize": 16.5,
+            "axes.labelsize": 15.0,
+            "xtick.labelsize": 13.0,
+            "ytick.labelsize": 13.0,
         }
     )
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(layers, scores, color="C0")
-    plt.xlabel("Layer Index")
-    plt.ylabel("dPD")
+    fig, ax = plt.subplots(figsize=(10.8, 6.6))
+    ax.bar(layers, scores, color="#4C78A8", edgecolor="#1F1F1F", linewidth=0.9)
+    ax.set_xlabel("Layer Index")
+    ax.set_ylabel("dPD")
     if layers:
-        plt.xticks(np.arange(0, max(layers) + 1, 5))
-    plt.tight_layout()
+        ax.set_xticks(np.arange(0, max(layers) + 1, 5))
+    ax.grid(axis="y", alpha=0.28)
+    stylize_axis(ax)
+    fig.tight_layout()
     output_png.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_png, dpi=300)
-    plt.close()
+    fig.savefig(output_png, dpi=320)
+    plt.close(fig)
 
 
 def _attn_out_hook_name(layer: int) -> str:

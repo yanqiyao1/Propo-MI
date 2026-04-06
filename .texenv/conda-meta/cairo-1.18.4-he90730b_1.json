@@ -1,0 +1,463 @@
+{
+  "name": "cairo",
+  "version": "1.18.4",
+  "build": "he90730b_1",
+  "build_number": 1,
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
+  "subdir": "linux-64",
+  "fn": "cairo-1.18.4-he90730b_1.conda",
+  "md5": "bb6c4808bfa69d6f7f6b07e5846ced37",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/cairo-1.18.4-he90730b_1.conda",
+  "sha256": "06525fa0c4e4f56e771a3b986d0fdf0f0fc5a3270830ee47e127a5105bde1b9a",
+  "depends": [
+    "__glibc >=2.17,<3.0.a0",
+    "fontconfig >=2.15.0,<3.0a0",
+    "fonts-conda-ecosystem",
+    "icu >=78.1,<79.0a0",
+    "libexpat >=2.7.3,<3.0a0",
+    "libfreetype >=2.14.1",
+    "libfreetype6 >=2.14.1",
+    "libgcc >=14",
+    "libglib >=2.86.3,<3.0a0",
+    "libpng >=1.6.53,<1.7.0a0",
+    "libstdcxx >=14",
+    "libxcb >=1.17.0,<2.0a0",
+    "libzlib >=1.3.1,<2.0a0",
+    "pixman >=0.46.4,<1.0a0",
+    "xorg-libice >=1.1.2,<2.0a0",
+    "xorg-libsm >=1.2.6,<2.0a0",
+    "xorg-libx11 >=1.8.12,<2.0a0",
+    "xorg-libxext >=1.3.6,<2.0a0",
+    "xorg-libxrender >=0.9.12,<0.10.0a0"
+  ],
+  "constrains": [],
+  "license": "LGPL-2.1-only or MPL-1.1",
+  "timestamp": 1766415934000,
+  "size": 989514,
+  "requested_spec": "None",
+  "package_tarball_full_path": "/ssd/data/qiyaoyan/conda/pkgs/cairo-1.18.4-he90730b_1.conda",
+  "extracted_package_dir": "/ssd/data/qiyaoyan/conda/pkgs/cairo-1.18.4-he90730b_1",
+  "files": [
+    "bin/cairo-trace",
+    "include/cairo/cairo-deprecated.h",
+    "include/cairo/cairo-features.h",
+    "include/cairo/cairo-ft.h",
+    "include/cairo/cairo-gobject.h",
+    "include/cairo/cairo-pdf.h",
+    "include/cairo/cairo-ps.h",
+    "include/cairo/cairo-script-interpreter.h",
+    "include/cairo/cairo-script.h",
+    "include/cairo/cairo-svg.h",
+    "include/cairo/cairo-tee.h",
+    "include/cairo/cairo-version.h",
+    "include/cairo/cairo-xcb.h",
+    "include/cairo/cairo-xlib-xrender.h",
+    "include/cairo/cairo-xlib.h",
+    "include/cairo/cairo.h",
+    "lib/cairo/libcairo-fdr.a",
+    "lib/cairo/libcairo-fdr.so",
+    "lib/cairo/libcairo-trace.a",
+    "lib/cairo/libcairo-trace.so",
+    "lib/libcairo-gobject.a",
+    "lib/libcairo-gobject.so",
+    "lib/libcairo-gobject.so.2",
+    "lib/libcairo-gobject.so.2.11804.4",
+    "lib/libcairo-script-interpreter.a",
+    "lib/libcairo-script-interpreter.so",
+    "lib/libcairo-script-interpreter.so.2",
+    "lib/libcairo-script-interpreter.so.2.11804.4",
+    "lib/libcairo.a",
+    "lib/libcairo.so",
+    "lib/libcairo.so.2",
+    "lib/libcairo.so.2.11804.4",
+    "lib/pkgconfig/cairo-fc.pc",
+    "lib/pkgconfig/cairo-ft.pc",
+    "lib/pkgconfig/cairo-gobject.pc",
+    "lib/pkgconfig/cairo-pdf.pc",
+    "lib/pkgconfig/cairo-png.pc",
+    "lib/pkgconfig/cairo-ps.pc",
+    "lib/pkgconfig/cairo-script-interpreter.pc",
+    "lib/pkgconfig/cairo-script.pc",
+    "lib/pkgconfig/cairo-svg.pc",
+    "lib/pkgconfig/cairo-tee.pc",
+    "lib/pkgconfig/cairo-xcb-shm.pc",
+    "lib/pkgconfig/cairo-xcb.pc",
+    "lib/pkgconfig/cairo-xlib-xcb.pc",
+    "lib/pkgconfig/cairo-xlib-xrender.pc",
+    "lib/pkgconfig/cairo-xlib.pc",
+    "lib/pkgconfig/cairo.pc"
+  ],
+  "paths_data": {
+    "paths_version": 1,
+    "paths": [
+      {
+        "_path": "bin/cairo-trace",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "613ec2657f12773a3196c72f337fe740c303bcca576e8816bff8784722294b29",
+        "size_in_bytes": 4458,
+        "sha256_in_prefix": "ec3921e7088a34914bea9f0f2e603265ef6b77699894bdcae4e0bbe1955cae71"
+      },
+      {
+        "_path": "include/cairo/cairo-deprecated.h",
+        "path_type": "hardlink",
+        "sha256": "873654913917ec9623c0d6f4a940f8ea638c0954cd2c01471df570046bea2bbf",
+        "size_in_bytes": 8698,
+        "sha256_in_prefix": "873654913917ec9623c0d6f4a940f8ea638c0954cd2c01471df570046bea2bbf"
+      },
+      {
+        "_path": "include/cairo/cairo-features.h",
+        "path_type": "hardlink",
+        "sha256": "8a1bd528e0f8e15384a4457ed34f4ef12386a35d8e34f65fafa138015eb9b27d",
+        "size_in_bytes": 799,
+        "sha256_in_prefix": "8a1bd528e0f8e15384a4457ed34f4ef12386a35d8e34f65fafa138015eb9b27d"
+      },
+      {
+        "_path": "include/cairo/cairo-ft.h",
+        "path_type": "hardlink",
+        "sha256": "12052b31eb03c101bbc05681d9a360b6f314ecb435281edddada02b7a209f48a",
+        "size_in_bytes": 3721,
+        "sha256_in_prefix": "12052b31eb03c101bbc05681d9a360b6f314ecb435281edddada02b7a209f48a"
+      },
+      {
+        "_path": "include/cairo/cairo-gobject.h",
+        "path_type": "hardlink",
+        "sha256": "b991fec459ac2ffee2b731a8d740649d89cce3806db837ac7eed5ba7292ac4c9",
+        "size_in_bytes": 6718,
+        "sha256_in_prefix": "b991fec459ac2ffee2b731a8d740649d89cce3806db837ac7eed5ba7292ac4c9"
+      },
+      {
+        "_path": "include/cairo/cairo-pdf.h",
+        "path_type": "hardlink",
+        "sha256": "3c1beeb914e1742428d6991b1c629965d7583ee218e131159df5e203c050c0bc",
+        "size_in_bytes": 6059,
+        "sha256_in_prefix": "3c1beeb914e1742428d6991b1c629965d7583ee218e131159df5e203c050c0bc"
+      },
+      {
+        "_path": "include/cairo/cairo-ps.h",
+        "path_type": "hardlink",
+        "sha256": "2ca71c761c807eb16fb97099ef0f8c6b877c61f49e3f568075eb762837b2f610",
+        "size_in_bytes": 3632,
+        "sha256_in_prefix": "2ca71c761c807eb16fb97099ef0f8c6b877c61f49e3f568075eb762837b2f610"
+      },
+      {
+        "_path": "include/cairo/cairo-script-interpreter.h",
+        "path_type": "hardlink",
+        "sha256": "611668b45019a603304188280cb52a3ba1c8deb8c9802bc400c2da49ce3a5d06",
+        "size_in_bytes": 4059,
+        "sha256_in_prefix": "611668b45019a603304188280cb52a3ba1c8deb8c9802bc400c2da49ce3a5d06"
+      },
+      {
+        "_path": "include/cairo/cairo-script.h",
+        "path_type": "hardlink",
+        "sha256": "03d8abe5e374e9b8b51598f1e1db29cc1f42cc5a52722338acaffe0218d9b6f2",
+        "size_in_bytes": 3072,
+        "sha256_in_prefix": "03d8abe5e374e9b8b51598f1e1db29cc1f42cc5a52722338acaffe0218d9b6f2"
+      },
+      {
+        "_path": "include/cairo/cairo-svg.h",
+        "path_type": "hardlink",
+        "sha256": "0557cca0fd5ccb4712bc344e83d32eb59381d56206ba0622806bb708ea64e5e6",
+        "size_in_bytes": 4547,
+        "sha256_in_prefix": "0557cca0fd5ccb4712bc344e83d32eb59381d56206ba0622806bb708ea64e5e6"
+      },
+      {
+        "_path": "include/cairo/cairo-tee.h",
+        "path_type": "hardlink",
+        "sha256": "137b1dd27971f2bd67dfbcd8e27d403e0fe4760d1296c044b075c8848d91bcfc",
+        "size_in_bytes": 2201,
+        "sha256_in_prefix": "137b1dd27971f2bd67dfbcd8e27d403e0fe4760d1296c044b075c8848d91bcfc"
+      },
+      {
+        "_path": "include/cairo/cairo-version.h",
+        "path_type": "hardlink",
+        "sha256": "1fd834f4dda391dfc52e485df2126e8f48be70b4ca858bedca03fc2f359cf3c1",
+        "size_in_bytes": 148,
+        "sha256_in_prefix": "1fd834f4dda391dfc52e485df2126e8f48be70b4ca858bedca03fc2f359cf3c1"
+      },
+      {
+        "_path": "include/cairo/cairo-xcb.h",
+        "path_type": "hardlink",
+        "sha256": "1941b977fe51808745a2242430ded7a07818ff2e27b6dc16fdf87f7c411bd37c",
+        "size_in_bytes": 3775,
+        "sha256_in_prefix": "1941b977fe51808745a2242430ded7a07818ff2e27b6dc16fdf87f7c411bd37c"
+      },
+      {
+        "_path": "include/cairo/cairo-xlib-xrender.h",
+        "path_type": "hardlink",
+        "sha256": "db5bf4c3c9db852bac533df54979e6b7cc7527324f348582cb669d940c834f93",
+        "size_in_bytes": 2436,
+        "sha256_in_prefix": "db5bf4c3c9db852bac533df54979e6b7cc7527324f348582cb669d940c834f93"
+      },
+      {
+        "_path": "include/cairo/cairo-xlib.h",
+        "path_type": "hardlink",
+        "sha256": "c2dc8111eb4325a439d91192c66827e1e9c9ada4974d453f242dcd30abad6a05",
+        "size_in_bytes": 3577,
+        "sha256_in_prefix": "c2dc8111eb4325a439d91192c66827e1e9c9ada4974d453f242dcd30abad6a05"
+      },
+      {
+        "_path": "include/cairo/cairo.h",
+        "path_type": "hardlink",
+        "sha256": "2648b182afef057343b789551ccb4a0d44398278a7e0a63aaf65246cc7d13e80",
+        "size_in_bytes": 118325,
+        "sha256_in_prefix": "2648b182afef057343b789551ccb4a0d44398278a7e0a63aaf65246cc7d13e80"
+      },
+      {
+        "_path": "lib/cairo/libcairo-fdr.a",
+        "path_type": "hardlink",
+        "sha256": "a24ffabd9b440db89f1e4ac0e82474d2f2928c8bc8489b796ee9e692be81a0d4",
+        "size_in_bytes": 26178,
+        "sha256_in_prefix": "a24ffabd9b440db89f1e4ac0e82474d2f2928c8bc8489b796ee9e692be81a0d4"
+      },
+      {
+        "_path": "lib/cairo/libcairo-fdr.so",
+        "path_type": "hardlink",
+        "sha256": "2c32141a393d0b625711b310dabf04079b8177ca41aa08c064face04f59b09f1",
+        "size_in_bytes": 15112,
+        "sha256_in_prefix": "2c32141a393d0b625711b310dabf04079b8177ca41aa08c064face04f59b09f1"
+      },
+      {
+        "_path": "lib/cairo/libcairo-trace.a",
+        "path_type": "hardlink",
+        "sha256": "c558405c43917cdb111f75924f8c6f5ec6c1377ad7ad5e9e6fe6a0af907c7a1b",
+        "size_in_bytes": 264654,
+        "sha256_in_prefix": "c558405c43917cdb111f75924f8c6f5ec6c1377ad7ad5e9e6fe6a0af907c7a1b"
+      },
+      {
+        "_path": "lib/cairo/libcairo-trace.so",
+        "path_type": "hardlink",
+        "sha256": "bad65269c063e5b78fe4ddc0d58bc51769cf4a5ddbacdeeb5e680c78f61cad41",
+        "size_in_bytes": 38896,
+        "sha256_in_prefix": "bad65269c063e5b78fe4ddc0d58bc51769cf4a5ddbacdeeb5e680c78f61cad41"
+      },
+      {
+        "_path": "lib/libcairo-gobject.a",
+        "path_type": "hardlink",
+        "sha256": "97fce3852dbf9dfbb1f1767e16bc5f6594e770a0e0d16be7bce92ad33af770c7",
+        "size_in_bytes": 54448,
+        "sha256_in_prefix": "97fce3852dbf9dfbb1f1767e16bc5f6594e770a0e0d16be7bce92ad33af770c7"
+      },
+      {
+        "_path": "lib/libcairo-gobject.so",
+        "path_type": "softlink",
+        "sha256": "ce759116ffd62a79befa2247245959dec756d9df0e081b392d43deb098cac72c",
+        "size_in_bytes": 49056
+      },
+      {
+        "_path": "lib/libcairo-gobject.so.2",
+        "path_type": "softlink",
+        "sha256": "ce759116ffd62a79befa2247245959dec756d9df0e081b392d43deb098cac72c",
+        "size_in_bytes": 49056
+      },
+      {
+        "_path": "lib/libcairo-gobject.so.2.11804.4",
+        "path_type": "hardlink",
+        "sha256": "ce759116ffd62a79befa2247245959dec756d9df0e081b392d43deb098cac72c",
+        "size_in_bytes": 49056,
+        "sha256_in_prefix": "ce759116ffd62a79befa2247245959dec756d9df0e081b392d43deb098cac72c"
+      },
+      {
+        "_path": "lib/libcairo-script-interpreter.a",
+        "path_type": "hardlink",
+        "sha256": "23265d3e46b460d7131a5a198b9c7890fbb502feac2fa3b1c5cdafb3cfd12b44",
+        "size_in_bytes": 275460,
+        "sha256_in_prefix": "23265d3e46b460d7131a5a198b9c7890fbb502feac2fa3b1c5cdafb3cfd12b44"
+      },
+      {
+        "_path": "lib/libcairo-script-interpreter.so",
+        "path_type": "softlink",
+        "sha256": "58c293357bb27b2db69c79c395a82d2fe26f3a5344dbedea724a531e32aea23a",
+        "size_in_bytes": 177472
+      },
+      {
+        "_path": "lib/libcairo-script-interpreter.so.2",
+        "path_type": "softlink",
+        "sha256": "58c293357bb27b2db69c79c395a82d2fe26f3a5344dbedea724a531e32aea23a",
+        "size_in_bytes": 177472
+      },
+      {
+        "_path": "lib/libcairo-script-interpreter.so.2.11804.4",
+        "path_type": "hardlink",
+        "sha256": "58c293357bb27b2db69c79c395a82d2fe26f3a5344dbedea724a531e32aea23a",
+        "size_in_bytes": 177472,
+        "sha256_in_prefix": "58c293357bb27b2db69c79c395a82d2fe26f3a5344dbedea724a531e32aea23a"
+      },
+      {
+        "_path": "lib/libcairo.a",
+        "path_type": "hardlink",
+        "sha256": "9adb2389a2e170c862697f09bdefffe7f58a626a3ed31eaa408593e058cec11d",
+        "size_in_bytes": 2785762,
+        "sha256_in_prefix": "9adb2389a2e170c862697f09bdefffe7f58a626a3ed31eaa408593e058cec11d"
+      },
+      {
+        "_path": "lib/libcairo.so",
+        "path_type": "softlink",
+        "sha256": "4c03a05ea5445d38272b253a037c0595656a50cae7352ea8e70d1adf534a5774",
+        "size_in_bytes": 1297336
+      },
+      {
+        "_path": "lib/libcairo.so.2",
+        "path_type": "softlink",
+        "sha256": "4c03a05ea5445d38272b253a037c0595656a50cae7352ea8e70d1adf534a5774",
+        "size_in_bytes": 1297336
+      },
+      {
+        "_path": "lib/libcairo.so.2.11804.4",
+        "path_type": "hardlink",
+        "sha256": "4c03a05ea5445d38272b253a037c0595656a50cae7352ea8e70d1adf534a5774",
+        "size_in_bytes": 1297336,
+        "sha256_in_prefix": "4c03a05ea5445d38272b253a037c0595656a50cae7352ea8e70d1adf534a5774"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-fc.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "b13207ebc9cd82800c415df4248c1461f7a3b314d1db83ee533f71a2ad90fcdf",
+        "size_in_bytes": 451,
+        "sha256_in_prefix": "f666b88931a2b7a80a9df7ca0233ea0f8f0383e993f7a57e9e640c3eb0e878d0"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-ft.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "ba2167b5f052ab2db04e161e5b7b49ec813bce7d3f407e74d6bc667144efdef6",
+        "size_in_bytes": 449,
+        "sha256_in_prefix": "c61ed12983b577a3b57b5e5f034a00e6b9aa012e73e18b870438d56364323bcd"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-gobject.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "4b94e39b95e2480e2ef6addcf1a34a54060af2e6d9176462d1b91587a916b54e",
+        "size_in_bytes": 726,
+        "sha256_in_prefix": "850089d3389b3c7c513866e6e26579a1590ef598c888e05a28aeed975268dd35"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-pdf.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "7b03a4e4ce456e4b044daec922c02ae515c6df3c0718038ee8a25f1d601cbdd5",
+        "size_in_bytes": 431,
+        "sha256_in_prefix": "902b87324731d4ac61abde89e05b70c6af7d419ced24a9e2b1dd8387a7679da7"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-png.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "1f1a8e5a1c7bb6fbe1d9d33e263eba02bb1c2f90f501563bf0438ae639fb9b4a",
+        "size_in_bytes": 437,
+        "sha256_in_prefix": "18ef0247a210d17bdcd55c87a36467ab11eca6a91ca100ba995a230b49de5113"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-ps.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "56c3d350a7505638cdd21b7fafc63953760ce4a0ed9b3d83a5aef8c397bc6b5d",
+        "size_in_bytes": 437,
+        "sha256_in_prefix": "6a0562c63943e192ce08fcf706fd7ee4c0ff53b968a0970449ab6ed99d44727b"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-script-interpreter.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "ec6247547c000044c21f194a3aa20db0e2678a49e2f5a9706108ed41761d5ef1",
+        "size_in_bytes": 725,
+        "sha256_in_prefix": "02859a072e0b0078f8bbdb6c28062e75094f36e643267cb63d51ed556f75e546"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-script.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "bee992e6c77986d0854ce92bc0ff90ae4cb431bef01c440578c2ae749b755847",
+        "size_in_bytes": 437,
+        "sha256_in_prefix": "d156ef464b318ec339f9eb315fb3d2de0f1f1cbb183777783031229ce84c2675"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-svg.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "aa725cd781c6c23506ffb8b87532e26d9f97dec7e08b206af5ae07b5c0c223e2",
+        "size_in_bytes": 443,
+        "sha256_in_prefix": "481b5dc3cd02da88929505b769bc88107529099e95822ed72ae421b32958f458"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-tee.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "0db033879cc6fc766be1a327bef8dda05856e28c62f20c5821302ac01812b642",
+        "size_in_bytes": 425,
+        "sha256_in_prefix": "9ea5c1a3b22c18b9cf4ef63c6f9a0aa58501a6dd8be1c1b90e81f05b3e8fff14"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-xcb-shm.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "87bef35053c3c6ab2e42fae8c072192deb52e80e61b927ed62a249b0fc2e2380",
+        "size_in_bytes": 436,
+        "sha256_in_prefix": "f6576d001db82da0543dfa9aad4dd6cc844dc79bbbf0c0935e127414286db5e4"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-xcb.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "f3515057110455e3191f4b024e89733ff7d2df8000426f5e8ad10e7d6e030951",
+        "size_in_bytes": 458,
+        "sha256_in_prefix": "4b6500c8388c9e4d1c31f98b8e756d42b09f0b1fdfe46f2ee23032492814a2c2"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-xlib-xcb.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "73141c4edf4a27b67f39cf2376ebe413a63f35d2b51105594799df2c66a856d3",
+        "size_in_bytes": 438,
+        "sha256_in_prefix": "792893916daad4b789838767f31f327996e798f2da410236e7c3ea938ba60006"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-xlib-xrender.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "b3c73dccc7adbb24527b641cc0adeed00f241e33965923400382907421d8551c",
+        "size_in_bytes": 460,
+        "sha256_in_prefix": "3985b6731f9f8f0c0cdc0639b26a9ded780ffa2987c5716d8882a88ff41bc09d"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo-xlib.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "1e52122e7c45e0bdc63d4a8248aaf27d32cb4e3054efa6a0891f4300609f7c76",
+        "size_in_bytes": 438,
+        "sha256_in_prefix": "bbf3eddf70f997116d2f9ceec6e2e840a9efa37ea7ae124a8676d3400aabc0ae"
+      },
+      {
+        "_path": "lib/pkgconfig/cairo.pc",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/cairo_1766415704841/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "sha256": "643f4989920a89bfcff49e1b3d42d4f81c76102e51f90d62f76e2c048eba114c",
+        "size_in_bytes": 656,
+        "sha256_in_prefix": "57dacb8ca53709b932906ada1929d85950acd2d371386b1cef3a562665622178"
+      }
+    ]
+  },
+  "link": {
+    "source": "/ssd/data/qiyaoyan/conda/pkgs/cairo-1.18.4-he90730b_1",
+    "type": 1
+  }
+}

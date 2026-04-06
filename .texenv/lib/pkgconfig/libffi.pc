@@ -1,0 +1,11 @@
+prefix=/home/qiyaoyan/Propologic-MI/.texenv
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+toolexeclibdir=${libdir}
+includedir=/home/qiyaoyan/Propologic-MI/.texenv/include
+
+Name: libffi
+Description: Library supporting Foreign Function Interfaces
+Version: 3.5.2
+Libs: -L${toolexeclibdir} -lffi
+Cflags: -I${includedir}

@@ -5,8 +5,7 @@ from pathlib import Path
 
 from src.progress import log_event, resolve_log_path, setup_file_logger
 
-from .common import read_csv
-from .step2_taxonomy import plot_taxonomy_line_chart_from_counts
+from .plot_only import plot_taxonomy_line_chart_from_counts, read_csv
 
 
 def main() -> None:

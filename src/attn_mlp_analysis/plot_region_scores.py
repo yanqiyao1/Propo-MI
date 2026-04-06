@@ -6,8 +6,7 @@ from pathlib import Path
 from typing import List
 
 from src.progress import log_event, resolve_log_path, setup_file_logger
-
-from .attn_mlp_region_ablation import _plot_bar
+from src.mlp_analysis.plotting import plot_bar
 
 
 def _read_scores(csv_path: Path) -> tuple[List[int], List[float]]:
@@ -28,7 +27,7 @@ def main() -> None:
 
     logger = setup_file_logger(__name__, resolve_log_path(output_dir=args.output_png.parent, filename="plot_region_scores.log"))
     layers, scores = _read_scores(args.scores_csv)
-    _plot_bar(output_png=args.output_png, layers=layers, scores=scores)
+    plot_bar(output_png=args.output_png, layers=layers, scores=scores, ylabel="dPD")
     log_event(logger, {"scores_csv": str(args.scores_csv), "output_png": str(args.output_png)})
 
 

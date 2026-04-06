@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.progress import log_event, resolve_log_path, setup_file_logger
+from src.plot_style import stylize_axis
 
 from .common import ROLE_COLOR, ROLE_LABEL, ROLE_ORDER, apply_paper_style, read_csv, resolve_role_label, write_csv, write_json
 
@@ -54,16 +55,52 @@ def plot_taxonomy_line_chart_from_counts(
     trans = [int(float(row.get("transmission", 0))) for row in count_rows]
     n_layers = max(layers) + 1 if layers else 0
 
-    apply_paper_style({"axes.grid": True, "grid.alpha": 0.22})
-    fig, ax = plt.subplots(figsize=(9.5, 5.2))
-    ax.plot(layers, fact, label=ROLE_LABEL["fact_retrieval"], marker="o", color=ROLE_COLOR["fact_retrieval"])
-    ax.plot(layers, split, label=ROLE_LABEL["splitting"], marker="s", color=ROLE_COLOR["splitting"])
-    ax.plot(layers, trans, label=ROLE_LABEL["transmission"], marker="^", color=ROLE_COLOR["transmission"])
+    apply_paper_style(
+        {
+            "axes.grid": True,
+            "grid.alpha": 0.22,
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.5,
+            "ytick.labelsize": 12.5,
+            "legend.fontsize": 12.0,
+        }
+    )
+    fig, ax = plt.subplots(figsize=(10.4, 5.9))
+    ax.plot(
+        layers,
+        fact,
+        label=ROLE_LABEL["fact_retrieval"],
+        marker="o",
+        color=ROLE_COLOR["fact_retrieval"],
+        linewidth=2.4,
+        markersize=6.6,
+    )
+    ax.plot(
+        layers,
+        split,
+        label=ROLE_LABEL["splitting"],
+        marker="s",
+        color=ROLE_COLOR["splitting"],
+        linewidth=2.4,
+        markersize=6.4,
+    )
+    ax.plot(
+        layers,
+        trans,
+        label=ROLE_LABEL["transmission"],
+        marker="^",
+        color=ROLE_COLOR["transmission"],
+        linewidth=2.4,
+        markersize=6.6,
+    )
     ax.set_xlabel("Layer")
     ax.set_ylabel("Head count")
     if layers:
         ax.set_xticks(np.arange(0, max(layers) + 1, max(1, n_layers // 10)))
     ax.legend(loc="best", frameon=True)
+    stylize_axis(ax)
     fig.tight_layout()
     output_png.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_png, dpi=320)

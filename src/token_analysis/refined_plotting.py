@@ -6,7 +6,7 @@ from typing import Dict, List, Sequence
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.plot_style import apply_paper_style
+from src.plot_style import apply_paper_style, stylize_axis
 from .refined_token_classifier import CATEGORY_DISPLAY_NAMES
 
 
@@ -33,16 +33,16 @@ def plot_by_stage(
 
     apply_paper_style(
         {
-            "font.size": 12.5,
-            "axes.titlesize": 14.5,
-            "axes.labelsize": 12.5,
-            "xtick.labelsize": 10.5,
-            "ytick.labelsize": 10.5,
-            "legend.fontsize": 10.5,
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.5,
+            "ytick.labelsize": 12.5,
+            "legend.fontsize": 12.5,
         }
     )
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12.8, 6.8))
     x = np.arange(len(cats))
     width = 0.25
 
@@ -65,8 +65,8 @@ def plot_by_stage(
             color=STAGE_COLORS[stage],
             alpha=0.85,
             edgecolor="black",
-            linewidth=1.0,
-            capsize=3,
+            linewidth=1.1,
+            capsize=4,
         )
 
     ax.set_ylabel(ylabel)
@@ -74,8 +74,9 @@ def plot_by_stage(
     ax.set_xticklabels(cat_labels, rotation=35, ha="right")
     ax.grid(axis="y", alpha=0.3)
     ax.legend(loc="upper right")
+    stylize_axis(ax)
 
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
-    fig.savefig(save_path, dpi=300, bbox_inches="tight")
+    fig.savefig(save_path, dpi=320, bbox_inches="tight")
     plt.close(fig)

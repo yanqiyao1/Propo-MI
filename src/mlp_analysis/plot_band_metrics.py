@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.progress import log_event, resolve_log_path, setup_file_logger
-from src.plot_style import apply_paper_style
+from src.plot_style import apply_paper_style, stylize_axis, stylize_colorbar
 
 
 METRICS = ("BMI", "BCR", "SBI")
@@ -84,18 +84,18 @@ def _plot_panel(hop_payloads: Sequence[Dict[str, object]], output_dir: Path, tit
 
     apply_paper_style(
         {
-            "font.size": 12.0,
-            "axes.titlesize": 13.0,
-            "axes.labelsize": 11.5,
-            "xtick.labelsize": 10.5,
-            "ytick.labelsize": 10.5,
+            "font.size": 13.5,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.0,
+            "xtick.labelsize": 12.0,
+            "ytick.labelsize": 12.0,
         }
     )
 
     fig, axes = plt.subplots(
         nrows=nrows,
         ncols=ncols,
-        figsize=(4.8 * ncols, 3.3 * nrows),
+        figsize=(5.2 * ncols, 3.8 * nrows),
         squeeze=False,
         constrained_layout=True,
     )
@@ -149,11 +149,14 @@ def _plot_panel(hop_payloads: Sequence[Dict[str, object]], output_dir: Path, tit
                         ha="center",
                         va="center",
                         color=_text_color(value, vmin=vmin, vmax=vmax),
-                        fontsize=10.0,
+                        fontsize=11.0,
+                        fontweight="semibold",
                     )
+            stylize_axis(ax)
 
     for col_idx, metric in enumerate(METRICS):
-        fig.colorbar(last_images[metric], ax=axes[:, col_idx], fraction=0.045, pad=0.03)
+        cbar = fig.colorbar(last_images[metric], ax=axes[:, col_idx], fraction=0.045, pad=0.03)
+        stylize_colorbar(cbar)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     png_path = output_dir / "band_metrics_panel.png"
@@ -168,15 +171,15 @@ def _plot_bcr_stacked(hop_payloads: Sequence[Dict[str, object]], output_dir: Pat
     nrows = len(hop_payloads)
     apply_paper_style(
         {
-            "font.size": 12.0,
-            "axes.titlesize": 13.0,
-            "axes.labelsize": 11.5,
-            "xtick.labelsize": 10.5,
-            "ytick.labelsize": 10.5,
+            "font.size": 13.5,
+            "axes.titlesize": 15.5,
+            "axes.labelsize": 14.0,
+            "xtick.labelsize": 12.0,
+            "ytick.labelsize": 12.0,
         }
     )
 
-    fig, axes = plt.subplots(nrows=nrows, ncols=1, figsize=(7.2, 3.6 * nrows), squeeze=False)
+    fig, axes = plt.subplots(nrows=nrows, ncols=1, figsize=(8.2, 4.2 * nrows), squeeze=False)
     for row_idx, hop_payload in enumerate(hop_payloads):
         ax = axes[row_idx, 0]
         label = str(hop_payload["label"])
@@ -207,6 +210,7 @@ def _plot_bcr_stacked(hop_payloads: Sequence[Dict[str, object]], output_dir: Pat
         ax.grid(axis="y", alpha=0.25)
         if row_idx == 0:
             ax.legend(loc="upper right", ncol=3)
+        stylize_axis(ax)
 
     fig.tight_layout()
     output_dir.mkdir(parents=True, exist_ok=True)

@@ -19,7 +19,7 @@ from src.model_loading import add_model_source_arg, resolve_model_prompt
 from src.progress import log_event, make_tqdm, resolve_log_path, setup_file_logger
 from src.mech.dld import compute_prob_diff
 from src.mech.tl_utils import load_hooked_transformer, resolve_true_false_token_ids, to_tokens
-from src.plot_style import apply_paper_style
+from src.plot_style import apply_paper_style, stylize_axis, stylize_colorbar
 from src.token_analysis.refined_token_classifier import classify_tokens_refined
 from src.token_analysis.result_schema import get_delta_score_matrix
 
@@ -645,6 +645,16 @@ def _plot_simple_comparison(
     if not stats_rows:
         return
 
+    apply_paper_style(
+        {
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.5,
+            "ytick.labelsize": 12.5,
+        }
+    )
+
     categories = [str(r["category"]) for r in stats_rows]
     category_labels = [SIMPLE_CATEGORY_DISPLAY_NAMES.get(cat, cat) for cat in categories]
     x = np.arange(len(categories))
@@ -652,19 +662,18 @@ def _plot_simple_comparison(
     means = np.asarray([float(r.get("all_dpd_mean", 0.0)) for r in stats_rows], dtype=np.float64)
     sems = np.asarray([float(r.get("all_dpd_sem", 0.0)) for r in stats_rows], dtype=np.float64)
 
-    fig, ax = plt.subplots(figsize=(9, 6))
+    fig, ax = plt.subplots(figsize=(9.8, 6.6))
     ax.bar(x, means, yerr=sems, color=colors, alpha=0.85, edgecolor="black", linewidth=1.2, capsize=4)
     ax.axhline(y=0.0, color="gray", linestyle="--", linewidth=1.2, alpha=0.6)
-    ax.set_ylabel("dPD (Mean +/- SEM)", fontweight="bold")
+    ax.set_ylabel("dPD (Mean +/- SEM)")
     ax.set_xticks(x)
-    ax.set_xticklabels(category_labels, rotation=35, ha="right", fontweight="bold")
-    for tick in ax.get_yticklabels():
-        tick.set_fontweight("bold")
+    ax.set_xticklabels(category_labels, rotation=35, ha="right")
     ax.grid(axis="y", alpha=0.3)
+    stylize_axis(ax)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    fig.savefig(output_path, dpi=320, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -679,6 +688,17 @@ def _plot_layer_stage_simple(
     if not stats_rows:
         return
 
+    apply_paper_style(
+        {
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.5,
+            "ytick.labelsize": 12.5,
+            "legend.fontsize": 12.0,
+        }
+    )
+
     categories = [str(r["category"]) for r in stats_rows]
     category_labels = [SIMPLE_CATEGORY_DISPLAY_NAMES.get(cat, cat) for cat in categories]
     x = np.arange(len(categories))
@@ -688,7 +708,7 @@ def _plot_layer_stage_simple(
     middle_vals = np.asarray([float(r.get("middle_dpd_mean", 0.0)) for r in stats_rows], dtype=np.float64)
     late_vals = np.asarray([float(r.get("late_dpd_mean", 0.0)) for r in stats_rows], dtype=np.float64)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12.8, 6.8))
     ax.bar(x - width, early_vals, width, label=f"Early (L0-{early_end - 1})", color="#3498DB", edgecolor="black", alpha=0.85)
     ax.bar(x, middle_vals, width, label=f"Middle (L{early_end}-{middle_end - 1})", color="#9B59B6", edgecolor="black", alpha=0.85)
     ax.bar(x + width, late_vals, width, label=f"Late (L{middle_end}-{n_layers - 1})", color="#E67E22", edgecolor="black", alpha=0.85)
@@ -699,10 +719,11 @@ def _plot_layer_stage_simple(
     ax.set_xticklabels(category_labels, rotation=35, ha="right")
     ax.grid(axis="y", alpha=0.3)
     ax.legend(fontsize=10)
+    stylize_axis(ax)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    fig.savefig(output_path, dpi=320, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -758,26 +779,38 @@ def _plot_simple_heatmap(
     if heatmap_data.size == 0:
         return
 
+    apply_paper_style(
+        {
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.0,
+            "ytick.labelsize": 12.0,
+        }
+    )
+
     vmax = float(max(abs(float(heatmap_data.min())), abs(float(heatmap_data.max()))))
     if vmax <= 1e-12:
         vmax = 1.0
 
-    fig, ax = plt.subplots(figsize=(16, 5))
+    fig, ax = plt.subplots(figsize=(16.6, 5.8))
     im = ax.imshow(heatmap_data, aspect="auto", cmap="RdBu_r", vmin=-vmax, vmax=vmax)
     ax.set_yticks(range(len(category_order)))
-    ax.set_yticklabels([SIMPLE_CATEGORY_DISPLAY_NAMES.get(cat, cat) for cat in category_order], fontsize=11)
+    ax.set_yticklabels([SIMPLE_CATEGORY_DISPLAY_NAMES.get(cat, cat) for cat in category_order], fontsize=12.5)
     ax.set_xticks(range(0, heatmap_data.shape[1], 2))
-    ax.set_xticklabels(range(0, heatmap_data.shape[1], 2), fontsize=10)
+    ax.set_xticklabels(range(0, heatmap_data.shape[1], 2), fontsize=12.0)
     ax.set_xlabel("Layer")
     ax.set_ylabel("Category")
     ax.axvline(x=early_end - 0.5, color="white", linewidth=1.8)
     ax.axvline(x=middle_end - 0.5, color="white", linewidth=1.8)
     cbar = plt.colorbar(im, ax=ax)
     cbar.set_label("Mean dPD")
+    stylize_axis(ax)
+    stylize_colorbar(cbar)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    fig.savefig(output_path, dpi=320, bbox_inches="tight")
     plt.close(fig)
 
 def _read_dataset(path: Path) -> List[Dict[str, object]]:

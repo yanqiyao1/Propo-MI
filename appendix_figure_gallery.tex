@@ -1,0 +1,2047 @@
+\subsection{Additional Band-Composition and Region Galleries}
+\label{sec:appendix_extra_region_gallery}
+
+\makeatletter
+% This gallery is included after \onecolumn, so a regular figure already spans
+% the full page width. Routing figure* through the normal float queue avoids
+% exhausting the double-float queue under XeLaTeX.
+\renewenvironment{figure*}{\@float{figure}}{\end@float}
+\makeatother
+
+\captionsetup[figure]{font=small}
+\captionsetup[subfigure]{font=small}
+
+The saved outputs in \path{figures_experiments/} contain a more complete atlas of band-composition summaries and region-wise curves than we could place in the main text. We prioritize two diagnostic families here. First, the stacked-BCR summaries expose how each branch redistributes early/middle/late mass within each semantic region. Second, the omitted \texttt{expr\_first} region galleries show the full one-hop/two-hop curves rather than only the comparison panels. Together, these figures make the prompt-order effect more concrete: under \texttt{expr\_first}, the Expression Region moves earlier, the Facts Region becomes less purely early-layer dominated, and the Query Region remains the main integration sink.
+
+This reallocation is branch-dependent rather than arbitrary. In the saved Qwen3 BCR matrices, one-hop \textit{Qwen3-14B} MLP ablation shifts the Expression Region early-band BCR from $0.68$ under \texttt{facts\_first} to $0.84$ under \texttt{expr\_first}, while the Facts Region early-band BCR falls from $0.82$ to $0.60$. The attention branch makes the same intervention more structural: in one-hop \textit{Qwen3-14B}, the Facts Region becomes middle-dominant ($0.53$) while the Expression Region remains strongly early-dominant ($0.72$). The joint attention+MLP branch partially restores a cleaner early-layer concentration, with one-hop \textit{Qwen3-14B} \texttt{expr\_first} early-band BCRs of $0.71$ for Facts and $0.89$ for Expression. The additional galleries below therefore function as branch-specific evidence for the same high-level claim made in the main text: prompt reordering changes allocation, not the existence, of staged computation.
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/comparison/bcr_stacked.png}
+        \caption{\textit{Qwen3-8B}: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/comparison/bcr_stacked.png}
+        \caption{\textit{Qwen3-8B}: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/comparison/bcr_stacked.png}
+        \caption{\textit{Qwen3-8B}: Attention+MLP}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/comparison_14B/bcr_stacked.png}
+        \caption{\textit{Qwen3-14B}: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/comparison_14B/bcr_stacked.png}
+        \caption{\textit{Qwen3-14B}: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/comparison_14B/bcr_stacked.png}
+        \caption{\textit{Qwen3-14B}: Attention+MLP}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 \texttt{facts\_first}: stacked BCR summaries across scales and branches.} Each panel shows the early/middle/late contribution decomposition within the Facts, Expression, and Query regions. The MLP and joint branches maintain the clearest early-Facts profile, while the attention branch spreads more mass into middle-layer Expression and Query routing. The 14B results preserve the same ordering while reducing some of the 8B late-query mass.}
+    \label{fig:qwen3_bcr_stacked_facts}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/comparison_expr_first/bcr_stacked.png}
+        \caption{\textit{Qwen3-8B}: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/comparison_expr_first/bcr_stacked.png}
+        \caption{\textit{Qwen3-8B}: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/comparison_expr_first/bcr_stacked.png}
+        \caption{\textit{Qwen3-8B}: Attention+MLP}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/comparison_expr_first_14B/bcr_stacked.png}
+        \caption{\textit{Qwen3-14B}: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/comparison_expr_first_14B/bcr_stacked.png}
+        \caption{\textit{Qwen3-14B}: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/comparison_expr_first_14B/bcr_stacked.png}
+        \caption{\textit{Qwen3-14B}: Attention+MLP}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 \texttt{expr\_first}: stacked BCR summaries across scales and branches.} Compared with Figure~\ref{fig:qwen3_bcr_stacked_facts}, the Expression Region acquires much more early-band mass, while the Facts Region becomes less exclusively early-layer concentrated. The effect is strongest in the attention and joint branches, but every branch still preserves a distinct query-facing aggregation component rather than collapsing into a single early computation stage.}
+    \label{fig:qwen3_bcr_stacked_expr}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_one_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_one_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_one_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_two_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_two_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_two_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete \textit{Qwen3-8B} MLP region gallery under \texttt{expr\_first}.} The full one-hop/two-hop curves show that reordering the prompt moves expression processing earlier without removing the later query-facing integration stage. In one-hop, the Facts Region no longer dominates the earliest layers as strongly as under \texttt{facts\_first}, while the Expression Region becomes the sharpest early-layer signal. In two-hop, the same ordering survives but the Query Region broadens into a stronger middle-to-late bridge.}
+    \label{fig:qwen3_8b_mlp_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_one_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_one_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_one_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_two_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_two_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_two_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete \textit{Qwen3-14B} MLP region gallery under \texttt{expr\_first}.} The larger model exhibits the same prompt-order effect as 8B, but more cleanly: one-hop Expression is the most concentrated early-layer signal, Facts become broader and less purely early-band dominated, and Query remains the terminal aggregation region. Two-hop again lowers the absolute sharpness of every region while preserving the same coarse temporal ordering.}
+    \label{fig:qwen3_14b_mlp_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_8b_one_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_8b_one_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_8b_one_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_8b_two_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_8b_two_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_8b_two_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete \textit{Qwen3-8B} attention-region gallery under \texttt{expr\_first}.} Relative to the MLP branch, attention patching shifts more mass toward middle-layer routing. The Facts Region is no longer purely early-layer dominated in one-hop, while the Query Region broadens into a larger middle-to-late control surface. This supports the interpretation that attention primarily redistributes and routes information once prompt order front-loads the expression.}
+    \label{fig:qwen3_8b_attn_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_14b_one_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_14b_one_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_14b_one_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_14b_two_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_14b_two_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/attn_14b_two_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete \textit{Qwen3-14B} attention-region gallery under \texttt{expr\_first}.} The larger attention branch shows the same structure as 8B, but with an even clearer mid-layer Facts bulge in one-hop and a stronger middle-band Query component in two-hop. These curves make explicit that attention is the branch most sensitive to prompt-layout changes, especially in how it redistributes factual information away from the earliest layers.}
+    \label{fig:qwen3_14b_attn_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_8b_one_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_8b_one_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_8b_one_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_8b_two_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_8b_two_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_8b_two_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete \textit{Qwen3-8B} joint attention+MLP gallery under \texttt{expr\_first}.} The joint intervention remains more stage-like than the pure attention branch. Facts and expressions both retain strong early peaks, while Query continues to broaden over the middle and late bands. The figure therefore shows that coupling routing with nonlinear transformation partially stabilizes the staged decomposition under prompt reordering.}
+    \label{fig:qwen3_8b_attn_mlp_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_14b_one_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_14b_one_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_14b_one_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_14b_two_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_14b_two_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/attn_mlp_14b_two_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete \textit{Qwen3-14B} joint attention+MLP gallery under \texttt{expr\_first}.} The 14B joint branch amplifies the one-hop Expression peak while keeping Facts strongly early-layer concentrated. Two-hop curves remain broader, but still preserve the same order: Facts and Expression dominate the front half of the network, and Query remains the principal sink for later integration.}
+    \label{fig:qwen3_14b_attn_mlp_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/comparison/bcr_stacked.png}
+        \caption{Llama: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/comparison/bcr_stacked.png}
+        \caption{Llama: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/comparison/bcr_stacked.png}
+        \caption{Llama: Attention+MLP}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/comparison/bcr_stacked.png}
+        \caption{Mistral: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/comparison/bcr_stacked.png}
+        \caption{Mistral: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/comparison/bcr_stacked.png}
+        \caption{Mistral: Attention+MLP}
+    \end{subfigure}
+    \caption{\textbf{Cross-model stacked BCR summaries under \texttt{facts\_first}.} Both Llama and Mistral preserve the same coarse facts-to-expression-to-query ordering, but the stacked decompositions reveal much heavier query-facing mass than in Qwen3. Llama spreads more mass into the Query Region across all three branches, while Mistral retains a comparatively strong middle-band Query component even in the MLP branch.}
+    \label{fig:cross_model_bcr_stacked_facts}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/comparison/bcr_stacked.png}
+        \caption{Llama: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/comparison/bcr_stacked.png}
+        \caption{Llama: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/comparison/bcr_stacked.png}
+        \caption{Llama: Attention+MLP}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/comparison/bcr_stacked.png}
+        \caption{Mistral: MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/comparison/bcr_stacked.png}
+        \caption{Mistral: Attention}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/comparison/bcr_stacked.png}
+        \caption{Mistral: Attention+MLP}
+    \end{subfigure}
+    \caption{\textbf{Cross-model stacked BCR summaries under \texttt{expr\_first}.} Prompt reordering again increases early Expression mass, but the cross-model gap persists. Llama keeps a notably large early-plus-late Query component, while Mistral preserves a broad Query distribution across the back half of the network. These summaries reinforce the interpretation that both non-Qwen families rely more heavily on query-facing scaffolding during final integration.}
+    \label{fig:cross_model_bcr_stacked_expr}
+\end{figure*}
+
+The full cross-model MLP galleries sharpen the same qualitative point. In Llama, even the core MLP branch allocates unusually large mass to the Query Region: the one-hop \texttt{facts\_first} query BCR is split across early ($0.51$), middle ($0.27$), and late ($0.22$) bands rather than being primarily a late aggregator. Mistral looks somewhat cleaner than Llama, but still remains more query-heavy than Qwen3, with one-hop \texttt{facts\_first} query BCRs of $0.48$ / $0.37$ / $0.15$ (early / middle / late). The full curves below make these differences visible at layer resolution rather than only through band summaries.
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_one_hop_facts_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_one_hop_facts_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_one_hop_facts_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_two_hop_facts_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_two_hop_facts_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_two_hop_facts_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete Llama MLP region gallery under \texttt{facts\_first}.} Llama preserves the broad staged template but with a much heavier Query Region than Qwen3. The query curve is already substantial in one-hop middle layers and remains comparably strong in late layers, which is consistent with a more output-position-centered computation strategy.}
+    \label{fig:llama_mlp_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_one_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_one_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_one_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_two_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_two_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_two_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete Llama MLP region gallery under \texttt{expr\_first}.} Prompt reordering shifts expression processing earlier as expected, but the Query Region remains unusually broad and strong. Even after moving the queried expression to the front, Llama still allocates a large amount of MLP sensitivity to the query-facing suffix and answer anchor.}
+    \label{fig:llama_mlp_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_one_hop_facts_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_one_hop_facts_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_one_hop_facts_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_two_hop_facts_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_two_hop_facts_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_two_hop_facts_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete Mistral MLP region gallery under \texttt{facts\_first}.} Mistral retains a clearer early-Facts and early-Expression ordering than Llama, but again assigns more mass to the Query Region than Qwen3. The one-hop Query curve remains substantial throughout the back half of the network, and the two-hop curves further broaden this integration profile.}
+    \label{fig:mistral_mlp_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_one_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_one_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_one_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_two_hop_expr_first/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_two_hop_expr_first/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_two_hop_expr_first/query_region/mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Complete Mistral MLP region gallery under \texttt{expr\_first}.} Mistral again shifts expression processing forward under prompt reordering, but the Query Region remains broad and relatively heavy. Compared with Qwen3, the figure suggests a weaker separation between semantic content processing and final answer integration.}
+    \label{fig:mistral_mlp_expr_gallery}
+\end{figure*}
+
+\clearpage
+\subsection{Additional Token Diagnostics}
+\label{sec:appendix_extra_token_gallery}
+
+The unused token-analysis figures clarify two points that are only summarized in the main appendix. First, the refined mean and signed plots show whether a category's contribution is merely large in magnitude or also directionally aligned with the correct answer. Second, the raw heatmaps expose whether the same effect is sharply localized in layer depth. Qwen3 remains the most fact-heavy family in signed mass, while Llama and Mistral shift more mass toward query-facing categories. Concretely, in the refined sum statistics, \textit{Qwen3-14B} under \texttt{expr\_first} assigns $3.44$ total mass to \texttt{facts\_value} against $1.82$ for \texttt{query\_token}; in contrast, Llama and Mistral are query-dominant in all four released settings (for example, Llama \texttt{expr\_first}: $2.05$ vs. $1.23$; Mistral \texttt{facts\_first}: $1.04$ vs. $0.75$).
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_raw/heatmap_simple.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_facts_first_all_hop_raw/heatmap_simple.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_expr_first_all_hop_raw/heatmap_simple.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_expr_first_all_hop_raw/heatmap_simple.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 raw token heatmaps across scales and prompt orders.} The raw category-by-layer heatmaps make the same stage structure visible before refinement. \texttt{facts\_first} concentrates large early-layer effects on fact tokens, while \texttt{expr\_first} shifts more structure toward query-facing and derived-assignment categories. The 14B model keeps the same topology while producing a slightly cleaner early-to-late separation.}
+    \label{fig:qwen_token_raw_heatmaps}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_refined/refined_by_stage_mean.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_facts_first_all_hop_refined/refined_by_stage_mean.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_expr_first_all_hop_refined/refined_by_stage_mean.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_expr_first_all_hop_refined/refined_by_stage_mean.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 refined mean token diagnostics.} Averaging by token rather than summing by category preserves the same hierarchy as the sum-based plots while shrinking the advantage of categories that occupy more positions. Facts and query remain the dominant token types in all four settings, which shows that the main result is not an artifact of category cardinality.}
+    \label{fig:qwen_token_refined_mean}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_facts_first_all_hop_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_expr_first_all_hop_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_expr_first_all_hop_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 refined signed-sum token diagnostics.} These plots retain the sign of the token-level shift rather than using absolute magnitude. The dominant categories remain the same as in the unsigned plots, which shows that fact and query tokens are not merely high-variance sites: they push the model in a directionally meaningful way for the final decision.}
+    \label{fig:qwen_token_refined_sum_signed}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_facts_first_all_hop_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_expr_first_all_hop_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_expr_first_all_hop_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 refined signed-mean token diagnostics.} The signed mean-per-token view confirms that the facts-versus-query balance is robust to both normalization choices. Under \texttt{expr\_first}, the facts category remains directionally dominant in 14B even though query-facing mass is more visible in the unsigned plots, indicating that prompt reordering broadens computation without eliminating fact access.}
+    \label{fig:qwen_token_refined_mean_signed}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_facts_first_raw/heatmap_simple.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_expr_first_raw/heatmap_simple.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_raw/heatmap_simple.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_raw/heatmap_simple.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model raw token heatmaps.} Before any category refinement, both non-Qwen families already show heavier query-facing structure than Qwen3. Llama is especially diffuse, with broad late-layer activity over the query-facing portion of the prompt, while Mistral keeps a somewhat cleaner early-to-late progression but still concentrates less sharply on fact tokens than Qwen3.}
+    \label{fig:cross_model_token_raw_heatmaps}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_facts_first_refined/refined_by_stage_mean.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_expr_first_refined/refined_by_stage_mean.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_refined/refined_by_stage_mean.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_refined/refined_by_stage_mean.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model refined mean token diagnostics.} In both non-Qwen families, \texttt{query\_token} remains the largest mean contribution under both prompt orders. This is a compact quantitative diagnostic of the more output-position-centered strategy already visible in the band-composition summaries.}
+    \label{fig:cross_model_token_refined_mean}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_facts_first_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_expr_first_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_refined/refined_by_stage_sum_signed.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model refined signed-sum token diagnostics.} Retaining the sign makes the inter-family contrast sharper: Llama and Mistral still assign their largest directional mass to query-facing tokens, whereas Qwen3 keeps larger signed fact mass. This helps explain why the latter behaves more like a fact-driven staged reasoner and the former two look more suffix- and query-oriented.}
+    \label{fig:cross_model_token_refined_sum_signed}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_facts_first_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_expr_first_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Llama-3.1-8B-Instruct}, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_refined/refined_by_stage_mean_signed.png}
+        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model refined signed-mean token diagnostics.} The per-token normalization leaves the same ordering intact: Llama and Mistral remain query-heavy even after accounting for category size. This confirms that the cross-model difference is not driven by having more query-region tokens in the prompt template, but by where the models actually place their causal sensitivity.}
+    \label{fig:cross_model_token_refined_mean_signed}
+\end{figure*}
+
+\clearpage
+\subsection{Additional Head Diagnostics}
+\label{sec:appendix_extra_heads_gallery}
+
+The unused head-analysis figures complement the taxonomy line charts already shown in the appendix. The Step~1 discovery maps reveal whether the candidate heads are already spatially clustered before taxonomy assignment. The retained Step~3 plots focus on the two views that are most useful for the paper narrative: the absolute-ratio curves and the raw dPD-shift curves. Together they show both how harmful the targeted ablations are in magnitude and whether they move the model in the expected negative direction. For Qwen3, these diagnostics line up cleanly: candidate heads concentrate in the same early/middle/late bands later recovered by Step~2, and the role-targeted curves remain much more damaging than \textit{Random-Outside}. For Llama and Mistral, by contrast, the same supplementary diagnostics reveal weaker separation and stronger side effects from the random baseline.
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/classify/layer_head_role_distribution.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_expr_first/classify/layer_head_role_distribution.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_facts_first/classify/layer_head_role_distribution.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_expr_first/classify/layer_head_role_distribution.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 Step~1 discovery maps across scales and prompt orders.} Even before taxonomy assignment, the candidate heads are not uniformly spread across the network. Early-layer candidates cluster near boundary-sensitive regions, middle-layer candidates align with transmission bands, and later candidates shift toward fact-retrieval behavior. The \texttt{expr\_first} intervention increases the density of early-layer candidates, matching the higher abundance of Splitting Heads reported in Step~2.}
+    \label{fig:qwen_heads_step1_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/validation/plots/dpd_shift_curve.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_expr_first/validation/plots/dpd_shift_curve.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_facts_first/validation/plots/dpd_shift_curve.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_expr_first/validation/plots/dpd_shift_curve.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 Step~3 dPD-shift diagnostics.} The raw probability-difference shifts are again strongly negative for the discovered roles and remain close to zero for the random baseline. The effect is strongest in \textit{Qwen3-8B} \texttt{facts\_first}, where Fact-Retrieval heads cause the largest downward shift, but the same ordering remains visible in the other three settings.}
+    \label{fig:qwen_heads_dpd_shift_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/heads_analysis_facts_first/classify/layer_head_role_distribution.png}
+        \caption{Llama, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/heads_analysis_expr_first/classify/layer_head_role_distribution.png}
+        \caption{Llama, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/heads_analysis_facts_first/classify/layer_head_role_distribution.png}
+        \caption{Mistral, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/heads_analysis_expr_first/classify/layer_head_role_distribution.png}
+        \caption{Mistral, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model Step~1 discovery maps.} The same coarse early/middle/late clustering is still visible in Llama and Mistral, but the candidate sets are visibly more diffuse than in Qwen3. This foreshadows the weaker role separation later visible in the absolute-ratio and dPD-shift validation curves.}
+    \label{fig:cross_model_heads_step1_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/heads_analysis_facts_first/validation/plots/dpd_shift_curve.png}
+        \caption{Llama, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/heads_analysis_expr_first/validation/plots/dpd_shift_curve.png}
+        \caption{Llama, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/heads_analysis_facts_first/validation/plots/dpd_shift_curve.png}
+        \caption{Mistral, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/heads_analysis_expr_first/validation/plots/dpd_shift_curve.png}
+        \caption{Mistral, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model Step~3 dPD-shift diagnostics.} The raw dPD shifts confirm the same story. Llama's targeted interventions are harmful but shallow, and the random baseline can even move in the helpful direction. Mistral's targeted interventions remain sharply harmful, yet the random baseline also produces a noticeable positive displacement, consistent with a highly sensitive but less cleanly isolated head substrate.}
+    \label{fig:cross_model_heads_dpd_shift_gallery}
+\end{figure*}
+
+\clearpage
+\subsection{Further Region and Magnitude Atlases}
+\label{sec:appendix_further_atlas}
+
+This second atlas consumes the remaining diagnostic families that were still absent after the first appendix gallery. These figures are intentionally exhaustive rather than selective. They serve two roles. First, they close the gap between the saved report artifacts and the paper by exposing the branch-specific curves that were previously only summarized numerically. Second, they separate signed-direction effects from raw magnitude effects via the omitted absolute-dPD galleries and token simple plots. The result is a larger but more faithful appendix-level representation of the full experiment snapshot stored in \path{figures_experiments/}.
+
+\paragraph{Qwen3 facts-first supplements.}
+The remaining Qwen3 figures are primarily facts-first diagnostics that complement the main staged-computation story. The omitted two-hop attention and joint galleries show that two-hop reasoning preserves the same coarse region order while broadening the Query Region. The absolute-dPD MLP figures then distinguish where a region is large in magnitude from where it is directionally dominant. This matters because the raw dPD plots in the main appendix mix sign and magnitude; the absolute variants show that even when signed effects partially cancel, the same semantic regions remain the main intervention sites.
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/attn_8b_two_hop/facts_region/attn_facts_region_scores.png}
+        \caption{\textit{Qwen3-8B}: Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/attn_8b_two_hop/expression_region/attn_expression_region_scores.png}
+        \caption{\textit{Qwen3-8B}: Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/attn_8b_two_hop/query_region/attn_query_region_scores.png}
+        \caption{\textit{Qwen3-8B}: Query}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/attn_14b_two_hop/facts_region/attn_facts_region_scores.png}
+        \caption{\textit{Qwen3-14B}: Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/attn_14b_two_hop/expression_region/attn_expression_region_scores.png}
+        \caption{\textit{Qwen3-14B}: Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/attn_14b_two_hop/query_region/attn_query_region_scores.png}
+        \caption{\textit{Qwen3-14B}: Query}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 facts-first attention-region galleries for two-hop reasoning.} Two-hop attention patching preserves the same semantic order as one-hop, but widens the query-facing integration window. In both model sizes, the Facts Region remains early-dominant, the Expression Region splits between early and middle layers, and the Query Region acquires its largest mass in the middle-to-late bands.}
+    \label{fig:qwen_attn_twohop_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/attn_mlp_8b_two_hop/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{\textit{Qwen3-8B}: Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/attn_mlp_8b_two_hop/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{\textit{Qwen3-8B}: Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/attn_mlp_8b_two_hop/query_region/attn_mlp_query_region_scores.png}
+        \caption{\textit{Qwen3-8B}: Query}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/attn_mlp_14b_two_hop/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{\textit{Qwen3-14B}: Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/attn_mlp_14b_two_hop/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{\textit{Qwen3-14B}: Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/attn_mlp_14b_two_hop/query_region/attn_mlp_query_region_scores.png}
+        \caption{\textit{Qwen3-14B}: Query}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 facts-first joint attention+MLP galleries for two-hop reasoning.} The joint branch remains closer to the original staged decomposition than pure attention. Facts keep the strongest early-layer dominance, Expression spans the early-to-middle transition, and Query widens mainly in middle and late layers. The same ordering appears in both scales, which supports the view that routing and nonlinear transformation cooperate rather than compete in the joint intervention.}
+    \label{fig:qwen_attn_mlp_twohop_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/comparison_14B/band_metrics_panel.png}
+        \caption{MLP, 14B \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/comparison_14B/band_metrics_panel.png}
+        \caption{Attention, 14B \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.29\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/comparison_14B/band_metrics_panel.png}
+        \caption{Attention+MLP, 14B \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/comparison_expr_first_14B/band_metrics_panel.png}
+        \caption{Attention, 14B \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/comparison_expr_first_14B/band_metrics_panel.png}
+        \caption{Attention+MLP, 14B \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Remaining Qwen3-14B branch-level band summaries.} These panels complete the set of 14B branch summaries across prompt orders. They show the same main tendency already established elsewhere: \texttt{expr\_first} moves more mass into early Expression processing, while the attention branch remains the most middle-heavy and the joint branch the most stage-like.}
+    \label{fig:qwen14_remaining_band_panels}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis_expr_first/comparison_expr_first/band_metrics_panel.png}
+        \caption{Attention, 8B \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis_expr_first/comparison_expr_first/band_metrics_panel.png}
+        \caption{Attention+MLP, 8B \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Remaining Qwen3-8B \texttt{expr\_first} branch summaries.} These two omitted panels complete the 8B prompt-order intervention picture for the non-MLP branches. They again show that attention makes the prompt-order shift more structural, while the joint branch retains a cleaner staged decomposition.}
+    \label{fig:qwen8_expr_remaining_band_panels}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/validation/plots/pd_abs_ratio_curve.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_facts_first/validation/plots/pd_abs_ratio_curve.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 facts-first absolute validation curves.} These are the two remaining absolute-ratio head-validation plots not previously shown. They complete the Qwen3 Step~3 atlas by pairing the conventional absolute-ratio view with the dPD-shift diagnostics under \texttt{facts\_first}. Both scales preserve the same ordering: Fact-Retrieval is the most damaging single-role ablation, Transmission is second, Splitting is weakest, and \textit{Random-Outside} remains far less harmful.}
+    \label{fig:qwen_heads_abs_ratio_facts}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_two_hop/facts_region/mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_two_hop/expression_region/mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_two_hop/query_region/mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Qwen3-8B facts-first MLP gallery for two-hop reasoning.} These three curves complete the 8B facts-first MLP atlas. Compared with one-hop, two-hop reasoning weakens the sharpness of every region but preserves the same order: facts dominate earliest, expression remains concentrated in the middle of the network, and query stays strongest in the middle-to-late transition.}
+    \label{fig:qwen8_mlp_twohop_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_one_hop/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_one_hop/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_one_hop/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_two_hop/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_two_hop/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_8b_two_hop/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Qwen3-8B facts-first absolute-dPD MLP gallery.} Using $|\mathrm{dPD}|$ instead of signed dPD shows that the same regions dominate in pure magnitude. The two-hop curves are less sharp than one-hop, but the largest-magnitude intervention sites still follow the same facts-to-expression-to-query ordering.}
+    \label{fig:qwen8_mlp_abs_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_14b_one_hop/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_14b_one_hop/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_14b_one_hop/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_14b_two_hop/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_14b_two_hop/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/mlp_14b_two_hop/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Qwen3-14B facts-first absolute-dPD MLP gallery.} The larger model preserves the same magnitude profile as 8B while smoothing some of the late-layer noise. Facts remain the largest early-layer target, Expression retains the clearest middle-layer peak, and Query broadens into the middle-to-late integration stage.}
+    \label{fig:qwen14_mlp_abs_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_one_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_one_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_one_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_two_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_two_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_8b_two_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Qwen3-8B expr-first absolute-dPD MLP gallery.} In magnitude space, prompt reordering still pulls Expression earlier and broadens Query. The absolute plots show that the prompt-order shift is not only a signed-direction effect: the same front-loaded expression bias is visible even after removing sign.}
+    \label{fig:qwen8_mlp_abs_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_one_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_one_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_one_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_two_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_two_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/mlp_14b_two_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Qwen3-14B expr-first absolute-dPD MLP gallery.} The 14B absolute plots are the cleanest version of the prompt-order intervention at region level. Expression is the dominant early magnitude peak, Facts broaden into the early-to-middle transition, and Query remains a distributed middle-to-late sink.}
+    \label{fig:qwen14_mlp_abs_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_raw/category_comparison_simple.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_facts_first_all_hop_raw/category_comparison_simple.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_expr_first_all_hop_raw/category_comparison_simple.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_expr_first_all_hop_raw/category_comparison_simple.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 simple token category comparisons.} These pre-refinement summaries already expose the same core ordering as the refined plots. \texttt{facts\_first} is more fact-heavy, whereas \texttt{expr\_first} shifts visible mass toward query-facing and derived-assignment behavior.}
+    \label{fig:qwen_token_simple_category}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_raw/layer_stage_simple.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_facts_first_all_hop_raw/layer_stage_simple.png}
+        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/8b_expr_first_all_hop_raw/layer_stage_simple.png}
+        \caption{\textit{Qwen3-8B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/token_analysis/14b_expr_first_all_hop_raw/layer_stage_simple.png}
+        \caption{\textit{Qwen3-14B}, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Qwen3 simple token stage summaries.} The stage-pooled simple plots are a lighter-weight version of the raw heatmaps. They show that the earliest stages remain fact-heavy, while the later stages move toward query-facing categories, with prompt reordering mostly changing the balance rather than the coarse stage layout.}
+    \label{fig:qwen_token_simple_stage}
+\end{figure*}
+
+\paragraph{Cross-model region atlases.}
+The remaining cross-model region figures are mostly full attention and joint-region galleries for Llama and Mistral. These are useful precisely because the corresponding summary panels can hide how broad the Query Region becomes at layer resolution. The full curves confirm that both families are less sharply factorized than Qwen3: Llama is particularly diffuse, whereas Mistral preserves a more recognizable stage ordering but still routes much more computation through the query-facing portion of the prompt.
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/attn_one_hop_facts_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/attn_one_hop_facts_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/attn_one_hop_facts_first/query_region/attn_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/attn_two_hop_facts_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/attn_two_hop_facts_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/attn_two_hop_facts_first/query_region/attn_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Llama attention-region gallery under \texttt{facts\_first}.} Llama's attention branch is strongly query-heavy even without prompt reordering. Facts and expression remain early dominant, but the Query Region keeps unusually large middle and late mass in both one-hop and two-hop reasoning.}
+    \label{fig:llama_attn_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/attn_one_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/attn_one_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/attn_one_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Llama attention-region gallery under \texttt{expr\_first} (one-hop).} Front-loading the expression pushes more mass into early Expression processing, but the Query Region still remains large through the back half of the network. Even in one-hop reasoning, the attention-stage profile is broad and comparatively diffuse rather than sharply factorized.}
+    \label{fig:llama_attn_expr_gallery_onehop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/attn_two_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/attn_two_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/attn_two_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Llama attention-region gallery under \texttt{expr\_first} (two-hop).} In two-hop reasoning the same prompt-order shift survives, but the Query Region becomes even broader and stronger. The extra depth therefore accentuates Llama's tendency to route a large fraction of computation through query-facing positions.}
+    \label{fig:llama_attn_expr_gallery_twohop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/attn_mlp_one_hop_facts_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/attn_mlp_one_hop_facts_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/attn_mlp_one_hop_facts_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Llama joint attention+MLP gallery under \texttt{facts\_first} (one-hop).} The joint branch is somewhat more stage-like than pure attention, but still much more query-heavy than Qwen3. Even in one-hop reasoning, the Query Region remains broad and substantial across the back half of the network.}
+    \label{fig:llama_attn_mlp_facts_gallery_onehop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/attn_mlp_two_hop_facts_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/attn_mlp_two_hop_facts_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/attn_mlp_two_hop_facts_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Llama joint attention+MLP gallery under \texttt{facts\_first} (two-hop).} Two-hop reasoning preserves the same query-heavy profile and broadens the middle-to-late Query Region further. This deeper setting therefore accentuates the same query-facing integration strategy already visible in one-hop.}
+    \label{fig:llama_attn_mlp_facts_gallery_twohop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/attn_mlp_one_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/attn_mlp_one_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/attn_mlp_one_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Llama joint attention+MLP gallery under \texttt{expr\_first} (one-hop).} The expression-first intervention sharpens the early Expression peak but does not reduce the broad Query profile. Even in one-hop reasoning, the joint branch still maintains a large query-facing computation footprint across the middle and late layers.}
+    \label{fig:llama_attn_mlp_expr_gallery_onehop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/attn_mlp_two_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/attn_mlp_two_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/attn_mlp_two_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Llama joint attention+MLP gallery under \texttt{expr\_first} (two-hop).} Two-hop reasoning preserves the same broad query profile and further stretches the query-facing stage across the back half of the network. This deeper setting therefore reinforces the same suffix- and query-centered computation strategy visible in one-hop.}
+    \label{fig:llama_attn_mlp_expr_gallery_twohop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/attn_one_hop_facts_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/attn_one_hop_facts_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/attn_one_hop_facts_first/query_region/attn_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Mistral attention-region gallery under \texttt{facts\_first} (one-hop).} Mistral retains a recognizable early-facts and early-expression attention profile, but keeps considerably more query mass than Qwen3. Even in one-hop reasoning, the Query Region already occupies a broad middle-to-late control surface.}
+    \label{fig:mistral_attn_facts_gallery_onehop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/attn_two_hop_facts_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/attn_two_hop_facts_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/attn_two_hop_facts_first/query_region/attn_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Mistral attention-region gallery under \texttt{facts\_first} (two-hop).} In two-hop reasoning the same broad Query profile becomes even more pronounced. Facts remain early-dominant and Expression remains front-loaded, but the Query Region spreads heavily across the middle and late layers.}
+    \label{fig:mistral_attn_facts_gallery_twohop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/attn_one_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/attn_one_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/attn_one_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/attn_two_hop_expr_first/facts_region/attn_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/attn_two_hop_expr_first/expression_region/attn_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/attn_two_hop_expr_first/query_region/attn_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Mistral attention-region gallery under \texttt{expr\_first}.} Prompt reordering shifts more weight into early Expression processing but leaves the Query Region broad and comparatively heavy. The accompanying saved band summary below confirms that Mistral's attention branch remains highly query-facing even under \texttt{expr\_first}.}
+    \label{fig:mistral_attn_expr_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/comparison/band_metrics_panel.png}
+        \caption{Attention branch}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+        \caption{Joint attention+MLP branch}
+    \end{subfigure}
+    \caption{\textbf{Remaining Mistral expr-first branch summaries.} These two band panels complete the Mistral prompt-order atlas for the non-MLP branches. The attention panel is more middle- and query-heavy; the joint panel is somewhat more stage-like but still broader than its Qwen3 counterpart.}
+    \label{fig:mistral_expr_remaining_band_panels}
+\end{figure*}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.78\columnwidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+    \caption{\textbf{Mistral facts-first joint attention+MLP band summary.} This final omitted branch-level summary completes the Mistral band-panel atlas. The joint intervention preserves the same broad staged template as the MLP branch, but still places comparatively strong mass on the Query Region throughout the back half of the network.}
+    \label{fig:mistral_attn_mlp_facts_band_panel}
+\end{figure}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/attn_mlp_one_hop_facts_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/attn_mlp_one_hop_facts_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/attn_mlp_one_hop_facts_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query (One-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/attn_mlp_two_hop_facts_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/attn_mlp_two_hop_facts_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/attn_mlp_two_hop_facts_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Mistral joint attention+MLP gallery under \texttt{facts\_first}.} The joint branch again looks more stage-like than pure attention, but still preserves a heavy Query Region relative to Qwen3. The full curves show that Mistral's joint intervention sharpens early Facts while leaving a substantial amount of middle-to-late query-facing mass.}
+    \label{fig:mistral_attn_mlp_facts_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/attn_mlp_one_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/attn_mlp_one_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/attn_mlp_one_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Mistral joint attention+MLP gallery under \texttt{expr\_first} (one-hop).} In one-hop reasoning, front-loading the expression amplifies the early Expression Region while keeping the Query Region broad. Relative to Qwen3, the joint branch remains visibly less cleanly factorized and more query-facing.}
+    \label{fig:mistral_attn_mlp_expr_gallery_onehop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/attn_mlp_two_hop_expr_first/facts_region/attn_mlp_facts_region_scores.png}
+        \caption{Facts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/attn_mlp_two_hop_expr_first/expression_region/attn_mlp_expression_region_scores.png}
+        \caption{Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/attn_mlp_two_hop_expr_first/query_region/attn_mlp_query_region_scores.png}
+        \caption{Query}
+    \end{subfigure}
+    \caption{\textbf{Mistral joint attention+MLP gallery under \texttt{expr\_first} (two-hop).} Two-hop reasoning preserves the same reordered stage structure but broadens the Query Region further. The resulting curves again indicate a less sharply separated reasoning scaffold than in Qwen3, even when routing and nonlinear transformation are intervened jointly.}
+    \label{fig:mistral_attn_mlp_expr_gallery_twohop}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_one_hop_facts_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Llama, facts-first (one-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_two_hop_facts_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Llama, facts-first (two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_one_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Llama, expr-first (one-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_two_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Llama, expr-first (two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_one_hop_facts_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Mistral, facts-first (one-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_two_hop_facts_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Mistral, facts-first (two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Cross-model absolute-dPD facts-region diagnostics.} The absolute facts-region curves make it clear that both non-Qwen families still retain a meaningful facts-processing stage in magnitude space. The main difference from Qwen3 is therefore not the absence of facts processing, but its weaker separation from the query-facing stages.}
+    \label{fig:cross_model_abs_facts_region}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_one_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Mistral, expr-first (one-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_two_hop_expr_first/facts_region/mlp_facts_region_abs_dpd_scores.png}
+        \caption{Mistral, expr-first (two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_one_hop_facts_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Llama facts-first: Expression}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_one_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Llama expr-first: Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_one_hop_facts_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Mistral facts-first: Expression}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_one_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Mistral expr-first: Expression}
+    \end{subfigure}
+    \caption{\textbf{Additional cross-model absolute-dPD diagnostics for facts and expression processing.} These remaining magnitude plots reinforce the same conclusion as the signed and BCR summaries: prompt reordering increases early expression mass in both Llama and Mistral, but neither model develops the same clean fact-versus-query separation seen in Qwen3.}
+    \label{fig:cross_model_abs_remaining}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_one_hop_facts_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Facts-first: Query (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_two_hop_facts_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Facts-first: Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/mlp_two_hop_facts_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Facts-first: Query (Two-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_one_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Expr-first: Query (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_two_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expr-first: Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/mlp_two_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Expr-first: Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Residual Llama absolute-dPD diagnostics.} These six remaining magnitude plots complete the Llama MLP atlas. They show that the most persistent residual magnitude sits in the Query Region, especially once the query is moved to the front or when reasoning depth increases to two-hop.}
+    \label{fig:llama_abs_residual_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_one_hop_facts_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Facts-first: Query (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_two_hop_facts_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Facts-first: Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/mlp_two_hop_facts_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Facts-first: Query (Two-hop)}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_one_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Expr-first: Query (One-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_two_hop_expr_first/expression_region/mlp_expression_region_abs_dpd_scores.png}
+        \caption{Expr-first: Expression (Two-hop)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.285\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/mlp_two_hop_expr_first/query_region/mlp_query_region_abs_dpd_scores.png}
+        \caption{Expr-first: Query (Two-hop)}
+    \end{subfigure}
+    \caption{\textbf{Residual Mistral absolute-dPD diagnostics.} These final magnitude plots complete the Mistral MLP atlas. They reinforce the same picture seen throughout the appendix: Mistral preserves a recognizable expression-processing stage, but its strongest residual magnitude is often query-facing once the task becomes two-hop or the prompt is reordered.}
+    \label{fig:mistral_abs_residual_gallery}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_facts_first_raw/category_comparison_simple.png}
+        \caption{Llama, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_expr_first_raw/category_comparison_simple.png}
+        \caption{Llama, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_raw/category_comparison_simple.png}
+        \caption{Mistral, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_raw/category_comparison_simple.png}
+        \caption{Mistral, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model simple token category comparisons.} These non-refined token summaries already show that Llama and Mistral allocate more visible mass to query-facing categories than Qwen3. The refined analyses sharpen the same picture rather than changing it.}
+    \label{fig:cross_model_token_simple_category}
+\end{figure*}
+
+\begin{figure*}[p]
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_facts_first_raw/layer_stage_simple.png}
+        \caption{Llama, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/token_analysis_expr_first_raw/layer_stage_simple.png}
+        \caption{Llama, \texttt{expr\_first}}
+    \end{subfigure}
+
+    \vspace{0.2em}
+
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_raw/layer_stage_simple.png}
+        \caption{Mistral, \texttt{facts\_first}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_raw/layer_stage_simple.png}
+        \caption{Mistral, \texttt{expr\_first}}
+    \end{subfigure}
+    \caption{\textbf{Cross-model simple token stage summaries.} Stage-pooled raw token plots again show that both non-Qwen models are more query-facing. Llama is the most diffuse, while Mistral preserves a somewhat cleaner early-to-late progression but still places more late-stage weight on query-region categories than Qwen3.}
+    \label{fig:cross_model_token_simple_stage}
+\end{figure*}

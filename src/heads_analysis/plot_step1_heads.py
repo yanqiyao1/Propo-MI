@@ -7,8 +7,7 @@ from typing import Tuple
 
 from src.progress import log_event, resolve_log_path, setup_file_logger
 
-from .common import read_csv
-from .step1_discover_fast import _plot_layer_head_distribution
+from .plot_only import plot_layer_head_distribution, read_csv
 
 
 def _infer_plot_shape(classify_csv: Path, summary_json: Path | None) -> Tuple[int, int]:
@@ -41,7 +40,7 @@ def main() -> None:
     if not rows:
         raise ValueError(f"No rows found in classify csv: {args.classify_csv}")
     n_layers, n_heads = _infer_plot_shape(args.classify_csv, args.summary_json)
-    _plot_layer_head_distribution(rows, args.output_png, n_layers=n_layers, n_heads=n_heads)
+    plot_layer_head_distribution(rows, args.output_png, n_layers=n_layers, n_heads=n_heads)
     log_event(
         logger,
         {

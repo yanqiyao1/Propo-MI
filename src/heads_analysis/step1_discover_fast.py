@@ -22,6 +22,7 @@ from transformer_lens import utils
 from src.eval.io_utils import balanced_sample_by_rule, count_by_field
 from src.model_loading import add_model_source_arg
 from src.progress import log_event, make_tqdm, resolve_log_path, setup_file_logger
+from src.plot_style import stylize_axis
 
 from .common import (
     ROLE_COLOR,
@@ -402,8 +403,19 @@ def _plot_layer_head_distribution(
         pts_by_role[role]["s"].append(35.0 + 300.0 * impact)
         layer_role_counts[layer][role] += 1
 
-    apply_paper_style({"axes.grid": True, "grid.alpha": 0.20})
-    fig, (ax_map, ax_bar) = plt.subplots(1, 2, figsize=(12.2, 6.1), gridspec_kw={"width_ratios": [1.45, 1.0]})
+    apply_paper_style(
+        {
+            "axes.grid": True,
+            "grid.alpha": 0.20,
+            "font.size": 14.0,
+            "axes.titlesize": 16.0,
+            "axes.labelsize": 14.5,
+            "xtick.labelsize": 12.5,
+            "ytick.labelsize": 12.5,
+            "legend.fontsize": 12.0,
+        }
+    )
+    fig, (ax_map, ax_bar) = plt.subplots(1, 2, figsize=(13.4, 6.8), gridspec_kw={"width_ratios": [1.45, 1.0]})
 
     gx, gy = np.meshgrid(np.arange(n_heads), np.arange(n_layers))
     ax_map.scatter(gx.ravel(), gy.ravel(), s=7, c="#DCDCDC", marker="s", alpha=0.35, linewidths=0)
@@ -432,6 +444,7 @@ def _plot_layer_head_distribution(
     ax_map.set_xticks(np.arange(0, n_heads, max(1, n_heads // 8)))
     ax_map.set_yticks(np.arange(0, n_layers, max(1, n_layers // 10)))
     ax_map.legend(loc="upper left", frameon=True)
+    stylize_axis(ax_map)
 
     layers_arr = np.arange(n_layers)
     bottom = np.zeros(n_layers, dtype=np.float64)
@@ -454,6 +467,7 @@ def _plot_layer_head_distribution(
     ax_bar.set_xlabel("# Heads in Layer")
     ax_bar.set_ylabel("Layer")
     ax_bar.set_yticks(np.arange(0, n_layers, max(1, n_layers // 10)))
+    stylize_axis(ax_bar)
 
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)

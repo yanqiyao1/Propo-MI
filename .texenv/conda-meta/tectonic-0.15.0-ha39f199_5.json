@@ -1,0 +1,83 @@
+{
+  "name": "tectonic",
+  "version": "0.15.0",
+  "build": "ha39f199_5",
+  "build_number": 5,
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
+  "subdir": "linux-64",
+  "fn": "tectonic-0.15.0-ha39f199_5.conda",
+  "md5": "24f0cbec77074a1d5545c3a8ae3f35c9",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/tectonic-0.15.0-ha39f199_5.conda",
+  "sha256": "645b201d901ac627a49cdfb3855890e5635ccc959e48f368b64024eaaf63b981",
+  "depends": [
+    "fontconfig",
+    "freetype",
+    "graphite2",
+    "harfbuzz",
+    "icu",
+    "libpng",
+    "openssl",
+    "zlib",
+    "__glibc >=2.17,<3.0.a0",
+    "libstdcxx >=14",
+    "libgcc >=14",
+    "harfbuzz >=12.3.0",
+    "libglib >=2.86.3,<3.0a0",
+    "icu >=78.1,<79.0a0",
+    "fontconfig >=2.15.0,<3.0a0",
+    "fonts-conda-ecosystem",
+    "libfreetype >=2.14.1",
+    "libfreetype6 >=2.14.1",
+    "libzlib >=1.3.1,<2.0a0",
+    "graphite2 >=1.3.14,<2.0a0",
+    "libexpat >=2.7.3,<3.0a0",
+    "libpng >=1.6.53,<1.7.0a0",
+    "openssl >=3.5.4,<4.0a0"
+  ],
+  "constrains": [
+    "__glibc >=2.17"
+  ],
+  "license": "MIT",
+  "timestamp": 1767686075000,
+  "size": 5229201,
+  "requested_spec": "tectonic",
+  "package_tarball_full_path": "/ssd/data/qiyaoyan/conda/pkgs/tectonic-0.15.0-ha39f199_5.conda",
+  "extracted_package_dir": "/ssd/data/qiyaoyan/conda/pkgs/tectonic-0.15.0-ha39f199_5",
+  "files": [
+    "bin/tectonic",
+    "etc/conda/test-files/tectonic/0/example.tex",
+    "var/cache/fontconfig/8afa914436a5fdf2be81dc3345f3ffca-le64.cache-9"
+  ],
+  "paths_data": {
+    "paths_version": 1,
+    "paths": [
+      {
+        "_path": "bin/tectonic",
+        "path_type": "hardlink",
+        "sha256": "b3c2c0215ba3e30bf787b91512ce38cd9f25ab6f76b708ac7d7d696e58039abd",
+        "size_in_bytes": 19632232,
+        "sha256_in_prefix": "b3c2c0215ba3e30bf787b91512ce38cd9f25ab6f76b708ac7d7d696e58039abd"
+      },
+      {
+        "_path": "etc/conda/test-files/tectonic/0/example.tex",
+        "path_type": "hardlink",
+        "sha256": "59002b62de211f0e51fc6737f58d8c3db9bd7aba2057702f669f0a5fe6c5a0d5",
+        "size_in_bytes": 87,
+        "sha256_in_prefix": "59002b62de211f0e51fc6737f58d8c3db9bd7aba2057702f669f0a5fe6c5a0d5"
+      },
+      {
+        "_path": "var/cache/fontconfig/8afa914436a5fdf2be81dc3345f3ffca-le64.cache-9",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/bld/rattler-build_tectonic_1767686075/host_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "sha256": "6ad46ccd5a757ca41b739e24950490db6c264c62fd1fc354265b0a28599eaa55",
+        "size_in_bytes": 68056,
+        "sha256_in_prefix": "670bc825c5fd70327ffd9cd5e2408ee7525d11e4e335eeac671cace1b1044ed2"
+      }
+    ]
+  },
+  "link": {
+    "source": "/ssd/data/qiyaoyan/conda/pkgs/tectonic-0.15.0-ha39f199_5",
+    "type": 1
+  }
+}

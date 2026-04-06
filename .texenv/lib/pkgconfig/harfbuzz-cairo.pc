@@ -1,0 +1,12 @@
+prefix=/home/qiyaoyan/Propologic-MI/.texenv
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: harfbuzz-cairo
+Description: HarfBuzz cairo support
+Version: 13.2.1
+Requires: harfbuzz =  13.2.1
+Requires.private: freetype2 >=  12.0.6, glib-2.0 >=  2.30.0, graphite2 >=  1.2.0, cairo >=  1.10.0
+Libs: -L${libdir} -lharfbuzz-cairo
+Libs.private: -lm -L${libdir} -lharfbuzz -pthread
+Cflags: -I${includedir}/harfbuzz

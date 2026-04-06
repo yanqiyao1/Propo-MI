@@ -5,8 +5,7 @@ from pathlib import Path
 
 from src.progress import log_event, resolve_log_path, setup_file_logger
 
-from .common import read_csv
-from .step3_validate_fast import _plot_pd_curves
+from .plot_only import plot_pd_curves, read_csv
 
 
 def _resolve_k_values(rows):
@@ -38,7 +37,7 @@ def main() -> None:
     signed_ratio_plot = args.output_dir / "pd_signed_ratio_curve.png"
     dpd_shift_plot = args.output_dir / "dpd_shift_curve.png"
 
-    _plot_pd_curves(
+    plot_pd_curves(
         rows,
         abs_ratio_plot,
         y_mean_key="mean_abs_relative_dpd_mean",
@@ -47,7 +46,7 @@ def main() -> None:
         k_values=k_values,
     )
     if args.include_signed_ratio_plot:
-        _plot_pd_curves(
+        plot_pd_curves(
             rows,
             signed_ratio_plot,
             y_mean_key="mean_signed_relative_dpd_mean",
@@ -55,7 +54,7 @@ def main() -> None:
             ylabel="dPD / PD_original",
             k_values=k_values,
         )
-    _plot_pd_curves(
+    plot_pd_curves(
         rows,
         dpd_shift_plot,
         y_mean_key="mean_dpd_shift_mean",
