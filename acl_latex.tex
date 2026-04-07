@@ -574,10 +574,10 @@ We apply activation patching and mean-ablation analyses across all 11 rule categ
 
     \caption{Region-wise MLP mean-ablation scores in \textit{Qwen3-8B} under \texttt{facts\_first}. Top row: one-hop. Bottom row: two-hop. Across both depths, the Facts Region remains strongly early-dominant, while the
   Expression Region occupies the early-to-middle part of the network. Two-hop reasoning preserves this coarse staged template but broadens the later computation: the Facts Region
-  early-band BCR decreases from $0.856$ to $0.791$, the Expression Region middle-band BCR rises from $0.304$ to $0.380$, and the Query Region shifts from a broader early-middle
-  profile in one-hop to a more clearly middle-to-late bridge in two-hop (middle/late BCR $0.329/0.093 \rightarrow 0.487/0.140$). Appendix~\ref{sec:appendix_stage} extends the same
+  early-band share decreases from $0.856$ to $0.791$, the Expression Region middle-band share rises from $0.304$ to $0.380$, and the Query Region shifts from a broader early-middle
+  profile in one-hop to a more clearly middle-to-late bridge in two-hop (middle/late shares $0.329/0.093 \rightarrow 0.487/0.140$). Appendix~\ref{sec:appendix_stage} extends the same
   MLP analysis to \textit{Qwen3-14B}, Appendix~\ref{sec:appendix_prompt_order} compares prompt orders, and Appendix~\ref{sec:appendix_extra_region_gallery} collects the broader
-  band-composition galleries and stacked BCR summaries.}
+  region galleries.}
     \label{fig:stage}
     \vspace{-0.5em}
   \end{figure*}
@@ -621,7 +621,7 @@ The results reveal a clear staged pattern. In early layers (L0-8), the Facts Reg
 
 This staged organization (\textit{i.e.}, facts first, expression second, integration last) mirrors the compositional structure of the input itself. Rather than collapsing the task into a single late decision stage, \textit{Qwen3} follows the logical dependency order of the prompt: premises are processed first, expressions are resolved next, and final integration is deferred to the query-facing region. Appendix~\ref{sec:appendix_stage} extends the same MLP analysis to \textit{Qwen3-14B}, and Appendix~\ref{sec:appendix_prompt_order} shows that this coarse early/middle/late decomposition survives the \texttt{expr\_first} intervention, although the relative weight of each region shifts with prompt order.
 
-We also extend this region-level analysis beyond MLPs. Appendix~\ref{sec:appendix_region_variants} reports the matched attention-region and joint attention+MLP interventions, while Appendix~\ref{sec:appendix_extra_region_gallery} collects the corresponding band-level summaries and stacked BCR decompositions. Across these appendix views, the overall stage ordering is preserved across all three branches, but the attention branch assigns relatively more mass to middle-layer Expression processing and late Query integration, whereas the joint branch remains closest to the original MLP decomposition while sharpening early Facts dominance. We therefore use the MLP branch as the main staged-computation probe, and treat the other two as supporting region-level interventions on the same computation.
+We also extend this region-level analysis beyond MLPs. Appendix~\ref{sec:appendix_region_variants} reports the matched attention-region and joint attention+MLP interventions, while Appendix~\ref{sec:appendix_extra_region_gallery} collects the corresponding region galleries. Across these appendix views, the overall stage ordering is preserved across all three branches, but the attention branch assigns relatively more mass to middle-layer Expression processing and late Query integration, whereas the joint branch remains closest to the original MLP decomposition while sharpening early Facts dominance. We therefore use the MLP branch as the main staged-computation probe, and treat the other two as supporting region-level interventions on the same computation.
 
 % In this section, we empirically investigate the internal mechanisms of the Qwen3 model during logical reasoning tasks. To ensure a tractable analysis of valid reasoning pathways, we focus our experiments primarily on one-hop and two-hop reasoning scenarios, as the model demonstrates consistent performance in these regimes compared to more complex logical problems. Our analysis unveils three primary structural behaviors governing the model's inference process: (1) \textbf{Information Transmission}, where semantic information within a specific text segment progressively aggregates at the final token of that interval; (2) \textbf{Specialized Attention Heads}, a phenomenon where attention heads assume specialized, persistent functional roles—such as semantic splitting, entity binding, or fact retrieval—across different layers and tasks; and (3) \textbf{Fact Retrospection}, a mechanism wherein critical factual information is actively maintained and revisited throughout the network's depth rather than being processed solely in early layers. Collectively, these findings provide a granular view of how Qwen3 organizes, propagates, and sustains logical information, which is schematically summarized in Figure~\ref{fig:overview}.
 
@@ -653,7 +653,7 @@ as it serves as the primary information pathway and accumulates representations 
 We conduct a controlled activation patching study: given a clean prompt $x_{\text{clean}}$ (\textit{e.g.}, \texttt{A is True, B is False, ($\neg$A or $\neg$B) is}) and a corrupt prompt $x_{\text{corrupt}}$ (\textit{e.g.}, A is True, B is True...), we patch token-wise residual stream activations from the clean run into the corrupt run and measure the resulting shift in logit difference. This reveals which token positions carry the causal information that determines the correct answer.
 The resulting causal traces (Figure~\ref{fig:logit_difference}) reveal a clear pattern of information transmission. In Figure~\ref{fig:logit_difference}a, the patching effect is initially concentrated at token position 6 (\textit{i.e.}, the truth value \texttt{True}) in early layers, then shifts to token position 14 (\textit{i.e.}, the closing parenthesis \texttt{)}), and finally converges at the query token in late layers. Intra-segment tokens show negligible effects throughout. This trajectory indicates that information progressively aggregates at segment-terminal tokens before flowing to the final prediction position.
 
-\paragraph{Pattern Quantification.} We corroborate this finding with an alternative patching configuration (Figure~\ref{fig:logit_difference}b), which identifies positions 2, 6, 14, and 15 as dominant convergence points. To quantify this pattern, we analyze the mean \text{|dPD|} (\textit{i.e.}, absolute probability-difference shift) across token categories and layer groups (Figure~\ref{fig:info_converge_token}). The results confirm that \texttt{facts\_value} tokens dominate in early layers (L0--13), while \texttt{query\_token} shows a substantial surge in late layers (L24--35), with \text{Mean |dPD|} values increasing over 2.5$\times$. Extended experiments for \textit{Qwen3-14B}, two-hop reasoning, and the \texttt{expr\_first} prompt-order intervention are provided in Appendix~\ref{sec:appendix_info_converge}, Appendix~\ref{sec:appendix_prompt_order}, and Figure~\ref{fig:info_converge_appendix}; Appendix~\ref{sec:appendix_extra_token_gallery} further reports the omitted raw heatmaps and refined signed/mean token diagnostics.
+\paragraph{Pattern Quantification.} We corroborate this finding with an alternative patching configuration (Figure~\ref{fig:logit_difference}b), which identifies positions 2, 6, 14, and 15 as dominant convergence points. Aggregating token-level effects by semantic category yields the same pattern, but now in a form that makes the privileged convergence sites explicit (Figure~\ref{fig:info_converge_token_main}). In \textit{Qwen3-8B} under \texttt{facts\_first}, \texttt{facts\_value} dominates the early stage ($1.98 \pm 0.02$), \texttt{expr\_last} is the strongest expression-side category in the middle of the network ($0.273 \pm 0.013$), and \texttt{query\_token} dominates late layers ($1.84 \pm 0.01$). The largest total mass is therefore concentrated on a small set of semantically important token classes rather than being distributed uniformly across all tokens in a segment. Extended token-category results for \textit{Qwen3-14B}, two-hop reasoning, and the \texttt{expr\_first} prompt-order intervention are reported in Appendix~\ref{sec:appendix_info_converge} and Appendix~\ref{sec:appendix_prompt_order}; Appendix~\ref{sec:appendix_extra_token_gallery} provides the retained refined token diagnostics.
 These findings establish that information transmission in \textit{Qwen3} follows a structured pattern: semantic content aggregates at the final token of each semantic segment (\textit{e.g.}, \texttt{True} for the fact \texttt{A is True}, and \texttt{)} for the expression region) and ultimately converges at the query token (\texttt{is}). These segment-terminal tokens serve as information hubs for downstream propagation, providing the infrastructure for the staged computation observed in Section~\ref{sec:staged}. 
 % Notably, \texttt{facts\_value} tokens maintain non-trivial causal importance even in middle and late layers (Figure~\ref{fig:info_converge_token}), contradicting a simple encode-then-forget model. This persistent influence suggests active re-access of source facts throughout processing.
 
@@ -690,14 +690,10 @@ These findings establish that information transmission in \textit{Qwen3} follows
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\columnwidth]{./figures/info-converge-onehop-8b.png}
-    \caption{Token-wise information convergence in \textit{Qwen3-8B} (One-hop).
-    Mean |dPD| (probability-difference shift caused by patching; see Appendix~\ref{sec:appendix_info_converge}) per token category across layer groups.
-    Early layers (L0-13): \texttt{facts\_value} tokens exhibit the highest causal importance, reflecting factual encoding.
-    Late layers (L24-35): \texttt{query\_token} shows a dramatic surge, indicating information convergence toward the final prediction position.
-    Error bars denote standard error of the mean (SEM). Appendix~\ref{sec:appendix_extra_token_gallery} provides the omitted raw heatmaps and refined token-diagnostic galleries.}
+    \includegraphics[width=\columnwidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_refined/refined_by_stage_sum.png}
+    \caption{\textbf{Token-category information convergence in \textit{Qwen3-8B} under \texttt{facts\_first}.} Token-level residual-stream patching effects are aggregated by semantic token category and layer stage. Early layers are dominated by \texttt{facts\_value} ($1.98 \pm 0.02$), the middle of the network concentrates the strongest expression-side mass on \texttt{expr\_last} ($0.273 \pm 0.013$), and late layers are dominated by \texttt{query\_token} ($1.84 \pm 0.01$). The largest total mass is concentrated on a small set of semantically privileged categories rather than spread across the full sequence (\texttt{facts\_value}: $2.47$; \texttt{query\_token}: $2.22$; \texttt{expr\_last}: $0.28$), which supports the view that information converges onto important tokens during reasoning.}
     \vspace{-0.5em}
-    \label{fig:info_converge_token}
+    \label{fig:info_converge_token_main}
 \end{figure}
 
 % \subsection{Information Transmission}
@@ -731,55 +727,32 @@ These findings establish that information transmission in \textit{Qwen3} follows
 
 \begin{figure*}[t]
     \centering
-    % --- 第一个子图 (Figure a) ---
-    \begin{subfigure}[b]{0.32\textwidth}
+    % 左侧子图
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        % 替换为你实际的文件名
-        \includegraphics[width=\linewidth]{./figures/split_heads.pdf} 
-        \caption{Splitting heads}
-        \label{fig:splitting_head}
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/classify/layer_head_role_distribution.png}
+        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+        \label{fig:subfig_role_distribution}
     \end{subfigure}
-    \hfill % 这里的 \hfill 负责在图片之间产生弹性间距
-    % --- 第二个子图 (Figure b) ---
-    \begin{subfigure}[b]{0.32\textwidth}
+    \hfill % 添加 \hfill 使左右两图在水平方向上拉开适当间距
+    % 右侧子图
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        % 替换为你实际的文件名
-        \includegraphics[width=\linewidth]{./figures/info_heads.pdf}
-        \caption{Information Transmission heads}
-        \label{fig:convergence_head}
-    \end{subfigure}
-    \hfill
-    % --- 第三个子图 (Figure c) ---
-    \begin{subfigure}[b]{0.32\textwidth}
-        \centering
-        % 替换为你实际的文件名
-        \includegraphics[width=\linewidth]{./figures/facts_heads.pdf}
-        \caption{Fact-Retrieval heads}
-        \label{fig:facts_head}
-
+        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/taxonomy/head_taxonomy_line_chart.png}
+        \caption{Taxonomy line chart} % 这里可以根据需要修改右图的简短标题
+        \label{fig:subfig_taxonomy_line}
     \end{subfigure}
     
-    % --- 总标题 ---
-    \caption{Visualization of attention matrices for three distinct types of heads. The prompt used is \texttt{A is True, B is False, ($\neg$A or $\neg$B) is}. The notation $(x, y)$ denotes the $y$-th head in the $x$-th layer.
-    (a) The Splitting heads (early layers) attend predominantly to the comma delimiter.
-    (b) The Information Transmission heads (intermediate layers) reveal lower-triangular structures within Fact and Expression regions.
-    (c) The Fact-Retrieval heads (deep layers) show tokens in the Expression Region or Query Token (\texttt{is}) attending to \texttt{True}/\texttt{False} indicators. A weaker first-token attention sink often coexists with these later-layer patterns; Appendix~\ref{sec:appendix_other_heads} discusses this phenomenon and its relation to idle heads in more detail.}
-    \label{fig:combined_heads}
+    % 总标题
+    \caption{Layer-wise distribution of the three head roles in the \textit{Qwen3-8B} \texttt{facts\_first} taxonomy results. Splitting Heads concentrate in early layers, Transmission Heads span the middle of the network, and Fact-Retrieval Heads peak in middle-to-late layers. Appendix~\ref{appendix_heads} extends this analysis to both model scales and both prompt orders; Appendix~\ref{sec:appendix_extra_heads_gallery} adds the omitted discovery maps and dPD-shift diagnostics; and Appendix~\ref{sec:appendix_full_accuracy} reports the complete validation tables.}
+    \label{fig:counts}
     \vspace{-0.5em}
 \end{figure*}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\columnwidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/taxonomy/head_taxonomy_line_chart.png}
-    \caption{Layer-wise distribution of the three head roles in the \textit{Qwen3-8B} \texttt{facts\_first} taxonomy results. Splitting Heads concentrate in early layers, Transmission Heads span the middle of the network, and Fact-Retrieval Heads peak in middle-to-late layers. Appendix~\ref{appendix_heads} extends this analysis to both model scales and both prompt orders; Appendix~\ref{sec:appendix_extra_heads_gallery} adds the omitted discovery maps and dPD-shift diagnostics; and Appendix~\ref{sec:appendix_full_accuracy} reports the complete validation tables.}
-\label{fig:counts}
-\vspace{-0.5em}
-\end{figure}
 
 \subsection{Fact Retrospection}
 \label{sec:retro}
 An unexpected finding from the preceding analysis is that fact tokens maintain
-causal importance even in late layers (Figure~\ref{fig:info_converge_token} shows that \texttt{facts\_value} tokens exhibit sustained comparatively high Mean $|\text{dPD}|$ values across all layer groups).
+causal importance even in late layers: the token-category aggregation reported in Appendix~\ref{sec:appendix_info_converge} shows that \texttt{facts\_value} retains non-trivial mean $|\mathrm{dPD}|$ across all layer groups.
 % , contradicting a simple encode-then-forget model. 
 % The Information Transmission analysis reveals an unexpected phenomenon: \textit{why do fact tokens maintain causal importance in deep layers?} Once information is transmitted to segment-terminal tokens, we would expect source positions to become causally irrelevant. Yet \texttt{facts\_value} tokens exhibit sustained comparatively high $|\text{dLD}|$ values across all layer groups (Figure~\ref{fig:info_converge_token}), contradicting a simple encode-then-forget model.
 This pattern holds across one-hop and two-hop reasoning (Appendix~\ref{sec:appendix_info_converge}). The complementary head-level evidence in Appendix~\ref{appendix_heads} and Appendix~\ref{sec:appendix_extra_heads_gallery} further shows that late-layer fact-retrieval heads remain prevalent and causally consequential across prompt orders.
@@ -869,7 +842,7 @@ Several methodological choices in our analysis warrant discussion. First, our he
 
 Second, our intervention suite mixes two families of operations: clean-to-corrupt activation patching for residual-stream analyses, and mean-ablation replacements for region- and head-level analyses. The latter are more conservative than zeroing activations, but they can still introduce distributional shifts because the replacement vectors need not lie on the model's natural trajectory for the intervened sample. Further work should compare within-sequence means, dataset means, and cleaner causal baselines across all branches.
 
-Third, our primary metric is the logit difference between the correct and incorrect tokens. While this captures the model's relative preference, it may miss cases where the correct token's absolute probability changes substantially without altering the logit difference. Supplementing with the probability of the correct token would provide a more complete picture.
+Third, our primary intervention metric is the aligned probability difference between the correct and incorrect answer tokens, and most analyses track its change under intervention ($\mathrm{dPD}$). This better matches the model's binary decision on the benchmark than a raw logit gap, but it still compresses behavior to a one-dimensional margin. Supplementing $\mathrm{dPD}$ with calibrated answer probability or sequence-level uncertainty would provide a fuller picture.
 
 % \subsection{From Circuit Discovery to Mechanism Characterization}
 
@@ -889,13 +862,13 @@ Third, our primary metric is the logit difference between the correct and incorr
 % \paragraph{Other Attention Head Patterns.}
 \subsection{Other Attention Head Patterns.}
 % \label{sec:other_heads}
-Beyond the above three primary head types, we observe additional patterns including: (1) \textit{Idle Heads} that consistently attend to the first token regardless of content; (2) \textit{Information Binding Heads} in early layers (specifically, L0-10) that associate entities with truth values; (3) \textit{Self-Processing Heads} exhibiting diagonal attention where tokens primarily attend to themselves; and (4) \textit{Expression Processing Heads} in L18-22 that concentrate on expression tokens before attention convergence. These patterns, while not causally validated, suggest additional functional diversity. More Details are provided in Appendix~\ref{sec:appendix_other_heads}.
+Beyond the three causally validated roles, we also observe recurrent descriptive motifs such as first-token sink heads, early entity-value binding heads, diagonal self-processing heads, and expression-focused heads in the late middle layers. These patterns are not part of the validated taxonomy, but they help explain several regularities in the attention maps shown throughout the paper. Appendix~\ref{sec:appendix_other_heads} discusses them qualitatively and clarifies how they relate to the main three-role picture.
 
 
 
 % \paragraph{Functional Coupling in Specialized Heads.}
 \subsection{Functional Coupling in Specialized Heads.}
-We observe that individual attention heads often exhibit multiple functional roles simultaneously. For example, a head may show Splitting behavior at delimiter positions while also contributing to Transmission within semantic regions; similarly, Fact-Retrieval patterns frequently co-occur with Transmission patterns in middle-layer heads. This functional coupling suggests that our categorization of Specialized Attention Heads represents idealized abstractions rather than mutually exclusive classes. Such multi-functionality likely reflects parameter efficiency: the model implements diverse reasoning sub-processes by reusing the same heads across different computational roles. This observation aligns with the superposition hypothesis in neural networks, where individual components participate in multiple overlapping circuits. Details are provided in Appendix~\ref{sec:appendix_func_couple}.
+Some heads exhibit multiple role signatures within a single attention map, especially combinations of boundary focus with local transmission or of transmission with fact retrieval. We therefore treat Splitting, Transmission, and Fact-Retrieval as coarse descriptive clusters rather than mutually exclusive types. Appendix~\ref{sec:appendix_func_couple} gives qualitative examples of this overlap and shows why the role taxonomy should be read as a useful summary of head behavior, not as a claim that each head performs only one operation.
 % Future work should develop metrics to quantify the degree of functional overlap and investigate whether multi-functional heads differ in causal importance from specialized ones.
 
 % \subsection{Lazy Reasoning: Information Flow vs. Logical Computation}
@@ -973,15 +946,16 @@ Second, our analysis characterizes the presence of mechanisms in pre-trained mod
 	        \item[\ref{sec:appendix_stage}] \hyperref[sec:appendix_stage]{Staged Computation}
 	        \item[\ref{sec:appendix_region_variants}] \hyperref[sec:appendix_region_variants]{Additional Region-Level Ablations}
 	        \item[\ref{sec:appendix_info_converge}] \hyperref[sec:appendix_info_converge]{Information Transmission}
-	        \item[\ref{appendix_heads}] \hyperref[appendix_heads]{Specialized Attention Heads: Robustness and Validation}
-	        \item[\ref{sec:appendix_llama}] \hyperref[sec:appendix_llama]{Cross-Model Extensions: Llama-3.1-8B-Instruct and Mistral-7B-Instruct-v0.1}
-	        \item[\ref{sec:appendix_full_accuracy}] \hyperref[sec:appendix_full_accuracy]{Complete Accuracy Tables}
-	        \item[\ref{sec:failure_analysis}] \hyperref[sec:failure_analysis]{Failure Case Analysis}
-	    \end{itemize}
-        \item[\ref{sec:appendix_discussion}] \hyperref[sec:appendix_discussion]{Discussion}
+		        \item[\ref{appendix_heads}] \hyperref[appendix_heads]{Specialized Attention Heads: Robustness and Validation}
+		        \item[\ref{sec:appendix_llama}] \hyperref[sec:appendix_llama]{Cross-Model Extensions: Llama-3.1-8B-Instruct and Mistral-7B-Instruct-v0.1}
+		        \item[\ref{sec:appendix_synthesis}] \hyperref[sec:appendix_synthesis]{Appendix Synthesis: Relation to the Main Claims}
+		        \item[\ref{sec:failure_analysis}] \hyperref[sec:failure_analysis]{Failure Case Analysis}
+		    \end{itemize}
+	        \item[\ref{sec:appendix_discussion}] \hyperref[sec:appendix_discussion]{Discussion}
     \begin{itemize}
         \item[\ref{sec:appendix_other_heads}] \hyperref[sec:appendix_other_heads]{Other Attention Head Patterns}
         \item[\ref{sec:appendix_func_couple}] \hyperref[sec:appendix_func_couple]{Functional Coupling in Specialized Heads}
+        \item[\ref{sec:appendix_full_accuracy}] \hyperref[sec:appendix_full_accuracy]{Complete Accuracy Tables}
         % \item[\ref{sec:lazy_reasoning}] \hyperref[sec:lazy_reasoning]{Lazy Reasoning}
     \end{itemize}
 \end{itemize}
@@ -1044,24 +1018,13 @@ where $T$ is the sequence length and $m^{(l)}_j$ is the original \texttt{mlp\_ou
 \begin{equation}
 R_{\mathrm{norm}}^{(l)}(R) = \frac{|\mathrm{dPD}^{(l)}(R)|}{\max\left(p_{\mathrm{sel}}(x), \varepsilon\right)},
 \end{equation}
-where $p_{\mathrm{sel}}(x)=\max\{p(\texttt{True}\mid x), p(\texttt{False}\mid x)\}$ on the unablated prompt and $\varepsilon=10^{-6}$. We report both this absolute score and its signed counterpart. Regions are defined by character-span alignment and then mapped back to token indices: \textbf{Facts Region}, \textbf{Expression Region}, and \textbf{Query Region}. The current implementation folds the older CLI aliases \texttt{constrain\_region} and \texttt{terminal\_token} into \texttt{query\_region} for backward compatibility. To summarize stage structure, we additionally compute: 
-\begin{equation}
-\mathrm{BMI}_b = \frac{1}{|b|}\sum_{l \in b} R_{\mathrm{norm}}^{(l)}, \qquad
-\mathrm{BCR}_b = \frac{\sum_{l \in b} R_{\mathrm{norm}}^{(l)}}{\sum_{l=1}^{L} R_{\mathrm{norm}}^{(l)}},
-\end{equation}
-and the signed band index
-\begin{equation}
-\mathrm{SBI}_b = \frac{1}{|b|}\sum_{l \in b} \widetilde{R}_{\mathrm{norm}}^{(l)},
-\end{equation}
-where $b \in \{\text{Early},\text{Middle},\text{Late}\}$ and $\widetilde{R}_{\mathrm{norm}}^{(l)}$ denotes the signed score.
-
-Intuitively, \textbf{BMI} answers ``how strong is this region on average in this band?'', \textbf{BCR} answers ``where in depth is this region's total causal mass concentrated?'', and \textbf{SBI} answers ``is that effect directionally harmful or helpful for the correct answer?'' In practice, high BMI and high BCR in an early Facts cell indicate a sharply localized early computation stage, whereas a broad middle/late Query BCR indicates that final integration is distributed across the back half of the network rather than concentrated at a single layer.
+where $p_{\mathrm{sel}}(x)=\max\{p(\texttt{True}\mid x), p(\texttt{False}\mid x)\}$ on the unablated prompt and $\varepsilon=10^{-6}$. We report both this absolute score and its signed counterpart. Regions are defined by character-span alignment and then mapped back to token indices: \textbf{Facts Region}, \textbf{Expression Region}, and \textbf{Query Region}. For consistency, the older aliases \texttt{constrain\_region} and \texttt{terminal\_token} are subsumed into \texttt{query\_region}.
 
 \paragraph{Attention-region and joint attention+MLP ablations.}
-We additionally consider two region-level companions to the main MLP branch. In \textbf{attention-region ablation}, we replace \texttt{attn\_out} for all positions in a selected region by the within-sequence mean attention-output vector at that layer. In \textbf{joint attention+MLP ablation}, we apply the same mean replacement to both \texttt{attn\_out} and \texttt{mlp\_out} inside the same region during one forward pass. Both branches reuse the same region parser, the same $\mathrm{dPD}$-based scoring, and the same BMI/BCR/SBI summaries as the MLP branch. Their results are summarized in Appendix~\ref{sec:appendix_region_variants}.
+We additionally consider two region-level companions to the main MLP branch. In \textbf{attention-region ablation}, we replace \texttt{attn\_out} for all positions in a selected region by the within-sequence mean attention-output vector at that layer. In \textbf{joint attention+MLP ablation}, we apply the same mean replacement to both \texttt{attn\_out} and \texttt{mlp\_out} inside the same region during one forward pass. Both branches reuse the same three-region parser and the same $\mathrm{dPD}$-based scoring. Their results are summarized in Appendix~\ref{sec:appendix_region_variants}.
 
 \paragraph{Token-wise residual patching.}
-This procedure supports the Information Transmission analysis in §\ref{sec:info}, including the aggregated token-category result in Figure~\ref{fig:info_converge_token} and its appendix-scale extensions in Appendix~\ref{sec:appendix_info_converge}.
+This procedure supports the Information Transmission analysis in §\ref{sec:info}, including the aggregated token-category analyses reported in Appendix~\ref{sec:appendix_info_converge}.
 The token analysis is a two-stage pipeline. In the raw stage, we patch \texttt{resid\_pre} one layer and one token at a time from the clean prompt into the corrupted prompt, and save the resulting layer-by-token patching tensor for downstream analysis. In the Qwen3 experiments reported here, this raw stage uses the dual-correct subset, \texttt{strict\_length\_match=True}, and a balanced sample budget of up to $1000$ examples per setting. Because chat formatting may prepend template tokens, raw prompt positions are first aligned to model-input positions using tokenizer offset mappings; if offset-based alignment fails, the implementation falls back to a contiguous body-span mapping inside the model input. For a sample with $T$ aligned raw-token positions, we obtain a matrix $\mathrm{dPD}_{l,i}$ with $l \in [0,L-1]$ and $i \in [1,T]$.
 
 The raw stage also produces a simple token grouping used for quick diagnostics and plotting. These simple categories are \texttt{facts\_value}, \texttt{query\_token}, \texttt{expr\_last}, \texttt{expression\_token}, and \texttt{others}. The refined stage then reclassifies each token into a more detailed taxonomy using prompt-order-aware string heuristics:
@@ -1343,10 +1306,13 @@ The raw dataset itself is not filtered by model behavior. Model-specific filteri
 \label{sec:appendix_results}
 
 \paragraph{Roadmap.}
-This appendix proceeds from compact summaries to increasingly specialized diagnostics. We begin with the behavioral baseline and the prompt-order intervention, then extend the main-text analyses at the region, token, and head levels, and finally collect cross-model comparisons and complete validation tables. The large figure galleries included later should therefore be read as expansions of the corresponding main-text claims rather than as disconnected result families.
+This appendix proceeds from compact summaries to increasingly specialized diagnostics. It begins with the behavioral baseline and the prompt-order intervention, then extends the main-text analyses at the region, token, and head levels, and finally turns to cross-model comparisons, a short synthesis, and the complete validation tables. The large figure galleries that follow expand the same claims at fuller granularity.
+
+\paragraph{How the appendix supports the main text.}
+The appendix is organized around the paper's four main mechanisms rather than around figure type alone. Sections~\ref{sec:appendix_prompt_order}, \ref{sec:appendix_stage}, and~\ref{sec:appendix_region_variants} extend \textbf{Staged Computation} to harder prompt orders, larger scale, and additional intervention branches. Section~\ref{sec:appendix_info_converge} broadens the evidence for \textbf{Information Transmission} and \textbf{Fact Retrospection} through additional corruption patterns and reasoning depths. Section~\ref{appendix_heads} expands \textbf{Specialized Attention Heads} from the main-text examples to a replicated taxonomy-and-validation result. Section~\ref{sec:appendix_llama} then shows which parts of the picture recur in other model families and which remain especially sharp in Qwen3.
 
 \paragraph{How to read the recurring figures.}
-Several visual formats reappear throughout the appendix. In the band-metric panels, \textbf{BMI} asks how strong a region's average effect is within a depth band, \textbf{BCR} asks what fraction of that region's \emph{total} causal mass falls in that band, and \textbf{SBI} restores sign: strongly negative values indicate that mean-ablation typically lowers support for the correct answer, while positive values indicate that the replacement is directionally helpful. In the stacked-BCR charts, each region sums to $1$, so the plot should be read as a \emph{where-in-depth} decomposition rather than as a raw magnitude comparison across regions. In the token plots, larger unsigned values mean a token class carries more answer-relevant information, while signed variants distinguish large-but-canceling effects from directionally consistent ones. In the head-validation curves, steeper upward absolute-ratio curves or more negative raw-dPD curves indicate that ablating the selected heads is more harmful.
+Several visual formats reappear throughout the appendix. In the retained region galleries, the main question is where a region peaks in depth and how broad that peak is. In the token plots, larger unsigned values mean a token class carries more answer-relevant information, while signed variants distinguish large-but-canceling effects from directionally consistent ones. In the head-validation curves, steeper upward absolute-ratio curves or more negative raw-dPD curves indicate that ablating the selected heads is more harmful.
 
 \subsection{Behavioral Performance on PropLogic-MI}
 \label{sec:appendix_performance}
@@ -1398,6 +1364,7 @@ Identity & 91.4 & 96.7 & 79.4 & 77.2 \\
 \end{table}
 
 Several trends are worth highlighting. First, prompt order has a large and consistent effect: moving from \texttt{facts\_first} to \texttt{expr\_first} lowers clean accuracy by 12.76 points in \textit{Qwen3-8B} and 13.03 points in \textit{Qwen3-14B}, while reducing the dual-correct rate by 21.55 and 23.75 points, respectively. Second, corrupted prompts are slightly easier in all four settings, with corrupted accuracy exceeding clean accuracy by 1.69--5.04 points. Third, hop depth interacts with prompt order: under \texttt{expr\_first}, both models show a substantial two-hop penalty, especially \textit{Qwen3-14B} (88.34\% one-hop vs. 61.72\% two-hop), whereas \texttt{facts\_first} remains considerably more stable. Finally, the rule-wise breakdown shows a persistent split between easy algebraic symmetries and harder conflict-style rules: Commutative is consistently above 92\%, De Morgan reaches 100\% in \textit{Qwen3-14B}, while Contradiction is the weakest rule in all four settings.
+These behavioral contrasts motivate the analytical choice made in the main text. The mechanistic analysis is centered on \texttt{facts\_first} because that setting is both more accurate and much richer in dual-correct samples, whereas \texttt{expr\_first} functions as a harder intervention that tests whether the same organization survives a less favorable surface order.
 
 \subsection{Prompt-Order Intervention: \texttt{expr\_first}}
 \label{sec:appendix_prompt_order}
@@ -1405,36 +1372,31 @@ We use \texttt{expr\_first} as a controlled prompt-order intervention. Relative 
 
 The observed pattern supports a mixed interpretation. Prompt order clearly matters behaviorally (Table~\ref{tab:appendix_performance_summary}), and it also redistributes where computation is concentrated. However, the coarse mechanisms identified in the main text do not disappear under \texttt{expr\_first}: staged MLP sensitivity remains visible, token-level convergence is still expected to center on the final query position, and the same three head roles remain recoverable with strong causal validation. We therefore interpret the \texttt{expr\_first} results as evidence that the existence of staged computation is largely model-driven, while the exact allocation of computation across regions is prompt-sensitive.
 
-\paragraph{How to read the band panels.}
-Figures in this subsection are best read row-wise by hop depth and then across the BMI/BCR/SBI columns. Large BMI indicates a strong average ablation effect in that band; large BCR indicates that the band accounts for a large share of that region's total effect; and strongly negative SBI indicates that replacing the region with its mean consistently hurts correct-answer support. The most informative cells are therefore usually the ones that are both high in BCR and directionally negative in SBI, because they identify not just large magnitude, but \emph{where} the model is systematically relying on that region.
-
 \paragraph{Staged computation under prompt reordering.}
-The MLP results already show a systematic prompt-order shift rather than a collapse of the stage structure. Figure~\ref{fig:expr_first_stage_panel} summarizes the full band-level comparison, while Figure~\ref{fig:query_region_prompt_order} isolates the query-region curves. In one-hop \textit{Qwen3-8B}, the early-band contribution ratio (BCR) of the Expression Region increases from $0.69$ under \texttt{facts\_first} to $0.77$ under \texttt{expr\_first}, while the Facts Region early-band BCR falls from $0.86$ to $0.69$. The same pattern appears in one-hop \textit{Qwen3-14B}, where the Expression Region early-band BCR rises from $0.68$ to $0.84$ and the Facts Region early-band BCR falls from $0.82$ to $0.60$. Meanwhile, the Query Region remains a late-stage aggregation site, with its late-band BCR increasing from $0.13$ to $0.19$ in one-hop \textit{Qwen3-8B}. This is consistent with a prompt-sensitive redistribution of computational load: placing the queried expression first pulls expression processing earlier, but it does not remove the late-stage answer integration step.
+The prompt-order shift remains clear in the region analyses even without a dedicated summary panel. In one-hop \textit{Qwen3-8B}, the Expression Region early-band contribution increases from $0.69$ under \texttt{facts\_first} to $0.77$ under \texttt{expr\_first}, while the Facts Region early-band contribution falls from $0.86$ to $0.69$. The same pattern appears in one-hop \textit{Qwen3-14B}, where the corresponding values move from $0.68$ to $0.84$ for Expression and from $0.82$ to $0.60$ for Facts. At the same time, the Query Region remains a middle-to-late integration site; its one-hop late-band contribution in \textit{Qwen3-8B} rises from $0.13$ to $0.19$, and the retained query-region curves in Figure~\ref{fig:query_region_prompt_order} show that this integration stage persists under both prompt orders. In two-hop \textit{Qwen3-8B}, the same tendency survives: the Query Region late-band contribution rises from $0.17$ to $0.22$ under \texttt{expr\_first}, while middle-band mass remains dominant in both settings. Prompt reordering therefore changes \emph{where} the model spends computation, but not the basic fact-processing $\rightarrow$ expression-processing $\rightarrow$ answer-integration template.
 
-The same tendency persists in more difficult settings. In two-hop \textit{Qwen3-8B}, the late-band BCR of the Query Region rises from $0.17$ under \texttt{facts\_first} to $0.22$ under \texttt{expr\_first}, while the middle-band contribution remains dominant in both cases ($0.49$ vs. $0.43$). In \textit{Qwen3-14B}, one-hop \texttt{expr\_first} again shifts the Facts Region away from an overwhelmingly early-stage pattern (early-band BCR $0.82 \rightarrow 0.60$) while strengthening the expression-first computation profile (Expression Region early-band BCR $0.68 \rightarrow 0.84$). Thus, prompt reordering changes \emph{where} the model spends computation, but not the basic fact-processing $\rightarrow$ expression-processing $\rightarrow$ answer-integration template.
-
-\begin{figure*}[t]
-    \centering
-
-    \begin{subfigure}[b]{0.9\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/comparison_expr_first/band_metrics_panel.png}
-        \caption{\textit{Qwen3-8B}}
-        \label{fig:expr_first_stage_8b}
-    \end{subfigure}
-
-    \vspace{0.8em}
-
-    \begin{subfigure}[b]{0.9\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/comparison_expr_first_14B/band_metrics_panel.png}
-        \caption{\textit{Qwen3-14B}}
-        \label{fig:expr_first_stage_14b}
-    \end{subfigure}
-
-    \caption{\textbf{Staged computation under the \texttt{expr\_first} prompt-order intervention.} Band-level MLP ablation summaries for the \texttt{expr\_first} condition, shown separately for \textit{Qwen3-8B} and \textit{Qwen3-14B}. Each panel compares one-hop and two-hop settings across the main semantic regions. The key pattern is a redistribution rather than a disappearance of stages: when the queried expression is placed first, the Expression Region acquires more early-band mass, the Facts Region becomes less exclusively early-layer dominated, and the Query Region retains a strong middle-to-late aggregation profile. This supports the claim that prompt order modulates the allocation of computation across regions, while the existence of a staged computational hierarchy remains stable.}
-    \label{fig:expr_first_stage_panel}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%
+%    \begin{subfigure}[b]{0.9\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/comparison_expr_first/band_metrics_panel.png}
+%        \caption{\textit{Qwen3-8B}}
+%        \label{fig:expr_first_stage_8b}
+%    \end{subfigure}
+%
+%    \vspace{0.8em}
+%
+%    \begin{subfigure}[b]{0.9\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis_expr_first/comparison_expr_first_14B/band_metrics_panel.png}
+%        \caption{\textit{Qwen3-14B}}
+%        \label{fig:expr_first_stage_14b}
+%    \end{subfigure}
+%
+%    \caption{\textbf{Staged computation under the \texttt{expr\_first} prompt-order intervention.} Band-level MLP ablation summaries for the \texttt{expr\_first} condition, shown separately for \textit{Qwen3-8B} and \textit{Qwen3-14B}. Each panel compares one-hop and two-hop settings across the main semantic regions. The key pattern is a redistribution rather than a disappearance of stages: when the queried expression is placed first, the Expression Region acquires more early-band mass, the Facts Region becomes less exclusively early-layer dominated, and the Query Region retains a strong middle-to-late aggregation profile. This supports the claim that prompt order modulates the allocation of computation across regions, while the existence of a staged computational hierarchy remains stable.}
+%    \label{fig:expr_first_stage_panel}
+%\end{figure*}
 
 \begin{figure*}[t]
     \centering
@@ -1511,19 +1473,21 @@ The head analysis shows the same pattern of prompt-sensitive reallocation atop a
     \label{fig:expr_first_heads_panel}
 \end{figure*}
 
+Across regions, tokens, and heads, prompt reordering changes the allocation of computation without erasing the underlying organization. The staged region profile, the query-side convergence pattern, and the head-role topology all remain visible under \texttt{expr\_first}, even though their relative weights shift. The prompt-order results therefore constrain the main claim: the mechanisms are sensitive to surface order, but they are not reducible to surface order.
+
 \subsection{Staged Computation}
 \label{sec:appendix_stage}
-We replicated the same MLP region mean-ablation analysis on \textit{Qwen3-14B} to verify cross-model consistency. Following the current implementation, we partition prompts into Facts, Expression, and Query regions, intervene on \texttt{mlp\_out} with within-sequence mean replacement, and summarize the resulting $\mathrm{dPD}$ traces using BMI/BCR/SBI. Figure~\ref{fig:staged_computation_14B} confirms that the same early-facts / middle-expression / late-query organization persists at the larger scale.
+We replicated the same MLP region mean-ablation analysis on \textit{Qwen3-14B} to verify cross-model consistency. Using the same three-region partition, we intervene on \texttt{mlp\_out} with within-sequence mean replacement. Figure~\ref{fig:staged_computation_14B} confirms that the same early-facts / middle-expression / late-query organization persists at the larger scale.
+The 14B replication shows that the staged decomposition is not an 8B-specific artifact. The same early-Facts / middle-Expression / query-side integration pattern persists at the larger scale, so the main-text staged-computation result should be read as an intra-family regularity rather than as a single-model observation.
 
 \subsection{Additional Region-Level Ablations}
 \label{sec:appendix_region_variants}
-We additionally consider two region-level companions to the main MLP branch: \textbf{attention-region ablation} and \textbf{joint attention+MLP ablation}. Both reuse the same three-region parser and the same BMI/BCR/SBI summaries. To keep these branches visually comparable to the main-text MLP figure, Figures~\ref{fig:attn_region_triples} and~\ref{fig:attn_mlp_region_triples} group the three region curves for one model under the same one-hop \texttt{facts\_first} template in a single row.
+We additionally consider two region-level companions to the main MLP branch: \textbf{attention-region ablation} and \textbf{joint attention+MLP ablation}. Both reuse the same three-region parser. To keep these branches visually comparable to the main-text MLP figure, Figures~\ref{fig:attn_region_triples} and~\ref{fig:attn_mlp_region_triples} group the three region curves for one model under the same one-hop \texttt{facts\_first} template in a single row.
 
-The interpretive distinction is straightforward. If a branch mainly changes \textbf{BMI}, it changes the \emph{strength} of the intervention effect. If it mainly changes \textbf{BCR}, it changes \emph{where in depth} the model spends that effect. The attention branch is especially informative in this regard because it often leaves the coarse region order intact while redistributing more mass into middle- and late-band routing.
+Two patterns are especially consistent. First, attention-region ablation shifts more mass into middle-layer Expression processing and later Query integration than pure MLP ablation. In one-hop \textit{Qwen3-8B}, the Expression Region middle-band share rises from $0.30$ in the MLP branch to $0.58$ in the attention branch, and the Query Region late-band share rises from $0.09$ to $0.12$. \textit{Qwen3-14B} shows the same shift ($0.32 \rightarrow 0.55$ for middle-band Expression and $0.04 \rightarrow 0.09$ for late-band Query). This is consistent with attention contributing more directly to cross-token routing and late integration.
 
-Two patterns are especially consistent. First, attention-region ablation places relatively more BCR mass in the middle Expression Region and the late Query Region than pure MLP ablation. In one-hop \textit{Qwen3-8B}, the Expression Region middle-band BCR rises from $0.30$ in the MLP branch to $0.58$ in the attention branch, and the Query Region late-band BCR rises from $0.09$ to $0.12$. \textit{Qwen3-14B} shows the same shift ($0.32 \rightarrow 0.55$ for middle-band Expression BCR and $0.04 \rightarrow 0.09$ for late-band Query BCR). This is consistent with attention contributing more directly to cross-token routing and late integration.
-
-Second, the joint attention+MLP intervention preserves the same coarse staged template while tightening early Facts Region dominance. In one-hop, the early-band Facts Region BCR becomes $0.86$ / $0.88$ in \textit{Qwen3-8B} / \textit{Qwen3-14B}, compared with $0.86$ / $0.82$ in the pure MLP branch. Thus, the joint branch does not overturn the staged picture; it reinforces the view that routing and nonlinear transformation contribute complementary pieces of the same three-stage computation.
+Second, the joint attention+MLP intervention preserves the same coarse staged template while tightening early Facts dominance. In one-hop, the early-band Facts share becomes $0.86$ / $0.88$ in \textit{Qwen3-8B} / \textit{Qwen3-14B}, compared with $0.86$ / $0.82$ in the pure MLP branch. Thus, the joint branch does not overturn the staged picture; it reinforces the view that routing and nonlinear transformation contribute complementary pieces of the same three-stage computation.
+These branch comparisons show that stage structure is not unique to MLP ablation. The attention-only and joint interventions preserve the same coarse ordering while changing how sharply different regions are separated. MLP ablation is therefore best understood as the clearest probe of the staged pattern, not as the only branch in which that pattern appears.
 
 \begin{figure*}[t]
     \centering
@@ -1627,44 +1591,16 @@ Second, the joint attention+MLP intervention preserves the same coarse staged te
 \label{sec:appendix_info_converge}
 
 \paragraph{Metric Definitions.}
-The current token pipeline measures causal effects using the label-aligned True/False probability difference rather than the raw logit gap. Concretely, for the final answer position we define
-$$\mathrm{PD}(x) = p_{\theta}(\texttt{True}\mid x) - p_{\theta}(\texttt{False}\mid x),$$
-where the probabilities are computed by a two-way softmax restricted to the True/False answer tokens. For a patched run at layer $l$ and token position $i$, the token-level shift is
-$$\mathrm{dPD}_{l,i} = \mathrm{PD}_{\mathrm{patched}}^{(l,i)} - \mathrm{PD}_{\mathrm{baseline}}.$$
+The token pipeline measures causal effects with the same aligned probability-difference metric used in the main text. For an answer label $y$ with paired alternative $\neg y$, we define
+$$\mathrm{PD}(x,y) = p_{\theta}(w_y\mid x) - p_{\theta}(w_{\neg y}\mid x),$$
+where the probabilities are computed by a two-way softmax restricted to the benchmark's answer tokens (in our case, \texttt{True} and \texttt{False}). For a patched run at layer $l$ and token position $i$, the token-level shift is
+$$\mathrm{dPD}_{l,i}(y) = \mathrm{PD}_{\mathrm{patched}}^{(l,i)}(x,y) - \mathrm{PD}_{\mathrm{baseline}}(x,y).$$
 Throughout this appendix, we therefore describe the token-level intervention effect using the updated \textbf{probability-difference shift} notation.
 
-We employ two aggregation strategies:
-
-\textbf{(1) Mean $|\mathrm{dPD}|$ across samples} (Figure~\ref{fig:info_converge_token} and Figure~\ref{fig:info_converge_appendix}): We aggregate $|\mathrm{dPD}|$ by: (i) averaging over layers within each stage (Early, Middle, Late), (ii) averaging over tokens belonging to the same category within each sample, and (iii) averaging across all samples in the dataset.
-
-\textbf{(2) Mean $|\mathrm{dPD}|$ per token} ($\mathrm{M}|\mathrm{dPD}|$, Figure~\ref{fig:infor_convergence_multi_corrupted}): For single-sample case studies, we compute the mean absolute shift at each token position $i$ within a layer stage $S$:
-$$\mathrm{M}|\mathrm{dPD}|_i^{(S)} = \frac{1}{|S|}\sum_{l \in S} |\mathrm{dPD}_{l,i}|.$$
-This metric captures how much patching each token position shifts the model's answer preference within each layer group.
+We aggregate $|\mathrm{dPD}|$ by: (i) averaging over layers within each stage (Early, Middle, Late), (ii) averaging over tokens belonging to the same category within each sample, and (iii) averaging across all samples in the dataset. This stage- and category-pooled view is the main token summary used in the retained appendix figures.
 
 \paragraph{How to read the token diagnostics.}
 The unsigned token plots answer a magnitude question: \emph{which token classes matter most?} The signed token plots answer a directional question: \emph{which token classes push the model toward the correct answer rather than merely producing large but canceling shifts?} Raw heatmaps are the most local view, because they expose whether the effect is concentrated at a narrow depth window or smeared across layers; the stage-aggregated bar plots are the most comparative view, because they make cross-category and cross-model differences easier to read at a glance.
-
-\paragraph{Single-Sample Case Studies.}
-Figure~\ref{fig:infor_convergence_multi_corrupted} extends the single-sample analysis from Figure~\ref{fig:logit_difference} (main text) by systematically varying which fact tokens are corrupted. This provides a controlled validation of the Information Transmission phenomenon across different corruption configurations.
-
-\begin{figure*}[t]
-  \includegraphics[width=\textwidth]{./figures/info-convergence-multi-corrupted.png}
-	\caption{Token-wise activation patching under multiple corruption scenarios.
-	Each panel shows $\mathrm{M}|\mathrm{dPD}|$ per token across Early (L0-13), Middle (L14-23), and Late (L24-35) layer groups. The clean prompt is \texttt{A is True, B is False, ($\neg$A or $\neg$B) is}.
-	Top: B changes (False$\to$True). The corrupted \texttt{True} token (position 8) exhibits high sensitivity in early/middle layers.
-	Middle: A changes (True$\to$False). The corrupted \texttt{False} token shows similar early-layer dominance.
-	Bottom: Both A and B change. Combined effects appear at both fact positions.
-	Across all scenarios, the query token \texttt{is} shows a significant surge in late layers, confirming information convergence toward the prediction position.}
-	\label{fig:infor_convergence_multi_corrupted}
-\end{figure*}
-
-The results reveal several consistent patterns across all corruption scenarios:
-
-(1) Early-layer fact encoding. In each scenario, the corrupted fact token(s) exhibit maximal patching sensitivity in early layers (L0-13). When only B changes (Top panel), position 8 dominates; when only A changes (Middle panel), position 4 dominates; when both change (Bottom panel), both positions show elevated effects. This confirms that fact tokens are primarily encoded in early layers regardless of which specific facts are manipulated.
-
-(2) Late-layer query convergence. Across all three scenarios, the query token \texttt{is} consistently shows a pronounced surge in late layers (L24-35), with $\mathrm{M}|\mathrm{dPD}|$ values of +2.0, +0.8, and +2.5 respectively. This invariance across corruption types provides strong evidence that late-layer query convergence is a robust architectural property, not an artifact of specific input configurations.
-
-(3) Additive effects in multi-fact corruption. The Bottom panel (both A and B corrupted) shows that patching effects at individual fact positions are approximately additive: the combined effect at positions 4 and 8 roughly equals the sum of effects observed when each is corrupted individually. This suggests that the model processes multiple facts through parallel, largely independent early-layer pathways before integrating them at later stages.
 
 \paragraph{Extended Results.}
 To verify the generalizability of the Information Transmission phenomenon, we extend our token-wise $|\mathrm{dPD}|$ analysis to \textit{Qwen3-14B} and two-hop reasoning tasks. Figure~\ref{fig:info_converge_appendix} presents the complete results.
@@ -1695,17 +1631,18 @@ To verify the generalizability of the Information Transmission phenomenon, we ex
     \caption{Token-wise information convergence across model scales and reasoning depths.
     All panels show Mean $|\mathrm{dPD}|$ per token category across Early (L0-13), Middle (L14-23), and Late (L24-35) layer groups.
     (a-b) Two-hop reasoning: The convergence pattern persists with attenuated magnitudes due to increased reasoning complexity. Notably, \texttt{query\_token} remains dominant in late layers, while \texttt{expr\_last} (the segment-terminal token of the expression region) also shows elevated $|\mathrm{dPD}|$ in middle layers, confirming that segment-terminal tokens serve as information hubs.
-    (c) Qwen3-14B One-hop: Consistent with the 8B model (Figure~\ref{fig:info_converge_token}), demonstrating scale-invariant information flow patterns.
+    (c) Qwen3-14B One-hop: Consistent with the corresponding 8B analysis, demonstrating scale-invariant information flow patterns.
     These results confirm that Information Transmission is a robust mechanism across both model scales and reasoning depths.}
     \label{fig:info_converge_appendix}
 \end{figure*}
 
 
 \paragraph{Cross-Model Consistency.}
-Comparing Figure~\ref{fig:info_converge_token} (\textit{Qwen3-8B}) with Figure~\ref{fig:info_converge_onehop_14b} (\textit{Qwen3-14B}), both models exhibit nearly identical convergence patterns on one-hop tasks. The \texttt{facts\_value} dominance in early layers and \texttt{query\_token} surge in late layers are preserved across the 8B$\rightarrow$14B scaling, suggesting that Information Transmission is an architectural property rather than a scale-dependent phenomenon.
+Comparing the retained one-hop \textit{Qwen3-14B} panel in Figure~\ref{fig:info_converge_onehop_14b} with the corresponding 8B analysis discussed in the main text, both models exhibit nearly identical convergence patterns on one-hop tasks. The \texttt{facts\_value} dominance in early layers and \texttt{query\_token} surge in late layers are preserved across the 8B$\rightarrow$14B scaling, suggesting that Information Transmission is an architectural property rather than a scale-dependent phenomenon.
 
 \paragraph{Reasoning Depth Effects.}
 In two-hop reasoning (Figures~\ref{fig:info_converge_twohop_8b} and~\ref{fig:info_converge_twohop_14b}), the overall $|\mathrm{dPD}|$ magnitudes are substantially lower compared to one-hop tasks. This attenuation reflects the increased computational complexity: with additional intermediate reasoning steps, causal effects become more distributed across the network. Nevertheless, the qualitative convergence pattern, characterized by early factual encoding followed by late-layer query aggregation, remains intact. Furthermore, the \texttt{expr\_last} token (representing the final token of the expression region) exhibits moderate but consistent $|\mathrm{dPD}|$ values in middle layers across all settings, reinforcing our finding that segment-terminal tokens serve as critical information hubs throughout the network.
+These token-level extensions move the argument beyond a single illustrative heatmap. Terminal-token convergence survives multiple corruption layouts, larger scale, and two-hop reasoning, while the sustained contribution of fact-side tokens remains visible beyond the earliest layers. This broader evidence base is what supports treating Information Transmission and Fact Retrospection as mechanism-level claims rather than as properties of one hand-picked example.
 
 \subsection{Specialized Attention Heads: Robustness and Validation}
 \label{appendix_heads}
@@ -1717,6 +1654,7 @@ The taxonomy line charts should be read as \emph{where the selected roles concen
 The coarse organization is stable across all settings. Splitting Heads remain concentrated in earlier layers, Transmission Heads span the middle of the model, and Fact-Retrieval Heads peak in middle-to-late layers and persist deep into the network. Prompt order changes the relative abundance of roles but not the overall topology: \texttt{expr\_first} prompts produce more Splitting Heads, whereas \texttt{facts\_first} prompts produce relatively more Fact-Retrieval Heads, consistent with the changed placement of structural boundaries and fact tokens. This robustness indicates that the head taxonomy tracks the computation required by the prompt rather than artifacts of a single format.
 
 Step 3 further provides a direct causal test. Table~\ref{tab:qwen3_head_accuracy_appendix} reports held-out clean-prompt accuracy after ablating the top-32 heads for each role, using balanced validation samples drawn from the filtered dual-correct pool. On \textit{Qwen3-8B} with \texttt{facts\_first} prompts, ablating Fact-Retrieval / Transmission / Splitting heads lowers accuracy from 96.6\% to 57.0\% / 69.2\% / 80.4\%, while the matched Random-Outside control remains at 97.2\%. The same qualitative gap appears in the other three settings: role-specific ablations reduce accuracy by 29.6 / 19.6 / 19.6 points in \textit{Qwen3-8B} with \texttt{expr\_first}, by 31.0 / 25.6 / 10.0 points in \textit{Qwen3-14B} with \texttt{facts\_first}, and by 20.4 / 21.0 / 10.8 points in \textit{Qwen3-14B} with \texttt{expr\_first}. By contrast, the Random-Outside baseline remains near the original accuracy in every setting. Tables~\ref{tab:qwen3_8b_ff_full_accuracy}--\ref{tab:qwen3_14b_ef_full_accuracy} provide the complete Qwen3 accuracy tables for all strategy types and all $k \in \{1,2,4,8,16,32,64\}$. Together, these results confirm that the identified roles are not merely visually distinctive attention patterns: they are causally important components of the mechanism uncovered in the main analysis.
+Across scale and prompt order, the same layer topology persists and the same role-targeted ablations remain much more damaging than the matched random control. The head taxonomy in the main text is therefore supported by a replicated causal pattern rather than by a small number of visually striking examples.
 
 \begin{table*}[t]
 \centering
@@ -1774,11 +1712,10 @@ We also ran the same pipeline on \textit{Llama-3.1-8B-Instruct} and \textit{Mist
 \paragraph{How to compare the cross-model figures.}
 The most reliable comparison is branch-matched rather than figure-matched: compare MLP with MLP, attention with attention, and joint with joint across families before comparing prompt orders. Within each branch, heavier Query mass indicates a more output-position-centered strategy, while cleaner early Facts and middle Expression concentration indicates a sharper staged decomposition. The cross-model gallery figures later in the appendix are organized with exactly this comparison rule in mind.
 
-\paragraph{Llama: behavioral comparison with Qwen3.}
-Behaviorally, Llama underperforms the Qwen3 family on the same benchmark. Under \texttt{facts\_first}, Llama reaches $63.86\%$ clean accuracy and a $38.37\%$ dual-correct rate, compared with $86.98\%$ / $75.44\%$ for \textit{Qwen3-8B}. Under \texttt{expr\_first}, the gap remains large: Llama reaches $60.34\%$ clean accuracy and $37.02\%$ dual-correct, whereas \textit{Qwen3-8B} reaches $74.22\%$ and $53.89\%$. The hop interaction is also qualitatively different. Llama's \texttt{expr\_first} prompts are better on one-hop than \texttt{facts\_first} ($81.47\%$ vs. $69.05\%$), but substantially worse on two-hop ($41.13\%$ vs. $59.13\%$). By contrast, Qwen3 remains much more stable under the same intervention. This suggests that Llama is more brittle to prompt-order changes once multi-step composition is required.
+\subsubsection{Llama-3.1-8B-Instruct}
+Behaviorally, Llama is substantially weaker than the Qwen3 family on the same benchmark. Under \texttt{facts\_first}, it reaches $63.86\%$ clean accuracy and a $38.37\%$ dual-correct rate, compared with $86.98\%$ / $75.44\%$ for \textit{Qwen3-8B}. Under \texttt{expr\_first}, the gap remains large at $60.34\%$ clean accuracy and $37.02\%$ dual-correct. The hop interaction is also different from Qwen3: Llama improves on one-hop when the queried expression is front-loaded ($81.47\%$ vs. $69.05\%$) but collapses on two-hop ($41.13\%$ vs. $59.13\%$). The prompt-order sensitivity is therefore concentrated in multi-step composition rather than in the easier one-hop regime.
 
-\paragraph{Llama: token and region-level structure.}
-The token-analysis branch is now complete. Figure~\ref{fig:token_facts_first_cross_model} collects the current \texttt{facts\_first} refined token-analysis outputs for all four models under a shared layout, with one subfigure per model and prompt template; Appendix~\ref{sec:appendix_extra_token_gallery} adds the raw and signed token diagnostics that make the same inter-family contrast more explicit. In the refined \texttt{facts\_first} token analysis, the dominant Llama categories are still \texttt{query\_token} and \texttt{facts\_value}, but their total contribution is much weaker than in Qwen3-8B: $1.63$ and $0.72$ in Llama, versus $2.22$ and $2.47$ in Qwen3-8B. This suggests that the same information-transmission motif is present, but less sharply concentrated.
+At the token level, Figures~\ref{fig:token_facts_first_cross_model} and~\ref{fig:token_expr_first_cross_model} show the same broad token taxonomy as in Qwen3, but with much heavier query emphasis. In the refined unsigned totals, \texttt{query\_token} exceeds \texttt{facts\_value} under both prompt orders: $1.63$ vs. $0.72$ under \texttt{facts\_first}, and $2.05$ vs. $1.23$ under \texttt{expr\_first}. Appendix~\ref{sec:appendix_extra_token_gallery} shows that this pattern survives both signed and mean-normalized views, so it is not just a consequence of category size.
 
 \begin{figure*}[t]
     \centering
@@ -1815,122 +1752,119 @@ The token-analysis branch is now complete. Figure~\ref{fig:token_facts_first_cro
     \label{fig:token_facts_first_cross_model}
 \end{figure*}
 
-Despite weaker behavioral performance, Llama still shows a coarse staged profile. Figure~\ref{fig:llama_mlp_panel} summarizes the MLP branch under both prompt orders, while Figure~\ref{fig:llama_band_overview} and Appendix~\ref{sec:appendix_extra_region_gallery} extend the comparison to the attention and joint branches. Facts and expressions remain early-to-middle dominant, while the Query Region accumulates a comparatively strong late contribution. Relative to Qwen3, the Query Region is much heavier throughout depth: for one-hop \texttt{facts\_first}, its late-band BCR is $0.22$ in Llama, versus $0.09$ in \textit{Qwen3-8B}. A plausible hypothesis is that Llama relies more heavily on answer-position scaffolding and suffix-aware integration, whereas Qwen3 exhibits a cleaner separation between semantic content regions and final answer integration.
+At the region level, Llama still shows a coarse staged profile in the retained region analyses collected in Appendix~\ref{sec:appendix_extra_region_gallery}. The main difference from Qwen3 is not the disappearance of staging, but the much heavier Query Region throughout depth. In one-hop \texttt{facts\_first} MLP ablation, the Query Region is split $0.51/0.27/0.22$ across early/middle/late bands in Llama, compared with $0.58/0.33/0.09$ in \textit{Qwen3-8B}. Llama therefore spends a much larger fraction of its region-level sensitivity on query-side scaffolding and final integration.
 
-\begin{figure*}[t]
-    \centering
-
-    \begin{subfigure}[b]{0.9\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{facts\_first}}
-        \label{fig:llama_mlp_facts_first}
-    \end{subfigure}
-
-    \vspace{0.8em}
-
-    \begin{subfigure}[b]{0.9\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{expr\_first}}
-        \label{fig:llama_mlp_expr_first}
-    \end{subfigure}
-
-    \caption{\textbf{Llama-3.1-8B-Instruct: staged computation under two prompt orders.} Band-level MLP ablation summaries for Llama. Panel (a) shows the default \texttt{facts\_first} condition; panel (b) shows the prompt-order intervention \texttt{expr\_first}. The same coarse staged pattern remains visible in both cases, but compared with Qwen3 the Query Region carries more weight throughout depth, suggesting a more output-position-centered computation strategy.}
-    \label{fig:llama_mlp_panel}
-\end{figure*}
-
-
-\begin{figure*}[t]
-    \centering
-
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{facts\_first}: MLP}
-        \label{fig:llama_band_ff_mlp}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{facts\_first}: Attention}
-        \label{fig:llama_band_ff_attn}
-    \end{subfigure}
-
-    \vspace{0.8em}
-
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{facts\_first}: Attention+MLP}
-        \label{fig:llama_band_ff_attn_mlp}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{expr\_first}: MLP}
-        \label{fig:llama_band_ef_mlp}
-    \end{subfigure}
-
-    \vspace{0.8em}
-
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{expr\_first}: Attention}
-        \label{fig:llama_band_ef_attn}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{expr\_first}: Attention+MLP}
-        \label{fig:llama_band_ef_attn_mlp}
-    \end{subfigure}
-
-    \caption{\textbf{Llama-3.1-8B-Instruct: band-level overviews for all three region-patching analyses.} Columns correspond to MLP, attention, and joint attention+MLP ablation; rows correspond to \texttt{facts\_first} and \texttt{expr\_first}. Across branches, the Query Region remains unusually heavy relative to Qwen3, and prompt reordering continues to redistribute mass without removing the coarse staged pattern.}
-    \label{fig:llama_band_overview}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%
+%    \begin{subfigure}[b]{0.9\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{facts\_first}}
+%        \label{fig:llama_mlp_facts_first}
+%    \end{subfigure}
+%
+%    \vspace{0.8em}
+%
+%    \begin{subfigure}[b]{0.9\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{expr\_first}}
+%        \label{fig:llama_mlp_expr_first}
+%    \end{subfigure}
+%
+%    \caption{\textbf{Llama-3.1-8B-Instruct: staged computation under two prompt orders.} Band-level MLP ablation summaries for Llama. Panel (a) shows the default \texttt{facts\_first} condition; panel (b) shows the prompt-order intervention \texttt{expr\_first}. The same coarse staged pattern remains visible in both cases, but compared with Qwen3 the Query Region carries more weight throughout depth, suggesting a more output-position-centered computation strategy.}
+%    \label{fig:llama_mlp_panel}
+%\end{figure*}
 
 
-\paragraph{Llama: head roles and causal validation.}
-The same three head roles remain identifiable in Llama, but they are less cleanly separated than in Qwen3. Figure~\ref{fig:llama_heads_panel} collects the corresponding taxonomy plots and validation curves. Under \texttt{facts\_first}, the Llama taxonomy yields $323$ classified heads in total (Fact-Retrieval $119$, Splitting $106$, Transmission $98$); under \texttt{expr\_first}, it yields $377$ heads (Fact-Retrieval $139$, Splitting $146$, Transmission $92$). Thus, the prompt-order effect on role allocation still matches Qwen3 qualitatively: \texttt{expr\_first} again increases the weight of Splitting Heads. However, the Step 3 validation curves and accuracy tables show a different causal signature. Under \texttt{facts\_first}, the base held-out accuracy is only $60.2\%$, and all role-targeted $k=32$ ablations collapse to $55.2\%$. Under \texttt{expr\_first}, the base held-out accuracy rises to $69.2\%$, but the same saturation pattern appears, with the corresponding $k=32$ role ablations all collapsing to $58.4\%$. Moreover, the Random-Outside control improves accuracy to $72.0\%$ / $79.2\%$ for \texttt{facts\_first} / \texttt{expr\_first}, indicating that mean-ablation replacement may regularize some diffuse heads rather than simply removing irrelevant structure. This is a notable contrast with Qwen3, where Random-Outside stays near baseline and role-targeted interventions produce much cleaner separations. The complete Llama Step 3 accuracy tables are reported in Tables~\ref{tab:llama_ff_full_accuracy} and~\ref{tab:llama_ef_full_accuracy}.
+%\begin{figure*}[t]
+%    \centering
+%
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{facts\_first}: MLP}
+%        \label{fig:llama_band_ff_mlp}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_facts_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{facts\_first}: Attention}
+%        \label{fig:llama_band_ff_attn}
+%    \end{subfigure}
+%
+%    \vspace{0.8em}
+%
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{facts\_first}: Attention+MLP}
+%        \label{fig:llama_band_ff_attn_mlp}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{expr\_first}: MLP}
+%        \label{fig:llama_band_ef_mlp}
+%    \end{subfigure}
+%
+%    \vspace{0.8em}
+%
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_analysis_expr_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{expr\_first}: Attention}
+%        \label{fig:llama_band_ef_attn}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_llama3/attn_mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{expr\_first}: Attention+MLP}
+%        \label{fig:llama_band_ef_attn_mlp}
+%    \end{subfigure}
+%
+%    \caption{\textbf{Llama-3.1-8B-Instruct: band-level overviews for all three region-patching analyses.} Columns correspond to MLP, attention, and joint attention+MLP ablation; rows correspond to \texttt{facts\_first} and \texttt{expr\_first}. Across branches, the Query Region remains unusually heavy relative to Qwen3, and prompt reordering continues to redistribute mass without removing the coarse staged pattern.}
+%    \label{fig:llama_band_overview}
+%\end{figure*}
 
-For direct comparison with the Qwen3 baseline discussed in the main text, Figure~\ref{fig:qwen3_region_band_overview} reproduces the corresponding Qwen3-8B branch-level band summaries in a single appendix figure.
 
-\begin{figure*}[t]
-    \centering
+At the head level, the same three roles remain recoverable, but they are not cleanly isolated in the causal validation. Figure~\ref{fig:llama_heads_panel} shows $323$ classified heads under \texttt{facts\_first} (Fact-Retrieval $119$, Splitting $106$, Transmission $98$) and $377$ under \texttt{expr\_first} (Fact-Retrieval $139$, Splitting $146$, Transmission $92$), so the prompt-order effect on role counts still resembles Qwen3. The Step~3 ablations, however, are weakly selective rather than sharply role-specific. At $k=32$, all three single-role ablations converge to the same floor: $55.2\%$ under \texttt{facts\_first} and $58.4\%$ under \texttt{expr\_first}. Meanwhile, the \textit{Random-Outside} control improves held-out accuracy to $72.0\%$ and $79.2\%$, respectively. Under this mean-ablation intervention, Llama therefore looks more diffuse than Qwen3: the role labels remain descriptively useful, but they do not isolate a clean subset of heads whose removal is uniquely harmful.
 
-    \begin{subfigure}[b]{0.95\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/comparison/band_metrics_panel.png}
-        \caption{MLP}
-        \label{fig:qwen3_band_mlp}
-    \end{subfigure}
-
-    \vspace{0.5em}
-
-    \begin{subfigure}[b]{0.95\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/comparison/band_metrics_panel.png}
-        \caption{Attention}
-        \label{fig:qwen3_band_attn}
-    \end{subfigure}
-
-    \vspace{0.5em}
-
-    \begin{subfigure}[b]{0.95\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/comparison/band_metrics_panel.png}
-        \caption{Attention+MLP}
-        \label{fig:qwen3_band_attn_mlp}
-    \end{subfigure}
-
-    \caption{\textbf{Qwen3-8B region-level band summaries across the three patching analyses.} All three panels correspond to the same \texttt{facts\_first} setting. Each panel compares one-hop and two-hop settings across the Facts, Expression, and Query regions using the shared BMI/BCR/SBI summary. The MLP and joint attention+MLP branches show the clearest early-facts / middle-expression / late-query decomposition, while the attention branch shifts comparatively more mass toward middle-layer expression routing and late query integration.}
-    \label{fig:qwen3_region_band_overview}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%
+%    \begin{subfigure}[b]{0.95\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/mlp_analysis/comparison/band_metrics_panel.png}
+%        \caption{MLP}
+%        \label{fig:qwen3_band_mlp}
+%    \end{subfigure}
+%
+%    \vspace{0.5em}
+%
+%    \begin{subfigure}[b]{0.95\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_analysis/comparison/band_metrics_panel.png}
+%        \caption{Attention}
+%        \label{fig:qwen3_band_attn}
+%    \end{subfigure}
+%
+%    \vspace{0.5em}
+%
+%    \begin{subfigure}[b]{0.95\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/attn_mlp_analysis/comparison/band_metrics_panel.png}
+%        \caption{Attention+MLP}
+%        \label{fig:qwen3_band_attn_mlp}
+%    \end{subfigure}
+%
+%    \caption{\textbf{Qwen3-8B region-level band summaries across the three patching analyses.} All three panels correspond to the same \texttt{facts\_first} setting. Each panel compares one-hop and two-hop settings across the Facts, Expression, and Query regions using the shared BMI/BCR/SBI summary. The MLP and joint attention+MLP branches show the clearest early-facts / middle-expression / late-query decomposition, while the attention branch shifts comparatively more mass toward middle-layer expression routing and late query integration.}
+%    \label{fig:qwen3_region_band_overview}
+%\end{figure*}
 
 
 \begin{figure*}[t]
@@ -1968,10 +1902,10 @@ For direct comparison with the Qwen3 baseline discussed in the main text, Figure
     \label{fig:llama_heads_panel}
 \end{figure*}
 
-\paragraph{Mistral: behavioral, token, and region-level structure.}
-Mistral presents a third behavioral profile. Under \texttt{facts\_first}, it reaches $65.09\%$ clean accuracy and a $35.11\%$ dual-correct rate. Under \texttt{expr\_first}, these rise slightly to $66.73\%$ and $39.98\%$. The gain is driven by one-hop prompts ($62.88\% \rightarrow 75.69\%$), while two-hop performance drops sharply ($67.09\% \rightarrow 58.59\%$), indicating that front-loading the query helps short-range reasoning but hurts deeper composition.
+\subsubsection{Mistral-7B-Instruct-v0.1}
+Mistral presents a third behavioral profile. Under \texttt{facts\_first}, it reaches $65.09\%$ clean accuracy and a $35.11\%$ dual-correct rate. Under \texttt{expr\_first}, both numbers rise slightly to $66.73\%$ and $39.98\%$. The improvement is driven entirely by one-hop prompts ($62.88\% \rightarrow 75.69\%$), while two-hop performance drops sharply ($67.09\% \rightarrow 58.59\%$). Front-loading the queried expression therefore helps short-range reasoning but hurts deeper composition.
 
-The refined Mistral token analysis is also complete. As in Qwen3 and Llama, \texttt{query\_token} and \texttt{facts\_value} remain the two dominant categories, with total contributions $1.04$ and $0.75$ under \texttt{facts\_first}. Thus, the same qualitative information-transmission signature remains visible, but again with lower total mass than in Qwen3. Figure~\ref{fig:token_expr_first_cross_model} further collects the current \texttt{expr\_first} refined token-analysis outputs for all four models under the same grouped layout, making the prompt-order intervention directly comparable across model families; Appendix~\ref{sec:appendix_extra_token_gallery} supplies the raw and signed diagnostics behind the same comparison.
+At the token level, Mistral sits between Qwen3 and Llama. In the refined unsigned totals, \texttt{query\_token} exceeds \texttt{facts\_value} under both prompt orders ($1.04$ vs. $0.75$ for \texttt{facts\_first}; $1.35$ vs. $0.89$ for \texttt{expr\_first}), which already makes it more query-facing than Qwen3. Appendix~\ref{sec:appendix_extra_token_gallery} shows a useful nuance, however: in the signed \texttt{facts\_first} totals, \texttt{query\_token} and \texttt{facts\_value} are almost tied ($0.731$ vs. $0.729$). Mistral is therefore not as uniformly query-dominant as Llama, but it is still less fact-centered than the main Qwen3 models.
 
 \begin{figure*}[t]
     \centering
@@ -2008,89 +1942,88 @@ The refined Mistral token analysis is also complete. As in Qwen3 and Llama, \tex
     \label{fig:token_expr_first_cross_model}
 \end{figure*}
 
-At the region level, Mistral still shows a coarse staged profile in the MLP branch, shown in Figure~\ref{fig:mistral_mlp_panel}. Figure~\ref{fig:mistral_band_overview} extends this to all three branches, and Appendix~\ref{sec:appendix_extra_region_gallery} adds the stacked-BCR and full-gallery views. The attention-region outputs indicate an even stronger late Query Region than the MLP branch: on one-hop \texttt{facts\_first}, the Query Region late-band BCR rises from $0.15$ in MLP ablation to $0.27$ in attention ablation. The joint branch stays more stage-like than pure attention, but still retains a broader query-facing tail than Qwen3. This suggests that Mistral may rely more heavily on late routing and integration than the main Qwen3 models.
+At the region level, Mistral still shows a coarse staged profile in the retained analyses collected in Appendix~\ref{sec:appendix_extra_region_gallery}. The main deviation from Qwen3 again appears on the query side. In one-hop \texttt{facts\_first}, the Query Region late-band share rises from $0.155$ in the MLP branch to $0.272$ in the attention branch, with the joint branch remaining intermediate at $0.233$. Facts and Expression stay early-dominant, so the difference is not a loss of staging but a broader late integration tail, especially in attention.
 
-\begin{figure*}[t]
-    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{facts\_first}}
-        \label{fig:mistral_mlp_facts_first}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
-        \caption{\texttt{expr\_first}}
-        \label{fig:mistral_mlp_expr_first}
-    \end{subfigure}
-    \caption{\textbf{Mistral-7B-Instruct-v0.1: staged computation under two prompt orders.} Band-level MLP ablation summaries for Mistral. The same broad early-facts / middle-expression / late-query structure remains visible, but the late Query Region is heavier than in Qwen3, consistent with a stronger dependence on final integration.}
-    \label{fig:mistral_mlp_panel}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{facts\_first}}
+%        \label{fig:mistral_mlp_facts_first}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.48\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+%        \caption{\texttt{expr\_first}}
+%        \label{fig:mistral_mlp_expr_first}
+%    \end{subfigure}
+%    \caption{\textbf{Mistral-7B-Instruct-v0.1: staged computation under two prompt orders.} Band-level MLP ablation summaries for Mistral. The same broad early-facts / middle-expression / late-query structure remains visible, but the late Query Region is heavier than in Qwen3, consistent with a stronger dependence on final integration.}
+%    \label{fig:mistral_mlp_panel}
+%\end{figure*}
 
-\begin{figure*}[t]
-      \centering
-      \begin{subfigure}[b]{0.47\textwidth}
-          \centering
-          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
-          \caption{\texttt{facts\_first}: MLP}
-          \label{fig:mistral_band_ff_mlp}
-      \end{subfigure}
-      \hfill
-      \begin{subfigure}[b]{0.47\textwidth}
-          \centering
-          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
-          \caption{\texttt{expr\_first}: MLP}
-          \label{fig:mistral_band_ef_mlp}
-      \end{subfigure}
+%\begin{figure*}[t]
+%      \centering
+%      \begin{subfigure}[b]{0.47\textwidth}
+%          \centering
+%          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+%          \caption{\texttt{facts\_first}: MLP}
+%          \label{fig:mistral_band_ff_mlp}
+%      \end{subfigure}
+%      \hfill
+%      \begin{subfigure}[b]{0.47\textwidth}
+%          \centering
+%          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+%          \caption{\texttt{expr\_first}: MLP}
+%          \label{fig:mistral_band_ef_mlp}
+%      \end{subfigure}
+%
+%      \vspace{0.8em}
+%
+%      \begin{subfigure}[b]{0.47\textwidth}
+%          \centering
+%          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/comparison/band_metrics_panel.png}
+%          \caption{\texttt{facts\_first}: Attention}
+%          \label{fig:mistral_band_ff_attn}
+%      \end{subfigure}
+%      \hfill
+%      \begin{subfigure}[b]{0.47\textwidth}
+%          \centering
+%          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/comparison/band_metrics_panel.png}
+%          \caption{\texttt{expr\_first}: Attention}
+%          \label{fig:mistral_band_ef_attn}
+%      \end{subfigure}
+%
+%      \vspace{0.8em}
+%
+%      \begin{subfigure}[b]{0.47\textwidth}
+%          \centering
+%          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
+%          \caption{\texttt{facts\_first}: Attention+MLP}
+%          \label{fig:mistral_band_ff_attn_mlp}
+%      \end{subfigure}
+%      \hfill
+%      \begin{subfigure}[b]{0.47\textwidth}
+%          \centering
+%          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/comparison/band_metrics_panel.png}
+%          \caption{\texttt{expr\_first}: Attention+MLP}
+%          \label{fig:mistral_band_ef_attn_mlp}
+%      \end{subfigure}
+%
+%      \caption{\textbf{Mistral-7B-Instruct-v0.1: band-level overviews for all three region-patching analyses under both prompt orders.} Rows correspond to MLP, attention, and joint
+%  attention+MLP ablations; columns correspond to \texttt{facts\_first} and \texttt{expr\_first}. Across all six panels, Mistral preserves a coarse staged template, but remains
+%  substantially more query-heavy than the main Qwen3 models. Under one-hop \texttt{facts\_first}, the Query Region late-band BCR rises from $0.155$ in the MLP branch to $0.272$ in
+%  the attention branch, with the joint branch remaining intermediate at $0.233$; meanwhile the Facts and Expression regions remain strongly early-dominant (for example, one-hop
+%  early-band BCRs are $0.782/0.713/0.782$ for Facts and $0.852/0.775/0.845$ for Expression across MLP/Attention/Attention+MLP). Under \texttt{expr\_first}, prompt reordering does
+%  not remove the staged decomposition, but reallocates more mass toward earlier Expression processing: in one-hop, the Expression Region early-band BCR is $0.872$ / $0.822$ /
+%  $0.873$ for MLP / Attention / Attention+MLP, while the Query Region remains broad over the back half of the network, especially in the attention and joint branches (one-hop late-
+%  band BCR $0.170$ / $0.242$ / $0.242$; two-hop attention middle/late BCR $0.400/0.306$). Overall, the MLP branch is the most stage-like, the attention branch is the most query-
+%  weighted, and the joint branch partially restores sharper early Facts/Expression concentration without eliminating Mistral's strong query-side integration.}
+%      \label{fig:mistral_band_overview}
+%  \end{figure*}
 
-      \vspace{0.8em}
-
-      \begin{subfigure}[b]{0.47\textwidth}
-          \centering
-          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_facts_first/comparison/band_metrics_panel.png}
-          \caption{\texttt{facts\_first}: Attention}
-          \label{fig:mistral_band_ff_attn}
-      \end{subfigure}
-      \hfill
-      \begin{subfigure}[b]{0.47\textwidth}
-          \centering
-          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_analysis_expr_first/comparison/band_metrics_panel.png}
-          \caption{\texttt{expr\_first}: Attention}
-          \label{fig:mistral_band_ef_attn}
-      \end{subfigure}
-
-      \vspace{0.8em}
-
-      \begin{subfigure}[b]{0.47\textwidth}
-          \centering
-          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_facts_first/comparison/band_metrics_panel.png}
-          \caption{\texttt{facts\_first}: Attention+MLP}
-          \label{fig:mistral_band_ff_attn_mlp}
-      \end{subfigure}
-      \hfill
-      \begin{subfigure}[b]{0.47\textwidth}
-          \centering
-          \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/attn_mlp_analysis_expr_first/comparison/band_metrics_panel.png}
-          \caption{\texttt{expr\_first}: Attention+MLP}
-          \label{fig:mistral_band_ef_attn_mlp}
-      \end{subfigure}
-
-      \caption{\textbf{Mistral-7B-Instruct-v0.1: band-level overviews for all three region-patching analyses under both prompt orders.} Rows correspond to MLP, attention, and joint
-  attention+MLP ablations; columns correspond to \texttt{facts\_first} and \texttt{expr\_first}. Across all six panels, Mistral preserves a coarse staged template, but remains
-  substantially more query-heavy than the main Qwen3 models. Under one-hop \texttt{facts\_first}, the Query Region late-band BCR rises from $0.155$ in the MLP branch to $0.272$ in
-  the attention branch, with the joint branch remaining intermediate at $0.233$; meanwhile the Facts and Expression regions remain strongly early-dominant (for example, one-hop
-  early-band BCRs are $0.782/0.713/0.782$ for Facts and $0.852/0.775/0.845$ for Expression across MLP/Attention/Attention+MLP). Under \texttt{expr\_first}, prompt reordering does
-  not remove the staged decomposition, but reallocates more mass toward earlier Expression processing: in one-hop, the Expression Region early-band BCR is $0.872$ / $0.822$ /
-  $0.873$ for MLP / Attention / Attention+MLP, while the Query Region remains broad over the back half of the network, especially in the attention and joint branches (one-hop late-
-  band BCR $0.170$ / $0.242$ / $0.242$; two-hop attention middle/late BCR $0.400/0.306$). Overall, the MLP branch is the most stage-like, the attention branch is the most query-
-  weighted, and the joint branch partially restores sharper early Facts/Expression concentration without eliminating Mistral's strong query-side integration.}
-      \label{fig:mistral_band_overview}
-  \end{figure*}
-
-\paragraph{Mistral: head roles and causal validation.}
-Mistral also yields the same three head roles, with $314$ classified heads under \texttt{facts\_first} (Fact-Retrieval $118$, Splitting $99$, Transmission $97$) and $307$ under \texttt{expr\_first} (Fact-Retrieval $123$, Splitting $109$, Transmission $75$). Figure~\ref{fig:mistral_heads_panel} collects the corresponding role distributions and validation curves. The Step 3 profile is strikingly sensitive. Base held-out accuracy is $99.4\%$ / $99.8\%$ for \texttt{facts\_first} / \texttt{expr\_first}, but $k=32$ role-targeted ablations reduce this to $41.2$--$41.4\%$ and $43.2$--$44.8\%$, respectively. Unlike Qwen3, however, the Random-Outside control is not benign: it still drops accuracy to $88.4\%$ and $85.3\%$. We interpret this as evidence that Mistral's performant head subset is highly sensitive overall, but less cleanly isolated from the surrounding pool than in Qwen3. The complete Mistral Step 3 accuracy tables are reported in Tables~\ref{tab:mistral_ff_full_accuracy} and~\ref{tab:mistral_ef_full_accuracy}.
+At the head level, Mistral again preserves the same three roles, with $314$ classified heads under \texttt{facts\_first} (Fact-Retrieval $118$, Splitting $99$, Transmission $97$) and $307$ under \texttt{expr\_first} (Fact-Retrieval $123$, Splitting $109$, Transmission $75$). Figure~\ref{fig:mistral_heads_panel} shows that the causal profile is much sharper than in Llama but also much less selective than in Qwen3. Base held-out accuracy is $99.4\%$ / $99.8\%$ for \texttt{facts\_first} / \texttt{expr\_first}, and $k=32$ role-targeted ablations reduce this to $41.2$--$41.4\%$ and $43.2$--$44.8\%$, respectively. Yet the \textit{Random-Outside} control is not benign: it still drops accuracy to $88.4\%$ and $85.3\%$. The picture is therefore one of high global sensitivity rather than clean head isolation. Mistral contains strongly consequential heads, but the surrounding head pool also matters much more than it does in Qwen3.
 
 \begin{figure*}[t]
     \centering
@@ -2127,41 +2060,48 @@ Mistral also yields the same three head roles, with $314$ classified heads under
     \label{fig:mistral_heads_panel}
 \end{figure*}
 
-\paragraph{Current cross-model hypothesis.}
-Taken together, the Llama and Mistral extensions strengthen the claim that the high-level motifs we identify in Qwen3 --- staged region sensitivity, prompt-order-dependent reallocation, and reusable head roles --- are not unique to a single model family. At the same time, both extensions look less cleanly factorized than Qwen3. Llama shows weaker token-level concentration and strong improvement under random-outside head ablation; Mistral shows extremely strong head sensitivity overall, including for the random control. One possible interpretation is that Qwen3 implements a sharper reasoning scaffold, whereas Llama and Mistral rely on noisier mixtures of semantic computation and output-position heuristics.
+\paragraph{Cross-model takeaway.}
+The Llama and Mistral extensions show that the high-level motifs identified in Qwen3 are not family-specific: all three families exhibit staged region sensitivity, prompt-order-dependent reallocation, and reusable head roles. What differs is the sharpness of separation. Qwen3 combines the strongest benchmark accuracy with the clearest fact-heavy token profile and the cleanest separation from \textit{Random-Outside}. Llama is markedly more diffuse and query-centered, whereas Mistral preserves stronger staging than Llama while remaining unusually sensitive in its late integration machinery.
 
-\clearpage
 \input{appendix_figure_gallery}
+
+\subsection{Appendix Synthesis: Relation to the Main Claims}
+\label{sec:appendix_synthesis}
+The appendix widens the evidential base of the main-text claims along five axes that the paper body treats only briefly: prompt order, model scale, intervention branch, reasoning depth, and model family.
+
+\paragraph{Staged Computation.}
+The region-level appendix sections show that the early-Facts / middle-Expression / query-side integration template is robust, but not rigid. It survives the 8B$\rightarrow$14B scale change, survives the \texttt{expr\_first} intervention as a redistribution rather than a collapse, and remains visible in the attention and joint branches even when those branches allocate more mass to routing. The main-text staged-computation claim is therefore supported at the level of a coarse computational template rather than by a single figure alone.
+
+\paragraph{Information Transmission and Fact Retrospection.}
+The token appendix sections clarify two issues left implicit in the main text. First, the segment-terminal convergence pattern is not tied to one hand-picked corruption pair: it survives multiple corruption layouts, larger scale, and two-hop reasoning. Second, the persistent contribution of \texttt{facts\_value} is not merely a high-variance artifact of unsigned magnitude plots; the signed diagnostics show that fact-side mass remains directionally relevant, especially in Qwen3. This gives the Fact Retrospection hypothesis a stronger empirical footing than the main-text summary alone could provide.
+
+\paragraph{Specialized Attention Heads.}
+The head appendix sections separate discovery, taxonomy, and validation. The discovery maps show that candidate heads are already spatially organized before any role label is assigned, and the full Step~3 tables show that role-targeted ablations remain selectively harmful in Qwen3 across scales and prompt orders. The main-text role labels are therefore supported by a repeated causal pattern rather than by a small set of attention-map exemplars.
+
+\paragraph{Cross-Model Generality.}
+The cross-model sections address a different question from the Qwen3-centered main text: not whether the mechanisms exist, but how cleanly different families realize them. Llama and Mistral both preserve the same broad motifs, which argues against a Qwen3-specific explanation. Their weaker factorization also clarifies why Qwen3 remains the clearest family for the main narrative.
 
 \subsection{Failure Case Analysis}
 \label{sec:failure_analysis}
 
-We analyze cases where the model produces incorrect outputs despite exhibiting the same functional head profiles observed in successful reasoning. Figure~\ref{fig:corporate_heads} provides a schematic recap of the three-role picture used to organize this discussion. The analysis reveals that failures are not due to a breakdown in head specialization, but rather to limitations in downstream integration.
+This subsection is qualitative rather than causal. We inspected a small set of incorrect generations to ask whether the role motifs identified earlier disappear entirely in failure cases.
 
-\begin{figure*}[t]
-  \includegraphics[width=\textwidth]{./figures/corporate_heads.pdf}
-	\caption{Schematic illustration of Specialized Attention Heads.
-The input sequence is segmented into semantic regions (Clauses and Logical Expression).
-Color coding indicates functional roles: Splitting Heads (blue) detect semantic boundaries at delimiters;
-Entity-Binding and Transmission Heads (orange) associate variables with values and aggregate information within regions;
-Fact-Retrieval Heads (green) access truth values from earlier contexts.}
-    \vspace{-0.5em}
-	\label{fig:corporate_heads}
-\end{figure*}
+%\begin{figure*}[t]
+%  \includegraphics[width=\textwidth]{./figures/corporate_heads.pdf}
+%	\caption{Schematic illustration of Specialized Attention Heads.
+%The input sequence is segmented into semantic regions (Clauses and Logical Expression).
+%Color coding indicates functional roles: Splitting Heads (blue) detect semantic boundaries at delimiters;
+%Entity-Binding and Transmission Heads (orange) associate variables with values and aggregate information within regions;
+%Fact-Retrieval Heads (green) access truth values from earlier contexts.}
+%    \vspace{-0.5em}
+%	\label{fig:corporate_heads}
+%\end{figure*}
 
-\paragraph{Persistent Head Specialization.}
-Even when the model fails on logical reasoning tasks involving excessive reasoning depth or element overload, attention heads continue to exhibit their characteristic functional profiles: Splitting Heads still concentrate on delimiters, Transmission Heads still aggregate within regions, and Fact-Retrieval Heads still attend to truth values. This persistence suggests that the identified mechanisms represent robust architectural properties rather than task-contingent behaviors.
+\paragraph{What Persists in Failures.}
+In the inspected examples, we still observe comma-focused splitting heads, within-region aggregation heads, and backward-looking fact-retrieval patterns. The failure cases therefore do not look like a wholesale loss of the mechanisms described in the main text. At the level of raw attention maps, many of the same motifs remain present even when the final answer is wrong.
 
-\paragraph{Potential Failure Modes.}
-We hypothesize three potential sources of failure:
-\begin{itemize}
-    \item \textbf{Interaction Deficiency}: Insufficient interaction between heads with complementary roles, preventing effective information handoff.
-    \item \textbf{Integration Misalignment}: Misalignment between head outputs and subsequent MLP computations, leading to incorrect logical combinations.
-    \item \textbf{Dynamic Rigidity}: The model's inability to dynamically reconfigure attention patterns when faced with novel or compositional reasoning demands.
-\end{itemize}
-
-\paragraph{Chain-of-Thought Recovery.}
-Notably, in certain failure cases, allowing the model to generate a sufficiently long CoT enables it to ultimately arrive at the correct answer. This suggests that some failures in implicit (non-CoT) reasoning stem from premature convergence or incomplete information aggregation at the query position. Extended sequential processing may compensate by providing additional computational steps for information integration. This observation invites further investigation into the relationship between reasoning depth, head collaboration, and the emergence of correct solutions.
+\paragraph{What Remains Unresolved.}
+The present evidence does not locate the point at which the failure enters the computation. Without matched interventions on correct and incorrect runs, we cannot distinguish a weak handoff between stages from insufficient query-side write-back or downstream MLP integration errors. The section therefore establishes only a limited point: recognizable head specialization can persist even when the final answer is wrong.
 
 
 
@@ -2181,22 +2121,22 @@ Notably, in certain failure cases, allowing the model to generate a sufficiently
 \subsection{Other Attention Head Patterns}
 \label{sec:appendix_other_heads}
 
-Beyond the three primary head types (\textit{i.e.}, Splitting, Transmission, and Fact-Retrieval) identified in our main analysis, we observe additional attention patterns that provide a more complete picture of the model's internal organization.
+Beyond the three primary head types (\textit{i.e.}, Splitting, Transmission, and Fact-Retrieval) identified in our main analysis, we observe several recurring attention patterns that are useful for interpretation but are not part of the causally validated taxonomy. The examples in this subsection simply group common map shapes that recur across Qwen3 attention heads.
 
 \paragraph{Attention Sink.}
-A recurring background phenomenon in the Qwen3 attention maps is a \textit{first-token attention sink}: many heads allocate a nontrivial fraction of their mass to position $0$, even when their main task-relevant structure is located elsewhere. In our visual inspections, this effect becomes especially common from roughly the middle of the network onward (around Layer~10 and above), where a visible first-column stripe often coexists with the more semantically meaningful patterns discussed in the main text. This sink should therefore be read as a global positional anchor rather than as a separate logical operation. In some heads it remains a weak background bias; in others it dominates the entire map and produces the idle-head pattern described next. Figure~\ref{fig:other_heads}(a) shows the strongest form of this behavior, while Figure~\ref{fig:other_heads}(g) illustrates a mixed case in which expression-focused attention coexists with a clear first-token sink.
+A recurring background phenomenon in the Qwen3 attention maps is a \textit{first-token attention sink}: many heads allocate a nontrivial fraction of their mass to position $0$, even when their main task-relevant structure is located elsewhere. In manual inspection, this effect becomes especially common from roughly the middle of the network onward (around Layer~10 and above), where a visible first-column stripe often coexists with the more semantically meaningful patterns discussed in the main text. We therefore read the sink as a global positional bias rather than as a separate logical operation. In some heads it remains a weak background tendency; in others it dominates the map and produces the idle-head pattern described next. Figure~\ref{fig:other_heads}(a) shows the strongest form of this behavior, while Figure~\ref{fig:other_heads}(g) illustrates a mixed case in which expression-focused attention coexists with a clear first-token sink.
 
 \paragraph{Idle Heads.}
-As network depth increases, certain heads exhibit minimal functional contribution, consistently attending to the first token regardless of input content. Figure~\ref{fig:other_heads}(a) shows Layer 7 Head 4, where attention concentrates heavily on the first column---all tokens attend primarily to position 0. To verify this is not an artifact of specific token semantics, we tested prompts where the first token is a semantically neutral period (``.'') rather than a meaningful character. The pattern persists. Furthermore, we observed that L7H4 exhibits identical idle behavior in multi-hop reasoning tasks and even in unrelated prompts (e.g., ``The weather is sunny, I am''), suggesting that idle heads may be an intrinsic property of the model architecture rather than task-specific behavior. This raises two possibilities: (1) certain heads are permanently idle across all inputs, representing genuinely redundant capacity; or (2) some heads may be conditionally idle, remaining inactive for certain task types while activating for others. A comprehensive analysis of all idle heads across diverse prompts would be needed to distinguish these hypotheses.
+As network depth increases, certain heads exhibit minimal task-specific structure and attend almost entirely to the first token regardless of input content. Figure~\ref{fig:other_heads}(a) shows Layer 7 Head 4, where the entire map collapses onto the first column. In a few manual probes, this pattern persists even when the first token is replaced by a semantically neutral period, which argues against a content-specific explanation. We do not attempt here to determine whether such heads are permanently idle or only idle for this task family; the present point is simply that the strongest attention-sink cases appear functionally detached from the logical computation we study elsewhere.
 
 \paragraph{Information Binding Heads.}
-In early layers (L0--10), we observe heads that associate entities with their truth values. Specifically, these heads bind ``A'' with ``True'' and ``B'' with ``False'' in the Facts region, and bind negation operators (``$\neg$'') with their operands in the Expression region. Figure~\ref{fig:other_heads}(b-c) illustrates two examples from Layer 0: Head 1 and Head 24 both exhibit diagonal patterns with localized binding, where adjacent tokens within semantic units show elevated mutual attention. Since tokenization separates these semantically coupled elements (e.g., ``$\neg$'' and ``A'' are distinct tokens), such binding appears necessary for downstream logical operations. This binding mechanism complements the Fact-Retrieval heads identified in middle-to-late layers.
+In early layers (L0--10), we observe heads that associate entities with their truth values and operators with their operands. Figure~\ref{fig:other_heads}(b-c) shows two Layer-0 examples whose attention is concentrated within local semantic units such as ``A is True'' or ``$\neg A$''. Because tokenization separates these elements, such local binding is a plausible precursor to the later Fact-Retrieval behavior identified in the main taxonomy.
 
 \paragraph{Self-Processing Heads.}
-Some heads exhibit strong diagonal attention patterns, where each token primarily attends to itself with minimal attention to other positions. Figure~\ref{fig:other_heads}(d-e) shows two examples: Layer 12 Head 20 and Layer 22 Head 12. Both display sharp diagonal lines with near-zero off-diagonal attention, indicating that each token's representation is refined independently. This self-focused processing may facilitate residual-like refinement of token representations without cross-position information mixing. Such heads appear across various layers, suggesting a distributed mechanism for token-level representation enhancement.
+Some heads exhibit strong diagonal attention patterns, where each token primarily attends to itself with minimal attention to other positions. Figure~\ref{fig:other_heads}(d-e) shows two examples. These maps are consistent with token-local refinement rather than cross-token routing, so we treat them as descriptive evidence that part of the attention budget is devoted to preserving or sharpening local representations.
 
 \paragraph{Expression Processing Heads.}
-In layers 18--22, immediately preceding the attention convergence observed in our main analysis, we identify heads that concentrate attention within the expression region tokens. Figure~\ref{fig:other_heads}(f-h) presents three examples from Layers 18, 19, and 21. These heads show elevated attention in the lower-right region of the attention matrix, corresponding to the expression tokens (``($\neg$A or $\neg$B) is''). Notably, Layer 19 Head 31 additionally attends to the first token, exhibiting functional coupling between expression processing and positional anchoring. These heads appear to process the logical structure of expressions, potentially executing core logical computations. The layer positioning aligns with our Staged Computation findings: expression processing occurs after fact encoding (early layers) but before final answer aggregation (late layers).
+In layers 18--22, immediately before the strongest query-side convergence observed in the main analysis, we identify heads that concentrate attention within the expression region. Figure~\ref{fig:other_heads}(f-h) presents three examples. These maps show within-expression routing at exactly the depth range where the region and token analyses place expression processing. We interpret them as qualitative evidence for expression-focused computation, without claiming that these heads by themselves realize the full logical operation.
 
 \begin{figure}[t]
   \centering
@@ -2214,14 +2154,14 @@ In layers 18--22, immediately preceding the attention convergence observed in ou
 \end{figure}
 
 \paragraph{Relationship to Primary Mechanisms.}
-These additional patterns complement rather than contradict our main findings. The attention-sink phenomenon suggests that part of the attention budget is reserved for a global positional anchor, upon which more task-specific patterns are superimposed. Idle Heads may therefore represent the limiting case where this sink-like behavior dominates almost completely. Information Binding Heads provide the early-layer foundation that enables later Fact-Retrieval. Self-Processing Heads may contribute to the residual stream's role in information maintenance. Expression Processing Heads bridge the gap between Information Transmission and final prediction, aligning with the Staged Computation framework. While these patterns have not been causally validated through patching experiments, they suggest functional diversity beyond the three primary head types and warrant further investigation.
+These additional patterns complement rather than contradict the primary mechanisms. The attention sink is a recurrent background bias that can coexist with more meaningful task structure. Information-binding heads fit naturally with the early fact-encoding stage, and expression-focused heads appear in the same late-middle band where the main analyses place expression processing. Because these patterns are not causally validated here, we use them only as qualitative context for reading the attention maps, not as additional mechanistic claims.
 
 
 \subsection{Functional Coupling in Specialized Heads}
 \label{sec:appendix_func_couple}
 
 
-We provide visual evidence for the functional coupling phenomenon described in the main text. Figure~\ref{fig:func_couple} shows three examples from early layers, each exhibiting multiple functional characteristics simultaneously.
+Figure~\ref{fig:func_couple} makes one narrow point: the role labels used in the main text are coarse descriptors rather than mutually exclusive types. The three example heads each combine more than one recognizable motif inside a single attention map.
 
 \begin{figure}[t]
   \centering
@@ -2232,13 +2172,50 @@ We provide visual evidence for the functional coupling phenomenon described in t
   \label{fig:func_couple}
 \end{figure}
 
-These attention patterns reveal that early-layer heads commonly exhibit multi-functional profiles:
-\begin{itemize}
-    \item \textbf{L0H19}: Staircase-like attention blocks at segment boundaries combined with elevated within-segment attention, performing both splitting and information binding.
-    \item \textbf{L0H31}: Diagonal emphasis (self-processing) with localized attention blocks within ``A is True'' and ``B is False'' segments (information binding).
-    \item \textbf{L1H22}: Strong diagonal pattern with scattered high-attention points at specific cross-positions, suggesting self-processing combined with selective fact retrieval.
-\end{itemize}
-This multi-functional profile supports the superposition hypothesis: individual heads participate in multiple overlapping computational circuits, achieving parameter efficiency through functional reuse.
+\begin{figure}[htbp]
+    \centering
+    
+    % --- 第一个子图 (Figure a) ---
+    \begin{subfigure}[b]{0.8\linewidth}
+        \centering
+        % 替换为你实际的文件名
+        \includegraphics[width=\linewidth]{./figures/split_heads.pdf} 
+        \caption{Splitting heads}
+        \label{fig:splitting_head}
+    \end{subfigure}
+    
+    \vspace{1em} % 添加垂直间距
+    
+    % --- 第二个子图 (Figure b) ---
+    \begin{subfigure}[b]{0.8\linewidth}
+        \centering
+        % 替换为你实际的文件名
+        \includegraphics[width=\linewidth]{./figures/info_heads.pdf}
+        \caption{Information Transmission heads}
+        \label{fig:convergence_head}
+    \end{subfigure}
+    
+    \vspace{1em} % 添加垂直间距
+    
+    % --- 第三个子图 (Figure c) ---
+    \begin{subfigure}[b]{0.8\linewidth}
+        \centering
+        % 替换为你实际的文件名
+        \includegraphics[width=\linewidth]{./figures/facts_heads.pdf}
+        \caption{Fact-Retrieval heads}
+        \label{fig:facts_head}
+    \end{subfigure}
+    
+    % --- 总标题 ---
+    \caption{Visualization of attention matrices for three distinct types of heads. The prompt used is \texttt{A is True, B is False, ($\neg$A or $\neg$B) is}. The notation $(x, y)$ denotes the $y$-th head in the $x$-th layer.
+    (a) The Splitting heads (early layers) attend predominantly to the comma delimiter.
+    (b) The Information Transmission heads (intermediate layers) reveal lower-triangular structures within Fact and Expression regions.
+    (c) The Fact-Retrieval heads (deep layers) show tokens in the Expression Region or Query Token (\texttt{is}) attending to \texttt{True}/\texttt{False} indicators. A weaker first-token attention sink often coexists with these later-layer patterns; Appendix~\ref{sec:appendix_other_heads} discusses this phenomenon and its relation to idle heads in more detail.}
+    \label{fig:combined_heads}
+    \vspace{-0.5em}
+\end{figure}
+
+L0H19 combines staircase-like boundary attention with elevated within-segment mass, so it looks simultaneously like a splitting head and a local binding head. L0H31 combines a strong diagonal with small within-segment blocks, blending self-processing with local transmission. L1H22 keeps a diagonal backbone but adds a small number of selective cross-position links, which is more retrieval-like than purely local. The common point is simply that a single head can mix boundary focus, local routing, and selective retrieval. The figure is therefore qualitative evidence for overlap between role signatures, not a proof of any particular decomposition.
 
 
 % \subsection{Lazy Reasoning}
