@@ -1156,22 +1156,22 @@ The remaining Qwen3 figures fill three specific gaps: the omitted two-hop attent
 %    \label{fig:qwen8_expr_remaining_band_panels}
 %\end{figure*}
 
-\begin{figure*}[t]
-    \centering
-    \begin{subfigure}[b]{0.44\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/validation/plots/pd_abs_ratio_curve.png}
-        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.44\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_facts_first/validation/plots/pd_abs_ratio_curve.png}
-        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
-    \end{subfigure}
-    \caption{\textbf{Qwen3 facts-first absolute validation curves.} These are the two remaining absolute-ratio head-validation plots not previously shown. They complete the Qwen3 Step~3 atlas by pairing the conventional absolute-ratio view with the dPD-shift diagnostics under \texttt{facts\_first}. Both scales preserve the same ordering: Fact-Retrieval is the most damaging single-role ablation, Transmission is second, Splitting is weakest, and \textit{Random-Outside} remains far less harmful.}
-    \label{fig:qwen_heads_abs_ratio_facts}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%    \begin{subfigure}[b]{0.44\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/validation/plots/pd_abs_ratio_curve.png}
+%        \caption{\textit{Qwen3-8B}, \texttt{facts\_first}}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.44\textwidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{./figures_experiments/reports/heads_analysis_qwen3_14b_facts_first/validation/plots/pd_abs_ratio_curve.png}
+%        \caption{\textit{Qwen3-14B}, \texttt{facts\_first}}
+%    \end{subfigure}
+%    \caption{\textbf{Qwen3 facts-first absolute validation curves.} These are the two remaining absolute-ratio head-validation plots not previously shown. They complete the Qwen3 Step~3 atlas by pairing the conventional absolute-ratio view with the dPD-shift diagnostics under \texttt{facts\_first}. Both scales preserve the same ordering: Fact-Retrieval is the most damaging single-role ablation, Transmission is second, Splitting is weakest, and \textit{Random-Outside} remains far less harmful.}
+%    \label{fig:qwen_heads_abs_ratio_facts}
+%\end{figure*}
 
 \begin{figure*}[t]
     \centering
@@ -1431,7 +1431,7 @@ The remaining Qwen3 figures fill three specific gaps: the omitted two-hop attent
 %\end{figure*}
 
 \paragraph{Cross-model region atlases.}
-The remaining cross-model region figures are primarily full attention and joint-region galleries for Llama and Mistral. The summary panels already show that both families place more weight on the Query Region than Qwen3; the layer-wise curves show how that difference is realized in depth. In Llama, query-facing mass is broad and diffuse. In Mistral, the stage ordering is easier to recognize, but query-side routing still occupies much more of the back half of the network than it does in Qwen3. Figures~\ref{fig:llama_attn_facts_gallery}, \ref{fig:llama_attn_expr_gallery}, \ref{fig:llama_attn_mlp_facts_gallery}, and \ref{fig:llama_attn_mlp_expr_gallery} collect the retained Llama attention and joint views. Figures~\ref{fig:mistral_attn_facts_gallery}, \ref{fig:mistral_attn_expr_gallery}, \ref{fig:mistral_attn_mlp_facts_gallery}, and \ref{fig:mistral_attn_mlp_expr_gallery} provide the corresponding Mistral views.
+The cross-model region figures are primarily full attention and joint-region galleries for Llama and Mistral. The summary panels already show that both families place more weight on the Query Region than Qwen3; the layer-wise curves show how that difference is realized in depth. In Llama, query-facing mass is broad and diffuse. In Mistral, the stage ordering is easier to recognize, but query-side routing still occupies much more of the back half of the network than it does in Qwen3. Figures~\ref{fig:llama_attn_facts_gallery}, \ref{fig:llama_attn_expr_gallery}, \ref{fig:llama_attn_mlp_facts_gallery}, and \ref{fig:llama_attn_mlp_expr_gallery} collect the retained Llama attention and joint views. Figures~\ref{fig:mistral_attn_facts_gallery}, \ref{fig:mistral_attn_expr_gallery}, \ref{fig:mistral_attn_mlp_facts_gallery}, and \ref{fig:mistral_attn_mlp_expr_gallery} provide the corresponding Mistral views.
 
 \begin{figure*}[t]
     \centering
