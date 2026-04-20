@@ -110,7 +110,7 @@
 % }
 \begin{abstract}
 % While Large Language Models (LLMs) demonstrate impressive capabilities in logical reasoning, the internal computations driving these behaviors remain largely opaque. Do LLMs merely parrot statistical patterns, or do they implement algorithmic circuits akin to formal deduction? In this work, we investigate the mechanistic underpinnings of propositional logical reasoning within the \textit{Qwen3} model family \textit{(8B and 14B)}. By applying causal mediation analysis on a custom dataset covering diverse logical rules (\textit{e.g.}, De Morgan's Laws, Distributivity) across one-hop and two-hop reasoning tasks, we uncover a structured ``computational architecture" underlying reasoning. We identify three core phenomena: Information Transmission (semantic information aggregates at boundary tokens), Specialized Attention Heads (attention heads exhibit stable functional specialization), and Fact Retrospection (factual information is persistently re-accessed). Notably, these mechanisms generalize across model scales and logical rule types, suggesting that LLMs employ specific computational strategies to solve logical problems.
-Understanding how Large Language Models (LLMs) perform logical reasoning internally remains a fundamental challenge. Prior mechanistic studies often focus on task-specific circuits, leaving open the broader question of what computational strategies LLMs use for propositional reasoning. We address this gap with a causal analysis on \textit{PropLogic-MI}, a controlled benchmark spanning 11 propositional logic rule categories across one-hop and two-hop tasks. Our primary analysis centers on \textit{Qwen3} (8B and 14B), with cross-model extensions to \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct-v0.1}. Rather than asking only which components are necessary, we ask how the computation is organized. Across region-level ablations, residual-stream patching, and attention-head validation, we identify four interlocking mechanisms: Staged Computation (layer-wise processing phases), Information Transmission (aggregation at semantically privileged boundary tokens), Fact Retrospection (persistent re-access of source facts), and Specialized Attention Heads (functionally distinct head roles). These patterns remain visible across Qwen3 scales, prompt orders, rule types, and reasoning depths. The cross-model results show that the same broad motifs recur in Llama and Mistral, but with weaker head-role selectivity and heavier query-centered computation than in Qwen3. Together, these findings provide mechanistic evidence that propositional reasoning in LLMs is structured rather than monolithic, while also revealing substantial family-level differences in how cleanly that structure is realized.
+How Large Language Models (LLMs) perform logical reasoning internally remains poorly understood: prior mechanistic studies mostly chase task-specific circuits, leaving open \emph{how} LLMs organize propositional reasoning as a computation. We address this gap with a causal mechanistic analysis on \textit{PropLogic-MI}, a controlled benchmark of 11 propositional rule categories across one- and two-hop tasks, applied to four models from three families (\textit{Qwen3}, \textit{Llama-3.1}, \textit{Mistral}). Rather than asking which components are necessary, we ask how the reasoning process is organized, and identify four interlocking mechanisms that recur across all four models: \textit{Staged Computation}, where early, middle, and late layers take on distinct functional roles; \textit{Information Transmission}, where semantic content aggregates at boundary tokens; \textit{Fact Retrospection}, in which factual information is persistently re-accessed across network depth; and \textit{Specialized Attention Heads} that implement the macroscopic patterns. A prompt-order intervention that moves the query before the facts confirms that this organization is model-internal rather than an artifact of surface layout. Together, these findings provide cross-family mechanistic evidence that propositional reasoning in LLMs is structured rather than monolithic.
 % Code and data are available at
 \end{abstract}
 
@@ -154,15 +154,12 @@ Propositional logical reasoning, \textit{i.e.}, the capacity to manipulate boole
 
 % generalize not only across rule types but also across reasoning depths. Second, and more fundamentally, we shift analytical focus from model-specific circuit identification to generalizable mechanistic principles. Rather than asking \textit{``which heads are necessary for this specific task,''} we ask \textit{``what computational strategies does the model employ to solve logical problems in general?''} This perspective reveals a \textit{Staged Computational Hierarchy} where early, middle, and late layers assume distinct functional roles, along with three interlocking phenomena: \textit{Information Transmission} (semantic information aggregates at boundary tokens), \textit{Fact Retrospection} (factual information is persistently re-accessed), and \textit{Specialized Attention Heads} (attention heads exhibit stable functional specialization). These phenomena persist across model scales, rule types, and reasoning depths. 
 
-In this paper, we address this gap with a more comprehensive analysis. 
-First, we shift analytical focus from model-specific circuit identification to generalizable mechanistic principles. Rather than asking \textit{``which heads are necessary for this specific task,''} we ask \textit{``what computational strategies does the model employ to solve logical problems in general?''} As shown in Figure~\ref{fig:overview}, 
-% this perspective reveals a \textit{Staged Computational Hierarchy} where early, middle, and late layers assume distinct functional roles, along with another three interlocking phenomena: \textit{Information Transmission} (semantic information aggregates at boundary tokens), \textit{Fact Retrospection} (factual information is persistently re-accessed), and \textit{Specialized Attention Heads} (attention heads exhibit stable functional specialization). 
-this perspective reveals four interlocking mechanisms: (1) Staged Computation, with layer-wise processing phases where early, middle, and late layers assume distinct functional roles; (2) Information Transmission, where semantic information aggregates at boundary tokens; (3) Fact Retrospection, in which factual information is persistently re-accessed; and (4) Specialized Attention Heads, where attention heads exhibit stable functional specialization. 
-Second, we 
-% substantially 
-expand the scope of analysis to 11 propositional logic rule categories across one-hop and two-hop reasoning in \textit{Qwen3} (8B, 14B), demonstrating that these mechanisms persist across model scales, rule types, and reasoning depths. 
-Third, we introduce a prompt-order intervention that moves the queried expression before the factual assignments (\texttt{expr\_first}) while preserving the underlying logical content, labels, and corruption semantics. This intervention lets us probe whether staged computation is primarily prompt-oriented or model-oriented. For readability, the main text focuses on \texttt{facts\_first}; the dedicated prompt-order analysis is reported in Appendix~\ref{sec:appendix_prompt_order}. 
-The appendix also collects the supporting scale, token, and head extensions that back these generalization claims, especially Appendix~\ref{sec:appendix_stage}, Appendix~\ref{sec:appendix_info_converge}, Appendix~\ref{appendix_heads}, and the cross-model summary in Appendix~\ref{sec:appendix_llama}.
+In this paper, we address this gap with a more comprehensive analysis.
+First, we shift analytical focus from model-specific circuit identification to generalizable mechanistic principles. Rather than asking \textit{``which heads are necessary for this specific task,''} we ask \textit{``what computational strategies does the model employ to solve logical problems in general?''} As shown in Figure~\ref{fig:overview}, this perspective reveals four interlocking mechanisms: (1) \textit{Staged Computation}, where early, middle, and late layers assume distinct functional roles; (2) \textit{Information Transmission}, where semantic information aggregates at boundary tokens; (3) \textit{Fact Retrospection}, in which factual information is persistently re-accessed across network depth rather than encoded once in early layers; and (4) \textit{Specialized Attention Heads}, where heads exhibit stable functional specialization into Splitting, Transmission, and Fact-Retrieval roles.
+%
+Second, we expand the scope of analysis to 11 propositional logic rule categories across one-hop and two-hop reasoning, and replicate the above four mechanisms on four models from three families: \textit{Qwen3-8B}, \textit{Qwen3-14B}, \textit{Llama-3.1-8B-Instruct}, and \textit{Mistral-7B-Instruct}. The same four mechanisms recur in all four models, showing that the organization we describe is a cross-family property of how these LLMs handle propositional reasoning rather than a feature of any single model.
+%
+Third, we introduce a prompt-order control intervention, \texttt{expr\_first}, that moves the queried expression before the factual assignments while preserving the underlying logical content, labels, and corruption semantics. This intervention tests whether staged computation follows the surface prompt layout or reflects a deeper model-internal preference: the same coarse early/middle/late template survives the reordering across all four models, and middle-layer fact-value causal density is in fact \emph{stronger} under \texttt{expr\_first} than under \texttt{facts\_first} in 7 out of 8 (model $\times$ order) cells. For readability, the main text figures use \texttt{facts\_first}; the full prompt-order analysis and cross-model tables are reported in Appendix~\ref{sec:appendix_prompt_order}, Appendix~\ref{sec:appendix_stage}, Appendix~\ref{sec:appendix_info_converge}, Appendix~\ref{appendix_heads}, and Appendix~\ref{sec:appendix_llama}.
 Through the above analysis, we provide a more profound, complete and generalizable understanding of the mechanism of propositional logical reasoning. 
 
 %%% PLM: Through the above analysis, we provide a more complete, deeper, and more generalizable picture / understanding of the mechanism of propositional logical reasoning. 
@@ -212,11 +209,7 @@ Through the above analysis, we provide a more profound, complete and generalizab
     \end{subfigure}
 
     \vspace{-0.3em}
-    \caption{\textbf{Overview of the propositional logic reasoning mechanisms in \textit{Qwen3}.}
-    (a) Staged Computation: MLP patching reveals layer-wise processing phases.
-    (b) Information Transmission: Semantic content aggregates at segment-terminal tokens.
-    (c) Fact Retrospection: Fact tokens maintain persistent causal influence across depth.
-    (d) Specialized Attention Heads: Specialized heads implement the macroscopic mechanisms.}
+    \caption{\textbf{Overview of the four propositional-logic reasoning mechanisms identified in this work.} (a) Staged Computation: region-level MLP patching reveals layer-wise processing phases. (b) Information Transmission: per-token residual-stream patching shows that the largest per-token causal density in each layer band concentrates on a small set of semantically privileged boundary tokens. (c) Fact Retrospection: fact-value tokens are the only non-query category whose per-token causal density remains above the background floor into the middle and late bands, across all four model families we test. (d) Specialized Attention Heads: Splitting, Transmission, and Fact-Retrieval heads structurally implement the three macroscopic patterns, and their removal causes accuracy drops that the matched \textit{Random-Outside} control does not.}
     \vspace{-0.5em}
     \label{fig:overview}
 \end{figure*}
@@ -244,6 +237,10 @@ Through the above analysis, we provide a more profound, complete and generalizab
 % connection to out work 分布到其他相关工作中；并非堆叠论文介绍。讲清楚和别人工作的区别。将RG展开讲。Review + Gap + Proposal。
 \section{Related Work}
 
+A common three-level abstraction in mechanistic interpretability distinguishes features, circuits, and the algorithms they implement \citep{bereska2024mechanisticinterpretabilityaisafety}. Building on this view, we organize prior work on LLM reasoning along two complementary axes. 
+A \textit{component-level} lens asks \textit{which} heads or layers implement a given sub-computation, while a \textit{strategy-level} lens asks \textit{how} those components are orchestrated into a network-wide reasoning pattern. 
+As \citet{NEURIPS2024_47c7edad} observe, the specific attention heads realizing a functional component may shift across training and scale, yet the overarching algorithm they implement remains stable, motivating the need for the latter view. Our work contributes primarily on the strategy-level axis while drawing its primitives from the component-level literature reviewed below.
+
 \paragraph{Component-Level Mechanistic Interpretability.}
 \textit{Mechanistic interpretability} (MI) has identified specific components responsible for individual computational primitives: induction heads for in-context learning \citep{olsson2022incontextlearninginductionheads}, MLP layers that store factual associations \citep{meng2023locatingeditingfactualassociations, geva2023dissectingrecallfactual, ferrando2025informationflowlarge}, and binding ID vectors through which attention heads link entities to their attributes \citep{feng2024languagemodelsrepresent, wang2023labelwordsanchors}. Causal mediation analysis \citep{vig2020causalinterpretingneuralNLP, hase2024doeslocalizationinform, zhang2024towardsbestpractices, heimersheim2024useinterpretactivation} and circuit-based methods \citep{elhage2021mathematicalframeworktransformer, wang2022interpretabilitywildcircuitindirect} extend this by identifying minimal subgraphs causally necessary for specific tasks.
 % , while sparse autoencoders \citep{marks2024sparsfeaturecircuits, engels2024decomposingdarkmatter} and function vectors \citep{todd2024functionvectorslarge} further explore distributed representations.
@@ -252,9 +249,9 @@ Through the above analysis, we provide a more profound, complete and generalizab
 %
 % These studies share a component-level lens: they ask \textit{which} heads or layers implement a given sub-task, providing fine-grained causal evidence for individual mechanisms. However, they leave open the question of how these components coordinate into coherent end-to-end reasoning strategies, particularly across diverse logical rules and multi-hop inference chains.
 
-For reasoning specifically, \citet{kim2024reasoningcircuitslanguage} decompose syllogistic inference into modular circuits with premise-retrieval and conclusion-assembly components, and \citet{aimpliesb} identify four functional head types (locating, mover, processing, and decision heads) for propositional implication in \textit{Mistral-7B} and \textit{Gemma-2}. These studies share a component-level lens, asking \textit{which} heads or layers implement a given sub-task, but leave open how these components coordinate into end-to-end reasoning strategies across diverse logical rules.
+For reasoning specifically, \citet{kim2024reasoningcircuitslanguage} decompose syllogistic inference into modular circuits with premise-retrieval and conclusion-assembly components. Together, these studies provide fine-grained causal evidence at the level of individual heads and layers.
 
-% \paragraph{System-Level Computational Strategies.}
+% \paragraph{Strategy-Level Reasoning Patterns.}
 % Less explored is how individual components organize into network-wide reasoning strategies. \citet{dutta2024thinkstepbystep} take a step in this direction by tracing how chain-of-thought (CoT) prompting restructures internal information flow, showing that explicit intermediate tokens serve as anchor points that enable staged computation across layers. Their analysis reveals that CoT provides external scaffolding for sequential reasoning steps.
 % %
 % Our work addresses the complementary question: how do models organize multi-step logical reasoning \textit{without} explicit intermediate tokens? We find that even in the implicit (no-CoT) setting, models exhibit temporal staging across layers, information convergence at boundary tokens, and repeated fact retrieval, which parallel but do not require the external scaffolding that CoT provides. This implicit reasoning perspective also connects to work on entity binding: \citet{feng2024languagemodelsrepresent} show that models route entity identity through binding ID vectors in attention heads, a single-primitive operation. Our Transmission Heads perform an analogous but higher-level function, routing \textit{composed logical content} (not just entity identity) across token positions toward semantic boundary tokens during multi-step reasoning.
@@ -263,10 +260,10 @@ For reasoning specifically, \citet{kim2024reasoningcircuitslanguage} decompose s
 % %
 % Compared with the component-level studies above, our system-level perspective, combined with broader rule coverage (11 categories) and multi-hop scenarios, reveals organizational patterns (\textit{e.g.}, staged computation, boundary-token convergence) that are invisible to analyses focused on individual heads or circuits alone.
 
-\paragraph{System-Level Computational Strategies.}
+\paragraph{Strategy-Level Reasoning Patterns.}
 Less explored is how individual components organize into network-wide reasoning strategies. \citet{dutta2024thinkstepbystep} trace how chain-of-thought (CoT) prompting restructures internal information flow, showing that explicit intermediate tokens serve as anchor points for staged computation. Our work addresses the complementary question: how do models organize multi-step logical reasoning \textit{without} such explicit tokens? We find that even in the implicit (no-CoT) setting, models exhibit temporal staging across layers, information convergence at boundary tokens, and repeated fact retrieval, which parallel but do not require the external scaffolding that CoT provides.
 %
-Prior component-level studies have shown that models route entity identity through binding ID vectors \citep{feng2024languagemodelsrepresent} and localize single-fact retrieval to specific MLP layers \citep{meng2023locatingeditingfactualassociations}. Our findings extend beyond these single-primitive operations: Transmission Heads route \textit{composed logical content} across token positions, and Fact Retrospection reveals that compositional reasoning demands \textit{distributed, recurring} access to premises across network depth rather than one-time retrieval. These patterns suggest a qualitative shift from factual recall to logical reasoning in how stored knowledge is accessed and coordinated.
+Beyond the CoT setting, prior component-level studies have shown that models route entity identity through binding ID vectors \citep{feng2024languagemodelsrepresent} and localize single-fact retrieval to specific MLP layers \citep{meng2023locatingeditingfactualassociations}. Our findings extend beyond these single-primitive operations: Transmission Heads route \textit{composed logical content} across token positions, and Fact Retrospection reveals that compositional reasoning relies on \textit{repeated} rather than \textit{one-shot} access to premises across network depth.
 
 
 
@@ -295,46 +292,29 @@ Prior component-level studies have shown that models route entity identity throu
 % \citet{aimpliesb} provide the only prior mechanistic analysis, identifying sub-circuits for implication reasoning in Mistral-7B and Gemma-2. However, they examine a \textbf{single operator structure} with \textbf{length-2} simplification. Broader rules—De Morgan's Laws, Distributivity, Commutativity, Associativity, Identity, Domination, and others—remain unexplored. \textbf{We address this gap} by analyzing Qwen3 (8B, 14B) across \textbf{11 propositional logic rule types}, uncovering \textbf{generalizable mechanisms} (Information Transmission, Specialized Attention Heads, Fact Retrospection) that persist across diverse logical structures. Unlike behavioral approaches testing \emph{whether} models reason, and \citet{aimpliesb}'s narrow analysis, we reveal \emph{how} models implement comprehensive propositional reasoning, providing evidence for structured algorithmic computation over pattern matching.
 
 
-\paragraph{Propositional Logic Reasoning in LLMs}
-Benchmarks such as PrOntoQA \citep{saparov2023languagemodelsgreedy}, ProofWriter \citep{tafjord2021proofwritergeneratingimplications}, and LogicBench \citep{parmar2024logicbench} have been developed to evaluate LLM propositional reasoning. Behavioral studies reveal systematic limitations specific to logical inference: accuracy degrades significantly with proof depth \citep{saparov2023languagemodelsgreedy, dziri2023faithfatelimitstransformers}, models struggle with proof planning (selecting correct inference steps when multiple valid options exist \citep{saparov2023languagemodelsgreedy}) and exhibit particular difficulty with negated premises \citep{parmar2024logicbench}. These findings fuel the ongoing debate: do LLMs implement genuine logical algorithms \citep{nanda2023progress}, or merely exploit statistical shortcuts \citep{dziri2023faithfatelimitstransformers}? However, behavioral evaluation alone only answers \textit{whether} models succeed, not \textit{how} models complete the reasoning internally. 
-% internal computation 
-% the internal computation analysis. 
-% To the best of our knowledge, the only mechanistic study on propositional logic is \citet{aimpliesb},  
-% Mechanistic studies on propositional logic are scarce. (revise) 
-% \citet{aimpliesb} provided an initial circuit-level analysis, identifying retrieval, processing, and decision sub-circuits for implication reasoning in Mistral-7B and Gemma-2. However, their work examines only a \textit{single operator structure} (implication chains) with simplified length-2 problems. Broader propositional rules, including De Morgan's Laws, Distributivity, and Commutativity, remain mechanistically unexplored.
-To the best of our knowledge, the only mechanistic study on propositional logic is \citet{aimpliesb}, which decomposes implication reasoning into four functional head types (locating, mover, processing, and decision heads) in \textit{Mistral-7B} 
-% TODO: 有点重复
-and \textit{Gemma-2} models. Their component-level analysis successfully pinpoints specific heads responsible for rule retrieval, information movement, and answer selection.
-Different from this head-level functional decomposition, we characterize network-wide computational patterns: how processing is temporally organized across layers, how information flows across token positions
-%toward semantic boundaries 
-, and how facts are repeatedly retrieved throughout network depth. This pattern-level perspective, combined with broader rule coverage and multi-hop scenarios, reveals mechanisms that generalize across diverse logical structures, inference chain length and model scales.
+\paragraph{Mechanistic Studies of Propositional Logic.}
+% Benchmarks such as PrOntoQA \citep{saparov2023languagemodelsgreedy}, ProofWriter \citep{tafjord2021proofwritergeneratingimplications}, and LogicBench \citep{parmar2024logicbench} evaluate LLM propositional reasoning behaviorally. They reveal systematic limitations: accuracy degrades with proof depth \citep{saparov2023languagemodelsgreedy, dziri2023faithfatelimitstransformers}, models struggle with proof planning when multiple valid inference steps exist \citep{saparov2023languagemodelsgreedy}, and they show particular difficulty with negated premises \citep{parmar2024logicbench}. These findings fuel the ongoing debate over whether LLMs implement genuine logical algorithms \citep{nanda2023progress} or merely exploit statistical shortcuts \citep{dziri2023faithfatelimitstransformers}. Behavioral evaluation alone, however, answers only \textit{whether} models succeed, not \textit{how} they complete the reasoning internally.
+%
+To the best of our knowledge, the only mechanistic study on propositional logic is \citet{aimpliesb}, which decomposes implication reasoning into four functional head types (locating, mover, processing, and decision heads) in \textit{Mistral-7B} and \textit{Gemma-2}, pinpointing the heads responsible for rule retrieval, information movement, and answer selection. Building on this head-level decomposition, we characterize network-wide computational patterns: how processing is temporally organized across layers, how information flows across token positions, and how facts are repeatedly retrieved throughout network depth. Combined with broader rule coverage and multi-hop scenarios, this pattern-level perspective reveals mechanisms that generalize across diverse logical structures, inference chain lengths, and model scales.
 
 % \textit{We address this gap} by analyzing \textit{Qwen3} (8B, 14B) across \textit{11 propositional logic rule categories} with one-hop and two-hop reasoning. We uncover \textbf{three generalizable mechanisms}, namely Information Transmission, Specialized Attention Heads, and Fact Retrospection, that persist across diverse logical structures and model scales, providing mechanistic evidence for how LLMs implement propositional reasoning.
 
-\section{Methodology}
-% In this section, we formalize the propositional logic reasoning task, describe the construction of our dataset, and introduce the mechanistic interpretability techniques used to dissect the model's internal computations.
-
-Our approach departs from the circuit-discovery paradigm \citep{elhage2021mathematicalframeworktransformer, wang2022interpretabilitywildcircuitindirect} 
-% that asks 
-which primarily asks 
-% TODO: 侧重circuit
-``which heads are necessary?'' 
-We instead focus on ``what computational strategies does the model employ?'' This shift is motivated by two considerations. First, circuit faithfulness is difficult to establish, as multiple circuits may implement the same function and ablating one may simply shift computation to another. Second, circuits often fail to generalize across different models, limiting their scientific value for understanding \emph{how transformers reason} rather than \emph{how a particular model is wired}. Accordingly, our analysis characterizes network-wide computational patterns rather than minimal circuits.
+\section{PropLogic-MI: Task and Dataset}
+\label{sec:proplogic_mi}
 
 
 \subsection{Task Formulation}
+\label{sec:task}
 % We formulate the propositional logical reasoning task as a next-token prediction problem. Let $\mathcal{M}$ denote a causal language model. Given a prompt sequence $x = [F_1, F_2, ...R_1,...F_k,...R_m, Q]$, where $\{F_i\}$ represents a set of premises (facts), $\{R_i\}$ are logic expression, and $Q$ is the query, the model acts as a function that maps the sequence to a probability distribution over the vocabulary: $P(y|x) = \mathcal{M}(x)$. For a Boolean logic task, the target output $y$ is constrained to binary truth values: $y \in \{\text{True}, \text{False}\}$. To strictly evaluate implicit reasoning, we constrain the model to output the answer immediately following the query, prohibiting explicit chain-of-thought generation. This forces the model to perform the reasoning steps internally within its hidden states.
 
-We formulate the propositional logical reasoning task as a next-token prediction problem. Given a prompt $x = [F_1, \ldots, F_k, R_1, \ldots, R_m, Q]$, where $\{F_i\}$ are premises (\textit{i.e.}, facts), $\{R_j\}$ are logical expressions, and $Q$ is the query, the model $\mathcal{M}$ predicts the answer $y \in \{\texttt{True}, \texttt{False}\}$. To strictly evaluate implicit reasoning, we require the model to output the answer immediately following the query without \textit{Chain-of-Thought} (CoT) generation, 
-% forcing all reasoning to occur internally within hidden states. 
-confining all reasoning to internal hidden states.
+We formulate propositional logical reasoning as a next-token prediction problem over a \emph{logical instance} $I = (F, E, Q)$, where $F$ is a set of factual assignments, $E$ is a set of logical expressions, and $Q$ is the query. The gold answer $y \in \{\texttt{True}, \texttt{False}\}$ is fully determined by $I$ and is invariant to the order in which $F$, $E$, and $Q$ are presented to the model. To turn $I$ into a model input, we apply a \emph{surface linearization} $\pi$ that orders the components into a token sequence $x = \pi(I)$; throughout this paper we use two complementary linearizations: $\pi_{\mathrm{FF}}$ (\texttt{facts\_first}), which lists $F$ before $E$, and $\pi_{\mathrm{EF}}$ (\texttt{expr\_first}), which front-loads $E$ before $F$. Both linearizations preserve the same logical content $I$ and the same gold answer $y$, and both are evaluated for every model studied in this paper. The model $\mathcal{M}$ then predicts $y$ from $x$. To strictly probe implicit reasoning, we require the model to output the answer immediately after the query without \textit{Chain-of-Thought} (CoT) generation, confining all reasoning to internal hidden states.
 
 
 \subsection{Dataset Construction}
 \label{sec:dataset}
 \paragraph{PropLogic-MI}
 While benchmarks like \textit{PrOntoQA} and \textit{ProofWriter} have established a foundation for evaluating reasoning accuracy in LLMs, they remain insufficient for fine-grained MI. These datasets often introduce uncontrolled linguistic variability and entangled reasoning steps, which act as confounding factors for causal analysis methods like activation patching. 
-To address this limitation, we introduce \textit{PropLogic-MI}, a highly controlled dataset designed specifically for circuit discovery. \textit{PropLogic-MI} focuses on atomic logical operations across 11 propositional logic rule categories (Table~\ref{tab:rule_coverage}), providing strictly aligned clean/corrupted pairs for one-hop and two-hop reasoning. This structural precision enables researchers to isolate the exact neural components responsible for logical transitions, shifting the focus from measuring performance to dissecting the underlying mechanism.
+To address this limitation, we introduce \textit{PropLogic-MI}, a highly controlled dataset designed specifically for circuit discovery. \textit{PropLogic-MI} focuses on atomic logical operations across 11 propositional logic rule categories (Table~\ref{tab:rule_coverage}), providing strictly aligned clean/corrupted pairs for one-hop and two-hop reasoning. Crucially, \textit{PropLogic-MI} is released in two prompt-order variants ($\pi_{\mathrm{FF}}$ and $\pi_{\mathrm{EF}}$, see \S\ref{sec:task}) that share rules, fact assignments, and gold labels and differ only in surface linearization, so the two variants together expose the same logical content under two complementary token orderings. This structural precision enables researchers to isolate the exact neural components responsible for logical transitions, shifting the focus from measuring performance to dissecting the underlying mechanism.
 
 % \paragraph{Rule Coverage.}
 % Our dataset encompasses 11 fundamental propositional logic rule categories, spanning core operations of Boolean algebra.
@@ -411,15 +391,14 @@ To address this limitation, we introduce \textit{PropLogic-MI}, a highly control
 
 
 \paragraph{Prompt Template}
-% For each rule, we instantiate prompts by randomly assigning truth values to atomic propositions in all possibility. For example, for \textit{De Morgan's Law}:
-For each rule, we instantiate prompts by enumerating all possible truth value assignments to atomic propositions. For example, for \textit{De Morgan's Law}:
+For each rule, we instantiate prompts by sampling truth values over the rule's atomic propositions and then randomly remapping the variable letters to fresh uppercase symbols drawn from a pool that excludes \texttt{T} and \texttt{F} (so the same logical row may surface as $A,B$ in one prompt and $G,W$ in another). Each prompt terminates with the fixed answer suffix \texttt{"Answer with one word only: True or False."}, which constrains the model to a binary truth-value output. A representative one-hop \textit{De Morgan} prompt under $\pi_{\mathrm{FF}}$ is therefore:
 \begin{center}
-\texttt{"A is True, B is False, ($\neg$A or $\neg$B) is"}
+\texttt{"G is False, W is False, ($\neg$G or $\neg$W) is. Answer with one word only: True or False."}
 \end{center}
-where the model is expected to predict the correct truth value (\texttt{True} in this case). The ground-truth answer is computed via symbolic evaluation.
+where the gold answer is \texttt{True}. Under $\pi_{\mathrm{EF}}$ the same row is linearized as \texttt{"($\neg$G or $\neg$W) is? G is False, W is False. Answer with one word only: True or False."}. The ground-truth answer is computed via symbolic evaluation; full corpus details are in Appendix~\ref{sec:appendix_dataset}.
 
 \paragraph{Reasoning Depth}
-We construct prompts under two complexity settings: (1) One-Hop Reasoning, where the query is directly derived from facts via a single rule, and (2) Two-Hop Reasoning, where an intermediate conclusion must first be derived before predicting the final answer. Representative examples are provided in Table~\ref{tab:reasoning_depth}. 
+We construct prompts under two complexity settings: (1) One-Hop Reasoning, where the query is directly derived from facts via a single rule, and (2) Two-Hop Reasoning, where an intermediate derived assignment $M = e_{1}$ is introduced inline (\textit{e.g.}, \texttt{"V is X or not X"}) and the final query then composes $M$ with a gate variable. Representative examples are provided in Table~\ref{tab:reasoning_depth}. Combined with the two surface linearizations $\pi_{\mathrm{FF}}$ and $\pi_{\mathrm{EF}}$ from \S\ref{sec:task}, every logical row therefore appears in four token-level variants (\{one-hop, two-hop\} $\times$ \{$\pi_{\mathrm{FF}}$, $\pi_{\mathrm{EF}}$\}).
 % (Appendix~\ref{sec:appendix_dataset}).
 
 
@@ -427,6 +406,41 @@ We construct prompts under two complexity settings: (1) One-Hop Reasoning, where
 % We analyze pre-trained models in a zero-shot setting without fine-tuning. For each prompt, we measure the model's logit difference (Eq.~\ref{eq:logit_diff}) to assess reasoning performance and conduct activation patching experiments to identify causally important components.
 
 
+
+\subsection{Sample Pools and Prompt-Order Variants}
+\label{sec:sample_pools}
+
+\paragraph{Sample Pools and Behavioral Baselines}
+For each prompt-order variant of \textit{PropLogic-MI} we construct $20{,}000$ clean/corrupted pairs (\,$9{,}523$ one-hop, $10{,}477$ two-hop, nearly rule-balanced; see Appendix~\ref{sec:appendix_dataset}). Table~\ref{tab:dataset_baselines} reports clean accuracy and the \emph{dual-correct} rate (\textit{i.e.}, the fraction of prompts a model answers correctly on both the clean and the corrupted run) for all four models under both linearizations. The dual-correct subset is the per-model sample pool used by every mechanistic intervention in this paper. Llama-3.1-8B and Mistral-7B reach a markedly lower absolute accuracy than Qwen3, but as we show in \S\ref{sec:results} and Appendix~\ref{sec:appendix_llama}, the same four mechanisms recur in all four models on these dual-correct pools. Token-level patching is then run on balanced sub-samples of $n \approx 1{,}000$ prompts per (model, linearization) cell drawn from these pools, following the filtering pipeline described in Appendix~\ref{sec:appendix_setup}.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{l cc cc c}
+\toprule
+& \multicolumn{2}{c}{$\pi_{\mathrm{FF}}$} & \multicolumn{2}{c}{$\pi_{\mathrm{EF}}$} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Model} & Clean & Dual & Clean & Dual & Pool (FF/EF) \\
+\midrule
+\textit{Qwen3-8B}            & 87.0 & 75.4 & 74.2 & 53.9 & 15{,}087 / 10{,}778 \\
+\textit{Qwen3-14B}           & 87.4 & 76.6 & 74.4 & 52.8 & 15{,}310 / 10{,}562 \\
+\textit{Llama-3.1-8B}        & 63.9 & 38.4 & 60.3 & 37.0 & \phantom{0}7{,}674 / \phantom{0}7{,}403 \\
+\textit{Mistral-7B}          & 65.1 & 35.1 & 66.7 & 40.0 & \phantom{0}7{,}022 / \phantom{0}7{,}995 \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Behavioral baselines on \textit{PropLogic-MI}} ($20{,}000$ prompts per linearization). Clean = clean-prompt accuracy (\%). Dual = fraction of prompts answered correctly on \emph{both} the clean and corrupted runs (\%). The dual-correct subset (right column) defines the per-model sample pool used for all mechanistic experiments. Llama-3.1-8B and Mistral-7B are markedly weaker in absolute accuracy than Qwen3, yet the same four mechanisms recur on their dual-correct pools (\S\ref{sec:results}, Appendix~\ref{sec:appendix_llama}). \textit{Mistral} is the only family whose dual-correct rate does not decrease under $\pi_{\mathrm{EF}}$; the reversal is driven entirely by one-hop prompts ($62.9 \to 75.7$\%) while two-hop drops ($67.1 \to 58.6$\%, see Appendix~\ref{sec:appendix_llama}).}
+\label{tab:dataset_baselines}
+\vspace{-0.6em}
+\end{table}
+
+\paragraph{Prompt-Order as a Sibling Linearization}
+We refer to $\pi_{\mathrm{FF}}$ and $\pi_{\mathrm{EF}}$ as \emph{sibling linearizations}: two surface orderings of the same underlying logical content $I$ (§\ref{sec:task}) that differ only in which clause block (facts or expression) appears first. We adopt this term instead of \emph{prompt-order intervention} because the comparison is not a causal intervention in the activation-patching sense; it is a surface-form manipulation applied at the data-construction level.
+We treat $\pi_{\mathrm{FF}}$ and $\pi_{\mathrm{EF}}$ symmetrically: both are run end-to-end through the full pipeline for every model. Because the two linearizations carry the same logical content, comparing them isolates effects that depend on \emph{surface token order} from effects that reflect \emph{model-internal computational preference}. Throughout the main text we display $\pi_{\mathrm{FF}}$ figures for readability and use $\pi_{\mathrm{EF}}$ as the matched control; the head-to-head comparisons across orderings are collected in Appendix~\ref{sec:appendix_performance} and Appendix~\ref{sec:appendix_prompt_order}.
+
+
+\section{Methodology}
+\label{sec:methodology}
 
 \subsection{Analytical Methods}
 \label{sec:analytical_methods}
@@ -450,6 +464,42 @@ where $\mathrm{P}(w \mid x)$ is the model probability assigned to token $w$ at t
 \end{equation}
 where $x_{\text{baseline}}$ denotes the unpatched corrupted run. A positive $\mathrm{dPD}$ indicates that the intervention restores the model toward the correct answer.
 
+\paragraph{Token Category Taxonomy}
+To study the mechanistic roles of different prompt components (facts, expressions, and the query) at a finer granularity than the three-region partition of §\ref{sec:staged}, we partition each prompt's tokens into eight semantic categories produced by a deterministic, prompt-order-aware classifier (Table~\ref{tab:token_categories}; implementation in Appendix~\ref{sec:appendix_setup}). The eight categories are: \texttt{facts\_value}, \texttt{variable\_in\_facts}, \texttt{query\_token}, \texttt{variable\_in\_expr}, \texttt{operator}, \texttt{expr\_last}, \texttt{derived\_assignment}, and \texttt{others}. The same taxonomy is used across all four models and both prompt orders, so token-level results in \S\ref{sec:results} and Appendix~\ref{sec:appendix_llama} are directly comparable across cells.
+
+\paragraph{Category-Level Aggregation}
+\textit{Purpose.} To place causal effects from tokens with very different roles and cardinalities on a common per-token scale that is comparable across categories, layer bands, and model families.
+\textit{Metric.} We aggregate per-token $\mathrm{dPD}$ values as the \textit{mean unsigned dPD},
+\begin{equation}
+  \overline{|\mathrm{dPD}|}_{c,b} = \frac{1}{|\mathcal{T}_{c,b}|} \sum_{t \in \mathcal{T}_{c,b}} |\mathrm{dPD}(t)|,
+\end{equation}
+where $\mathcal{T}_{c,b}$ is the set of tokens belonging to category $c$ (Table~\ref{tab:token_categories}) in layer band $b$ (\textit{early}, \textit{middle}, or \textit{late}). The absolute value avoids cancellation between positive and negative shifts within a category, and the mean normalizes by category cardinality so that categories with very different token counts (\textit{e.g.}, \texttt{facts\_value} typically $\sim$$2$ tokens per prompt versus \texttt{others} $\sim$$15$--$30$) remain directly comparable.
+\textit{Role.} $\overline{|\mathrm{dPD}|}$ can thus be read as a \textit{per-token causal density}. This is the form used throughout §\ref{sec:results} and Appendix~\ref{sec:appendix_llama} to compare how strongly each category drives the prediction in each layer band, both within and across model families. We additionally define a \textit{staging sharpness ratio} $\rho_{\text{stage}} = \overline{|\mathrm{dPD}|}_{\texttt{facts\_value},\,\text{early}} / \overline{|\mathrm{dPD}|}_{\texttt{facts\_value},\,\text{middle}}$, which quantifies how quickly per-token fact-value density decays from the early to the middle band and thus serves as a family-level measure of staging sharpness independent of absolute density.
+
+\begin{table}[t]
+\centering
+\small
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\columnwidth}{@{}lX@{}}
+\toprule
+\textbf{Category} & \textbf{Definition} \\
+\midrule
+\texttt{facts\_value}        & Truth-value tokens in the facts block (\texttt{True}, \texttt{False}). \\
+\texttt{variable\_in\_facts} & Variable letters appearing in factual assignments outside the queried expression. \\
+\texttt{query\_token}        & Query-region tokens: the query \texttt{is} anchor, the answer-suffix tokens, the final terminal token, and any chat-template tail. \\
+\texttt{variable\_in\_expr}  & Variable letters that participate in the queried expression. \\
+\texttt{operator}            & Logical operators inside an expression (\texttt{and}, \texttt{or}, \texttt{not}, \texttt{xor}, \ldots). \\
+\texttt{expr\_last}          & The last non-punctuation token inside the queried expression span. \\
+\texttt{derived\_assignment} & Non-punctuation tokens in the inline derived assignment $M = e_{1}$ for two-hop prompts. \\
+\texttt{others}              & All remaining tokens (non-terminal punctuation, uncategorized expression tokens). \\
+\bottomrule
+\end{tabularx}
+\caption{\textbf{Token category taxonomy.} Eight semantic categories used by the token-level analyses in \S\ref{sec:results} and Appendix~\ref{sec:appendix_llama}. The classifier is deterministic and prompt-order-aware, so the same taxonomy applies under both $\pi_{\mathrm{FF}}$ and $\pi_{\mathrm{EF}}$.}
+\label{tab:token_categories}
+\vspace{-0.6em}
+\end{table}
+
 
 % We quantify the causal effect of this intervention using the \textit{Logit Difference} (LD) metric on the patched output:
 % % \begin{equation}
@@ -472,27 +522,14 @@ where $x_{\text{baseline}}$ denotes the unpatched corrupted run. A positive $\ma
 % \end{equation}
 % A high positive shift in $\Delta \text{Logits}$ after patching indicates that the patched component stores critical information for the correct deduction.
 
-\subsection{Experimental Setup}
-\label{sec:experiments-setup}
-% We analyze pretrained \textit{Qwen3} models on \textit{PropLogic-MI} using causal intervention analysis.
+\subsection{Models and Evaluation}
+\label{sec:models_eval}
 
 \paragraph{Models}
-Our primary analysis centers on \textit{Qwen3-8B} (36 layers, 32 attention heads per layer), with same-family replication on \textit{Qwen3-14B}. The appendix also reports cross-model extensions to \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct-v0.1}; these are summarized in Appendix~\ref{sec:appendix_llama}. All analyses use pretrained checkpoints in zero-shot settings without fine-tuning.
-
-% \paragraph{Dataset.}
-% From the 370 examples generated via template instantiation (74 one-hop, 296 two-hop), we retain 224 examples (60.5\%) where Qwen3-8B correctly predicts both clean and corrupted prompts—42 one-hop (56.8\%) and 182 two-hop (61.5\%). This filtering ensures activation patching measures genuine mechanism disruption rather than pre-existing failures, while maintaining balanced coverage across reasoning depths and rule categories.
-
-
-% \paragraph{Dataset}
-\paragraph{PropLogic-MI}
-We constructed a total of $20000$ samples ($10000$ one-hop, $10000$ two-hop) by populating the templates in Table~\ref{tab:rule_coverage} with randomized truth values, thereby generating strictly aligned clean and corrupted pairs; full dataset-construction details are provided in Appendix~\ref{sec:appendix_dataset}. Under the default \texttt{facts\_first} prompt order used in the main text, \textit{Qwen3-8B} achieves $86.98\%$ clean accuracy with a $75.44\%$ dual-correct rate ($15087/20000$), while \textit{Qwen3-14B} reaches $87.42\%$ clean accuracy with a $76.55\%$ dual-correct rate ($15310/20000$). The alternative \texttt{expr\_first} prompt order is substantially harder: clean accuracy drops to $74.22\%$ / $74.39\%$ and the dual-correct rate drops to $53.89\%$ / $52.80\%$ for \textit{Qwen3-8B} / \textit{Qwen3-14B}. We use this harder setting as a prompt-order intervention: because it preserves the logical task while reordering the surface presentation, it lets us test whether staged computation follows the prompt layout or reflects a more model-internal computational preference. We therefore keep \texttt{facts\_first} in the main figures for readability, and report the prompt-order comparisons in Appendix~\ref{sec:appendix_performance} and Appendix~\ref{sec:appendix_prompt_order}. Unless otherwise specified, our mechanistic analysis is conducted on samples that the model answers correctly on both the clean and corrupted prompts.
-% To ensure the validity of our mechanistic interventions, we constraint that the model must accurately predict the clean and corrupt pair to differentiate genuine circuit disruption from pre-existing performance failures. 
-% Following evaluation with \textit{Qwen3-8B}, we retain $224$ validated examples ($60.5\%$), comprising $42$ one-hop ($56.8\%$) and $182$ two-hop ($61.5\%$) cases. 
-% This filtered subset preserves sufficient statistical power while maintaining balanced coverage across reasoning depths and rule categories.
-
+We run the full mechanistic analysis on four LLMs drawn from three model families: \textit{Qwen3-8B}, \textit{Qwen3-14B}, \textit{Llama-3.1-8B-Instruct}, and \textit{Mistral-7B-Instruct}. For readability, the main-text figures show \textit{Qwen3-8B} as a representative case; the same pipeline is replicated on the other three models, with the corresponding figures and tables reported in Appendix~\ref{sec:appendix_stage}, Appendix~\ref{sec:appendix_info_converge}, Appendix~\ref{appendix_heads}, and Appendix~\ref{sec:appendix_llama}. All analyses use pretrained checkpoints in zero-shot settings without fine-tuning.
 
 \paragraph{Evaluation}
-We apply activation patching and mean-ablation analyses across all 11 rule categories (§\ref{sec:dataset}) using $\text{PD}$ (Eq.~\ref{eq:logit_diff}) and $\text{dPD}$ (Eq.~\ref{eq:dld}) to quantify component importance. The full experimental inventory now includes: (1) residual-stream patching for token-level information flow; (2) region-level mean ablation for MLP outputs; (3) matched region-level mean ablation for attention outputs; (4) a joint attention+MLP region ablation; and (5) a three-step attention-head discovery / validation pipeline. The main text focuses on the core Qwen3 MLP, token, and head results, while the corresponding extensions are distributed across Appendix~\ref{sec:appendix_region_variants}, Appendix~\ref{sec:appendix_info_converge}, Appendix~\ref{appendix_heads}, and Appendix~\ref{sec:appendix_llama}; expanded figure galleries are collected in Appendix~\ref{sec:appendix_extra_region_gallery}--\ref{sec:appendix_extra_heads_gallery}. All analyses run on NVIDIA H100 GPUs using TransformerLens~\citep{nanda2022transformerlens}. Detailed implementation is provided in Appendix~\ref{sec:appendix_setup}.
+All analyses apply activation patching and mean ablation across the 11 rule categories of \S\ref{sec:dataset} using $\text{PD}$ (Eq.~\ref{eq:logit_diff}) and $\text{dPD}$ (Eq.~\ref{eq:dld}), and aggregate per-token effects via the mean unsigned form $\overline{|\mathrm{dPD}|}_{c,b}$ defined above. Experiments run on NVIDIA H100 GPUs using TransformerLens~\citep{nanda2022transformerlens}; full implementation, the deterministic token classifier behind Table~\ref{tab:token_categories}, and the per-experiment hyperparameters are provided in Appendix~\ref{sec:appendix_setup}.
 
 
 
@@ -598,26 +635,16 @@ We present our findings in four subsections, progressing from macroscopic to mic
 \label{sec:staged}
 
 We begin with a fundamental question: \textit{when does computation occur
-during logical reasoning, and what is processed at each stage?} 
-% TODO: 为什么MLP？动机不够
-Following
-prior interpretability work that identifies MLP layers as primary sites for knowledge processing \citep{geva-etal-2021-transformer}, 
-% TODO: 或许可以再加几篇工作证明出发点
-% we employ MLP patching to reveal when different computational steps occur. 
-% we employ MLP patching to reveal when different parts of the input are processed.
-% Specifically, we hypothesize that MLP layers handle binding entities to truth values,
-% retrieving logical rules, and applying them to derive answers.
-% We begin with a fundamental question: \textit{when does computation occur during logical reasoning, and what is processed at each stage?} In transformer architectures, attention mechanisms primarily perform linear operations (aggregating and routing information across tokens), while MLPs execute the nonlinear transformations that constitute actual computation. We hypothesize that for logical reasoning, the core computational work should be concentrated in MLP layers, including binding entities to their truth values, retrieving relevant logical rules, and applying them to derive the answer. Based on this, we employ MLP patching to reveal \textit{when} different parts of the input are processed.
-we employ MLP patching to reveal when different parts of the input are processed via partitioning each prompt
-into three semantically distinct regions: the \textit{Facts Region} (\textit{e.g.}, \texttt{A is True, B is False}), the \textit{Expression Region} (\textit{e.g.}, \texttt{($\neg$A or $\neg$B)}), and the \textit{Query Region}, which contains the query anchor together with the answer-format tail. For each region, we perform mean ablation on the MLP layer outputs across all layers in clean-prompt runs, quantifying the causal impact via 
+during logical reasoning, and what is processed at each stage?}
+To answer it at the granularity of the input's logical structure, we use a \emph{region-level} causal probe, where ``region-level'' refers to the granularity of three semantic regions defined below, as opposed to the layer-wise or per-token granularities used elsewhere in this paper. Specifically, we partition each prompt into three semantically distinct regions: the \textit{Facts Region} (\textit{e.g.}, \texttt{A is True, B is False}), the \textit{Expression Region} (\textit{e.g.}, \texttt{($\neg$A or $\neg$B)}), and the \textit{Query Region}, which contains the query anchor together with the answer-format tail. For each region, we perform mean ablation on the MLP layer outputs across all layers in clean-prompt runs, quantifying the causal impact via 
 $\text{dPD}$.  
 The results are illustrated in Figure~\ref{fig:stage}.
 
 The results reveal a clear staged pattern. In early layers (L0-8), the Facts Region exhibits the highest patching effect, indicating that factual information (entity-value bindings) is primarily processed at this stage. In middle layers (L10-16), the Expression Region becomes dominant, reflecting the resolution of logical operators. The Query Region is primarily important in late layers where it aggregates preceding computations into the final prediction, though it also shows notable influence in the middle of the network. Note that precise layer boundaries vary slightly across different analytical methods (MLP patching vs. residual stream patching), but the qualitative three-stage pattern remains consistent.
 
-This staged organization (\textit{i.e.}, facts first, expression second, integration last) mirrors the compositional structure of the input itself. Rather than collapsing the task into a single late decision stage, \textit{Qwen3} follows the logical dependency order of the prompt: premises are processed first, expressions are resolved next, and final integration is deferred to the query-facing region. Appendix~\ref{sec:appendix_stage} extends the same MLP analysis to \textit{Qwen3-14B}, and Appendix~\ref{sec:appendix_prompt_order} shows that this coarse early/middle/late decomposition survives the \texttt{expr\_first} intervention, although the relative weight of each region shifts with prompt order.
+This staged organization (\textit{i.e.}, facts first, expression second, integration last) mirrors the compositional structure of the input itself. Rather than collapsing the task into a single late decision stage, the model follows the logical dependency order of the prompt: premises are processed first, expressions are resolved next, and final integration is deferred to the query-facing region. The same three-stage template, at this layer-band granularity, reproduces on the other three families we tested. Appendix~\ref{sec:appendix_stage} extends the same MLP analysis to \textit{Qwen3-14B}, Appendix~\ref{sec:appendix_llama} replicates it on \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct}, and Appendix~\ref{sec:appendix_prompt_order} shows that the early/middle/late decomposition survives the $\pi_{\mathrm{EF}}$ sibling linearization (§\ref{sec:sample_pools}), although the relative weight of each region shifts with prompt order.
 
-We also extend this region-level analysis beyond MLPs. Appendix~\ref{sec:appendix_region_variants} reports the matched attention-region and joint attention+MLP interventions, while Appendix~\ref{sec:appendix_extra_region_gallery} collects the corresponding region galleries. Across these appendix views, the overall stage ordering is preserved across all three branches, but the attention branch assigns relatively more mass to middle-layer Expression processing and late Query integration, whereas the joint branch remains closest to the original MLP decomposition while sharpening early Facts dominance. We therefore use the MLP branch as the main staged-computation probe, and treat the other two as supporting region-level interventions on the same computation.
+We also extend this region-level analysis beyond MLPs. Appendix~\ref{sec:appendix_region_variants} reports the matched attention-region and joint attention+MLP interventions, while Appendix~\ref{sec:appendix_extra_region_gallery} collects the corresponding region galleries. Across these appendix views, the overall stage ordering is preserved across all three branches, but the attention branch assigns relatively more mass to middle-layer Expression processing and late Query integration, whereas the joint branch remains closest to the baseline MLP decomposition while sharpening early Facts dominance. We therefore use the MLP branch as the main staged-computation probe, and treat the other two as supporting region-level interventions on the same computation.
 
 % In this section, we empirically investigate the internal mechanisms of the Qwen3 model during logical reasoning tasks. To ensure a tractable analysis of valid reasoning pathways, we focus our experiments primarily on one-hop and two-hop reasoning scenarios, as the model demonstrates consistent performance in these regimes compared to more complex logical problems. Our analysis unveils three primary structural behaviors governing the model's inference process: (1) \textbf{Information Transmission}, where semantic information within a specific text segment progressively aggregates at the final token of that interval; (2) \textbf{Specialized Attention Heads}, a phenomenon where attention heads assume specialized, persistent functional roles—such as semantic splitting, entity binding, or fact retrieval—across different layers and tasks; and (3) \textbf{Fact Retrospection}, a mechanism wherein critical factual information is actively maintained and revisited throughout the network's depth rather than being processed solely in early layers. Collectively, these findings provide a granular view of how Qwen3 organizes, propagates, and sustains logical information, which is schematically summarized in Figure~\ref{fig:overview}.
 
@@ -637,19 +664,10 @@ We also extend this region-level analysis beyond MLPs. Appendix~\ref{sec:appendi
 \subsection{Information Transmission}
 \label{sec:info}
 
-\paragraph{Tracing Information Flow.} 
-% Having established that computation occurs in distinct stages, a natural question arises: \textit{How does information move from one stage to the next?} 
-% If facts are encoded in early layers and predictions emerge at the query token in late layers, there must be a transmission mechanism.
-% We investigate this 
-We next investigate \textit{how information flows between computational stages}
-through residual stream patching, 
-% given that the residual stream 
-as it serves as the primary information pathway and accumulates representations across layers. By patching residual stream activations at specific token positions, we can trace \textit{where} stage-relevant information resides as it propagates through the network.
+\paragraph{Tracing Information Flow.}
+We next investigate \textit{how information flows between computational stages}. Applying the residual-stream instantiation of our activation-patching framework (§\ref{sec:analytical_methods}) to a running example with clean prompt $x_{\text{clean}}$ = \texttt{A is True, B is False, ($\neg$A or $\neg$B) is} and corrupt prompt $x_{\text{corrupt}}$ = \texttt{A is True, B is True, ($\neg$A or $\neg$B) is}, we obtain the token-by-token causal traces in Figure~\ref{fig:logit_difference}. In Figure~\ref{fig:logit_difference}a, the patching effect is first concentrated at token position 6 (the truth value \texttt{True}) in early layers, shifts to token position 14 (the closing parenthesis \texttt{)}) in the middle, and converges at the query token in late layers; intra-segment tokens show negligible effects throughout. Information therefore aggregates at segment-terminal tokens before flowing to the final prediction position.
 
-We conduct a controlled activation patching study: given a clean prompt $x_{\text{clean}}$ (\textit{e.g.}, \texttt{A is True, B is False, ($\neg$A or $\neg$B) is}) and a corrupt prompt $x_{\text{corrupt}}$ (\textit{e.g.}, A is True, B is True...), we patch token-wise residual stream activations from the clean run into the corrupt run and measure the resulting shift in logit difference. This reveals which token positions carry the causal information that determines the correct answer.
-The resulting causal traces (Figure~\ref{fig:logit_difference}) reveal a clear pattern of information transmission. In Figure~\ref{fig:logit_difference}a, the patching effect is initially concentrated at token position 6 (\textit{i.e.}, the truth value \texttt{True}) in early layers, then shifts to token position 14 (\textit{i.e.}, the closing parenthesis \texttt{)}), and finally converges at the query token in late layers. Intra-segment tokens show negligible effects throughout. This trajectory indicates that information progressively aggregates at segment-terminal tokens before flowing to the final prediction position.
-
-\paragraph{Pattern Quantification.} We corroborate this finding with an alternative patching configuration (Figure~\ref{fig:logit_difference}b), which identifies positions 2, 6, 14, and 15 as dominant convergence points. Aggregating token-level effects by semantic category yields the same pattern, but now in a form that makes the privileged convergence sites explicit (Figure~\ref{fig:info_converge_token_main}). In \textit{Qwen3-8B} under \texttt{facts\_first}, \texttt{facts\_value} dominates the early stage ($1.98 \pm 0.02$), \texttt{expr\_last} is the strongest expression-side category in the middle of the network ($0.273 \pm 0.013$), and \texttt{query\_token} dominates late layers ($1.84 \pm 0.01$). The largest total mass is therefore concentrated on a small set of semantically important token classes rather than being distributed uniformly across all tokens in a segment. Extended token-category results for \textit{Qwen3-14B}, two-hop reasoning, and the \texttt{expr\_first} prompt-order intervention are reported in Appendix~\ref{sec:appendix_info_converge} and Appendix~\ref{sec:appendix_prompt_order}; Appendix~\ref{sec:appendix_extra_token_gallery} provides the retained refined token diagnostics.
+\paragraph{Pattern Quantification.} A second clean/corrupt pair (Figure~\ref{fig:logit_difference}b) corroborates this trajectory and identifies positions 2, 6, 14, and 15 as dominant convergence points. Aggregating these token-level effects by semantic category under the mean unsigned dPD aggregation (§\ref{sec:analytical_methods}) yields the same pattern, now directly comparable across categories of different cardinality (Figure~\ref{fig:info_converge_token_main}). In \textit{Qwen3-8B} under \texttt{facts\_first}, three different categories win the three layer bands: \texttt{facts\_value} dominates the early band with per-token causal density $\overline{|\mathrm{dPD}|} = 0.854$, \texttt{expr\_last} wins the middle band at $0.267$, and \texttt{query\_token} wins the late band at $0.088$; the matched \texttt{others} floor stays at $0.014$--$0.017$ throughout. Because the aggregation is normalized by the number of tokens per category, these numbers are comparable across categories of different cardinality and across model families, which is what lets §\ref{sec:retro} and Appendix~\ref{sec:appendix_llama} read the same axes on Llama and Mistral. Extended token-category results for \textit{Qwen3-14B}, two-hop reasoning, and the $\pi_{\mathrm{EF}}$ sibling linearization are reported in Appendix~\ref{sec:appendix_info_converge} and Appendix~\ref{sec:appendix_prompt_order}; Appendix~\ref{sec:appendix_extra_token_gallery} provides the retained refined token diagnostics.
 These findings establish that information transmission in \textit{Qwen3} follows a structured pattern: semantic content aggregates at the final token of each semantic segment (\textit{e.g.}, \texttt{True} for the fact \texttt{A is True}, and \texttt{)} for the expression region) and ultimately converges at the query token (\texttt{is}). These segment-terminal tokens serve as information hubs for downstream propagation, providing the infrastructure for the staged computation observed in Section~\ref{sec:staged}. 
 % Notably, \texttt{facts\_value} tokens maintain non-trivial causal importance even in middle and late layers (Figure~\ref{fig:info_converge_token}), contradicting a simple encode-then-forget model. This persistent influence suggests active re-access of source facts throughout processing.
 
@@ -686,8 +704,8 @@ These findings establish that information transmission in \textit{Qwen3} follows
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\columnwidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_refined/refined_by_stage_sum.png}
-    \caption{\textbf{Token-category information convergence in \textit{Qwen3-8B} under \texttt{facts\_first}.} Token-level residual-stream patching effects are aggregated by semantic token category and layer stage. Early layers are dominated by \texttt{facts\_value} ($1.98 \pm 0.02$), the middle of the network concentrates the strongest expression-side mass on \texttt{expr\_last} ($0.273 \pm 0.013$), and late layers are dominated by \texttt{query\_token} ($1.84 \pm 0.01$). The largest total mass is concentrated on a small set of semantically privileged categories rather than spread across the full sequence (\texttt{facts\_value}: $2.47$; \texttt{query\_token}: $2.22$; \texttt{expr\_last}: $0.28$), which supports the view that information converges onto important tokens during reasoning.}
+    \includegraphics[width=\columnwidth]{./figures_experiments/reports/token_analysis/8b_facts_first_all_hop_refined/refined_by_stage_mean.png}
+    \caption{\textbf{Token-category information convergence in \textit{Qwen3-8B} under \texttt{facts\_first}.} Token-level residual-stream patching effects are aggregated by semantic category and layer band as \textit{mean unsigned dPD} (§\ref{sec:analytical_methods}), making per-token causal density directly comparable across categories of different cardinality. The early band is dominated by \texttt{facts\_value} ($\overline{|\mathrm{dPD}|}=0.854$), the middle band by \texttt{expr\_last} ($0.267$) with \texttt{facts\_value} still second at $0.209$, and the late band by \texttt{query\_token} ($0.088$); the \texttt{others} floor stays at $0.014$--$0.017$ across all bands. Concentrating the largest per-token density on a small set of semantically privileged categories, rather than spreading it uniformly across the prompt, is precisely what ``information convergence onto important tokens'' means under the mean unsigned aggregation.}
     \vspace{-0.5em}
     \label{fig:info_converge_token_main}
 \end{figure}
@@ -747,14 +765,15 @@ These findings establish that information transmission in \textit{Qwen3} follows
 
 \subsection{Fact Retrospection}
 \label{sec:retro}
-An unexpected finding from the preceding analysis is that fact tokens maintain
-causal importance even in late layers: the token-category aggregation reported in Appendix~\ref{sec:appendix_info_converge} shows that \texttt{facts\_value} retains non-trivial mean $|\mathrm{dPD}|$ across all layer groups.
-% , contradicting a simple encode-then-forget model. 
-% The Information Transmission analysis reveals an unexpected phenomenon: \textit{why do fact tokens maintain causal importance in deep layers?} Once information is transmitted to segment-terminal tokens, we would expect source positions to become causally irrelevant. Yet \texttt{facts\_value} tokens exhibit sustained comparatively high $|\text{dLD}|$ values across all layer groups (Figure~\ref{fig:info_converge_token}), contradicting a simple encode-then-forget model.
-This pattern holds across one-hop and two-hop reasoning (Appendix~\ref{sec:appendix_info_converge}). The complementary head-level evidence in Appendix~\ref{appendix_heads} and Appendix~\ref{sec:appendix_extra_heads_gallery} further shows that late-layer fact-retrieval heads remain prevalent and causally consequential across prompt orders.
-We propose the Fact Retrospection hypothesis to explain this observation: rather than processing facts once and discarding the original representations, the model actively revisits source fact tokens throughout its depth. This mechanism of active information maintenance may serve several functions: (1) Error Mitigation, where retaining access to original facts allows potential correction of misinterpretations in intermediate steps; (2) Integration Facilitation, since later reasoning steps may require renewed access to earlier facts for final synthesis; and (3) Robustness Enhancement, as redundant access to source information provides resilience against representation degradation.
+The token-level aggregation from §\ref{sec:info} reveals a finding that is not predicted by a simple encode-then-forget view of the residual stream: \texttt{facts\_value} retains above-floor per-token causal density far beyond the early band. Under the mean unsigned aggregation, this phenomenon decomposes cleanly into two layer-band sub-findings that together define what we call \textit{Fact Retrospection}. We emphasize that the evidence here is causal density, not a direct measurement of information flow, and we therefore describe it in rank-order terms rather than agency terms throughout.
 
-% If this hypothesis is correct, we should observe attention heads that persistently attend back to fact positions in later layers.
+\paragraph{Middle-Band Dominance} In the middle layer band, \texttt{facts\_value} is the only non-query category whose per-token density is substantially above the \texttt{others} floor across all four model families and both prompt orders. Under \texttt{facts\_first}, the middle-band $\overline{|\mathrm{dPD}|}$ of \texttt{facts\_value} is $0.209$ (\textit{Qwen3-8B}), $0.336$ (\textit{Qwen3-14B}), $0.045$ (\textit{Llama-3.1-8B-Instruct}), and $0.092$ (\textit{Mistral-7B-Instruct}), against matched \texttt{others} floors of $0.014$, $0.011$, $0.011$, and $0.007$, i.e.\ floor ratios of $15\times$, $31\times$, $4\times$, and $13\times$. Under \texttt{expr\_first} the same ranking holds and is in fact stronger in 7 out of 8 (model $\times$ order) cells: middle-band \texttt{facts\_value} density rises to $0.390$, $0.575$, $0.072$, and $0.095$ for the four models, with matched floors of $0.008$, $0.004$, $0.010$, and $0.009$ (floor ratios $49\times$, $144\times$, $7\times$, and $11\times$). The middle-of-network layers therefore retain substantial per-token causal dependence on fact-value positions in every (model, order) cell.
+
+\paragraph{Late-Band Rank-Order Residual} Late-band \texttt{facts\_value} density is numerically small in absolute terms ($0.004$--$0.029$ across the eight cells), but in every single cell it is the \textit{second-ranked} non-special category after \texttt{query\_token}, and it sits $2\times$--$29\times$ above the matched \texttt{others} floor (which decays to $0.000$--$0.002$ in the late band). Every other non-query category collapses essentially to floor, whereas \texttt{facts\_value} does not. This is not a claim that late layers ``return to'' the facts; it is a rank-order statement, namely that the fact-value positions are the only non-query category that carries a measurable residual causal signal into the late band of every model we tested.
+
+\paragraph{Prompt-Order Sub-Finding} The middle-band comparison above reveals a further structural fact: reordering the prompt so that the query appears before the factual assignments (\texttt{expr\_first}) does not weaken middle-band fact-value density but \emph{increases} it in 7 of 8 cells, most strikingly for \textit{Qwen3-14B} ($0.336 \to 0.575$, a $1.7\times$ increase) and \textit{Qwen3-8B} ($0.209 \to 0.390$). Staging sharpness (§\ref{sec:analytical_methods}) is therefore prompt-order sensitive in a direction consistent with §\ref{sec:staged}: when the query is parsed first, the middle of the network carries more per-token causal dependence on fact-value positions rather than less.
+
+\paragraph{Downstream Corroboration} The three token-level observations above come from residual-stream patching. Independently of this, the head-level ablation analysis in §\ref{sec:heads} shows that removing the top-$32$ Fact-Retrieval heads reduces held-out accuracy by $25.4$--$35.6$ points across all four validation settings, whereas a matched \textit{Random-Outside} control leaves accuracy near baseline. These two evidence streams are methodologically independent (token-position residual patching vs.\ head-level mean ablation), but they point in the same direction: fact-value positions remain a load-bearing component of the computation far beyond the early band. Full per-model breakdowns are provided in Appendix~\ref{sec:appendix_info_converge} and Appendix~\ref{sec:appendix_llama}.
 
 \subsection{Specialized Attention Heads}
 \label{sec:heads}
@@ -765,11 +784,22 @@ We group the discovered heads into three main categories, each corresponding to 
 
 \paragraph{Splitting Heads} In early layers, these heads concentrate on comma tokens (Figure~\ref{fig:splitting_head}), which act as boundary markers between semantic regions. They therefore operationalize Staged Computation: by marking clause boundaries, they separate the factual premises from the expression to be solved.
 \paragraph{Transmission Heads} These heads aggregate information within a semantic region and route it toward the region's terminal token. Their attention maps form lower-triangular blocks inside the Facts and Expression regions (Figure~\ref{fig:convergence_head}), matching the Information Transmission pattern identified from residual-stream patching. A subclass additionally binds variables to their truth values.
-\paragraph{Fact-Retrieval Heads} These heads repeatedly attend from the query token or expression tokens back to truth-value tokens (\texttt{True}/\texttt{False}) (Figure~\ref{fig:facts_head}). Their concentration in middle-to-late layers (Figure~\ref{fig:counts}) directly supports the Fact Retrospection hypothesis: the model does not simply encode facts once, but re-accesses them during later computation.
+\paragraph{Fact-Retrieval Heads} These heads route attention from the query token or expression tokens back toward truth-value tokens (\texttt{True}/\texttt{False}) (Figure~\ref{fig:facts_head}). Their concentration in middle-to-late layers (Figure~\ref{fig:counts}) provides the head-level counterpart to the rank-order residual reported in §\ref{sec:retro}: fact-value positions are the only non-query category whose causal density stays above floor into the middle and late bands, and these heads are the structural carriers of that residual at the attention level.
 
 The layer-wise organization is robust. Figure~\ref{fig:counts} shows the one-hop \textit{Qwen3-8B} case, where Splitting Heads cluster in early layers, Transmission Heads occupy the middle of the network, and Fact-Retrieval Heads remain active into later layers. Appendix~\ref{appendix_heads} shows the same coarse layout for both \textit{Qwen3-8B} and \textit{Qwen3-14B}, and for both \texttt{facts\_first} and \texttt{expr\_first} prompts, although the relative frequency of each role changes with prompt format; Appendix~\ref{sec:appendix_extra_heads_gallery} further shows that the candidate-head maps and per-role dPD-shift curves follow the same organization.
 
-More importantly, this taxonomy is causally predictive rather than merely descriptive. Across all four validation settings (\textit{Qwen3-8B}/\textit{Qwen3-14B} $\times$ \texttt{facts\_first}/\texttt{expr\_first}), ablating the top-32 heads of a single role lowers accuracy by 20.4--39.6 points for Fact-Retrieval, 19.6--27.4 points for Transmission, and 10.0--19.6 points for Splitting. Ablating top-32 heads pooled across all three roles lowers accuracy by 25.4--35.6 points. In contrast, ablating 32 \textit{Random-Outside} heads leaves accuracy at or above baseline in three of the four settings, and causes only a 0.3-point drop in the remaining case. The strongest effect appears in \textit{Qwen3-8B} with \texttt{facts\_first} prompts: ablating the top-64 Fact-Retrieval heads reduces accuracy from 96.6\% to 50.6\%, whereas ablating 64 random outside heads still leaves 91.1\% accuracy. These interventions show that the extracted heads are functionally important for solving the task, and that the three roles capture complementary parts of the reasoning mechanism rather than superficial attention motifs. Appendix~\ref{appendix_heads} summarizes the robustness checks; Appendix~\ref{sec:appendix_full_accuracy} reports the complete Qwen3 Step~3 accuracy tables for all strategies, all $k$ values, and the pairwise / mixed-role combinations; and Appendix~\ref{sec:appendix_llama} shows how the same validation pipeline behaves in \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct-v0.1}.
+The same three-role template reproduces on \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct} (Appendix~\ref{sec:appendix_llama}), although the relative weight of each role differs from Qwen3: Llama and Mistral both show weaker Fact-Retrieval concentration and a heavier query-centered late-band contribution, consistent with the lower fact-value density reported in §\ref{sec:retro}. In other words, the head taxonomy generalizes to all four families, but \emph{how strongly} each role is expressed tracks the family-level density and sharpness axes identified earlier.
+
+More importantly, this taxonomy is causally predictive rather than merely descriptive. Across all four Qwen3 validation settings (\textit{Qwen3-8B}/\textit{Qwen3-14B} $\times$ \texttt{facts\_first}/\texttt{expr\_first}), ablating the top-32 heads of a single role lowers accuracy by 20.4--39.6 points for Fact-Retrieval, 19.6--27.4 points for Transmission, and 10.0--19.6 points for Splitting. Ablating top-32 heads pooled across all three roles lowers accuracy by 25.4--35.6 points. In contrast, ablating 32 \textit{Random-Outside} heads leaves accuracy at or above baseline in three of the four settings, and causes only a 0.3-point drop in the remaining case. The strongest effect appears in \textit{Qwen3-8B} with \texttt{facts\_first} prompts: ablating the top-64 Fact-Retrieval heads reduces accuracy from 96.6\% to 50.6\%, whereas ablating 64 random outside heads still leaves 91.1\% accuracy. These interventions show that the extracted heads are functionally important for solving the task, and that the three roles capture complementary parts of the reasoning mechanism rather than superficial attention motifs. Appendix~\ref{appendix_heads} summarizes the robustness checks; Appendix~\ref{sec:appendix_full_accuracy} reports the complete Qwen3 Step~3 accuracy tables for all strategies, all $k$ values, and the pairwise / mixed-role combinations; and Appendix~\ref{sec:appendix_llama} shows how the same validation pipeline behaves in \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct}.
+
+The same selectivity is visible in raw dPD space. Figure~\ref{fig:qwen3_dpd_shift_main} plots the main \textit{Qwen3-8B} \texttt{facts\_first} validation sweep as the mean intervention-induced shift in dPD, where more negative values indicate that the ablation pushes the model farther away from the correct answer. Fact-Retrieval remains the strongest single-role curve throughout the sweep: at $k=32$, its mean shift reaches $-0.668$, compared with $-0.456$ for Transmission, $-0.263$ for Splitting, and $+0.018$ for \textit{Random-Outside}. Even at $k=64$, the random control remains much weaker ($-0.089$) than the role-targeted ablations. The pairwise and mixed strategies interpolate between these behaviors rather than overturning the overall ordering, which supports the view that the discovered roles are complementary but unequally concentrated parts of the mechanism. Appendix~\ref{sec:appendix_extra_heads_gallery} extends the same raw dPD-shift diagnostic to both model scales and both prompt orders.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{./figures_experiments/reports/heads_analysis_qwen3_8b_facts_first/validation/plots/dpd_shift_curve.png}
+\caption{\textbf{Raw Step~3 dPD-shift validation in \textit{Qwen3-8B} under \texttt{facts\_first}.} Each curve shows the mean change in dPD after ablating the top-$k$ heads for one strategy; more negative values indicate a more damaging intervention. Fact-Retrieval is the most harmful single-role ablation throughout the sweep ($-0.668$ at $k=32$; $-0.812$ at $k=64$), Transmission is second ($-0.456$ at $k=32$), Splitting is weakest ($-0.263$ at $k=32$), and \textit{Random-Outside} remains near zero through $k=32$ ($+0.018$) before becoming only mildly negative at $k=64$ ($-0.089$). This directional view complements Table~\ref{tab:qwen3_head_accuracy_main} by showing that the discovered roles move the model away from the correct answer in the expected causal direction rather than merely reducing held-out accuracy.}
+\label{fig:qwen3_dpd_shift_main}
+\end{figure}
 
 \begin{table}[t]
 \centering
@@ -826,46 +856,17 @@ Random-Outside & 97.2 $\pm$ 0.4 & 92.5 $\pm$ 0.8 & 98.3 $\pm$ 0.2 & 98.2 $\pm$ 0
 \section{Discussion}
 \subsection{Implications of the Findings}
 
-Our results suggest that propositional logical reasoning in transformers is not implemented by a monolithic circuit but rather organized as a multi-phase computational strategy: early-layer encoding, middle-layer information routing, and late-layer decision making. This staged organization persists across 11 rule categories, two reasoning depths, and two model scales, which points to a general architectural property rather than a task-specific shortcut.
+Our results suggest that propositional logical reasoning in transformers is not implemented by a monolithic circuit but rather organized as a multi-phase computational strategy: early-layer encoding, middle-layer information routing, and late-layer decision making. This staged organization persists across 11 rule categories, two reasoning depths, and two model scales, which points to a general architectural property rather than a task-specific shortcut. This view complements the circuit-discovery line of work \citep{elhage2021mathematicalframeworktransformer, wang2022interpretabilitywildcircuitindirect}, which asks \textit{which} components are necessary for a task; here we instead ask \textit{how} the computation is organized along depth, and find a stage pattern that recurs across four model families rather than a single wiring diagram tied to one model.
 
-A notable finding is Fact Retrospection, where models repeatedly re-access premise information across multiple layers rather than encoding it once. This recurring retrieval pattern is qualitatively different from the single-shot factual recall observed in knowledge localization studies \citep{meng2023locatingeditingfactualassociations}, and may reflect the additional computational demands of composing multiple premises under a logical rule. Whether this distributed access pattern extends to other forms of compositional reasoning (e.g., arithmetic, spatial) remains an open question.
+A notable finding is Fact Retrospection: under the mean unsigned aggregation, fact-value positions are the only non-query category whose per-token causal density remains above the background floor into the middle and late layer bands, across four model families and both prompt orders. This cross-family rank-order residual is qualitatively different from the single-shot factual recall localized to early/middle MLPs in knowledge-editing studies \citep{meng2023locatingeditingfactualassociations}: the premises here do not disappear after being read, they continue to carry causal signal into the layers where the logical rule is composed. The cross-rule breakdowns make this more concrete. Accuracy and head-role strength vary smoothly across the 11 propositional rule categories, and Distributivity and De~Morgan are not only the hardest rules but also the settings where \textit{Fact-Retrieval} ablation produces the largest accuracy drops (Appendix~\ref{sec:appendix_performance}). Exactly the rules that require multiple re-accesses to the original truth values are the ones most damaged when we remove the heads that attend back to those positions, which provides indirect behavioral support for the Fact Retrospection interpretation. Whether the same residual pattern extends to other forms of compositional reasoning (\textit{e.g.}, arithmetic, spatial) remains an open question.
 
-The staged computation we observe in the no-CoT setting also raises an interesting question about chain-of-thought prompting: if models already implement internal staging, CoT may succeed not by introducing staged reasoning \textit{de novo}, but by aligning the model's internal computation with an explicit external structure. Testing whether CoT reshapes or merely amplifies the patterns we identify could clarify the mechanistic role of intermediate tokens.
+The staged computation we observe in the no-CoT setting also raises a question about chain-of-thought prompting: if models already implement internal staging, CoT may succeed not by introducing staged reasoning \textit{de novo}, but by aligning the model's internal computation with an explicit external structure. Testing whether CoT reshapes or merely amplifies the patterns we identify could clarify the mechanistic role of intermediate tokens.
 
-\subsection{Methodological Considerations}
+\subsection{Rule-Type Variation}
+The cross-rule breakdowns in Appendix~\ref{sec:appendix_performance} show that accuracy and head-role strength vary smoothly across the 11 propositional rule categories rather than splitting into a clean ``solved vs.\ unsolved'' partition. Commutative and Identity rules are the easiest for all four models; Distributivity and De~Morgan are the hardest and also the settings where Fact-Retrieval ablation produces the largest accuracy drops, which we read in §6.1 as behavioral support for Fact Retrospection. Two-hop reasoning amplifies these differences without introducing qualitatively new head roles, consistent with the view that multi-hop composition reuses the same mechanism at greater depth rather than instantiating a separate circuit.
 
-Several methodological choices in our analysis warrant discussion. First, our head taxonomy (Splitting, Transmission, Fact-Retrieval) is derived from attention pattern clustering and validated through group ablation (Table~\ref{tab:qwen3_head_accuracy_main}), but we have not yet performed targeted ablation of individual heads within each type or matched random controls of equal size. Such experiments would strengthen the causal claims by distinguishing necessary heads from redundant ones within each category.
-
-Second, our intervention suite mixes two families of operations: clean-to-corrupt activation patching for residual-stream analyses, and mean-ablation replacements for region- and head-level analyses. The latter are more conservative than zeroing activations, but they can still introduce distributional shifts because the replacement vectors need not lie on the model's natural trajectory for the intervened sample. Further work should compare within-sequence means, dataset means, and cleaner causal baselines across all branches.
-
-Third, our primary intervention metric is the aligned probability difference between the correct and incorrect answer tokens, and most analyses track its change under intervention ($\mathrm{dPD}$). This better matches the model's binary decision on the benchmark than a raw logit gap, but it still compresses behavior to a one-dimensional margin. Supplementing $\mathrm{dPD}$ with calibrated answer probability or sequence-level uncertainty would provide a fuller picture.
-
-% \subsection{From Circuit Discovery to Mechanism Characterization}
-
-% Our approach departs from the circuit-discovery paradigm \citep{elhage2021mathematicalframeworktransformer, wang2022interpretabilitywildcircuitindirect} that asks ``which heads are necessary?'' We instead ask ``what computational strategies does the model employ?''
-
-% This shift is motivated by two observations. First, circuit faithfulness is difficult to establish: multiple circuits may implement the same function, and ablating one may simply shift computation to another. Second, circuits often fail to generalize across models, limiting their scientific value for understanding \emph{how transformers reason} rather than \emph{how a particular model is wired}.
-
-% Our findings (Staged Computation, Information Transmission, Fact Retrospection, Specialized Attention Heads) describe patterns at an abstraction level that may generalize across architectures, aligning with cognitive science's distinction between algorithmic and implementational analysis.
-
-
-% \subsection{Lazy Reasoning: Information Flow vs. Logical Computation}
-
-% Our analysis primarily traces information flow patterns, but an important distinction exists between information flow and logical computation. Our directional patching analysis (Appendix~\ref{sec:lazy_reasoning}, Figure~\ref{fig:lazy_reasoning}) suggests that the actual logical computation may be deferred to late layers at the \textit{Query Token}, consistent with a lazy reasoning strategy where facts are encoded early, routed through middle layers, and combined only at the final decision point.
-
-
-
-% \paragraph{Other Attention Head Patterns.}
-\subsection{Other Attention Head Patterns.}
-% \label{sec:other_heads}
-Beyond the three causally validated roles, we also observe recurrent descriptive motifs such as first-token sink heads, early entity-value binding heads, diagonal self-processing heads, and expression-focused heads in the late middle layers. These patterns are not part of the validated taxonomy, but they help explain several regularities in the attention maps shown throughout the paper. Appendix~\ref{sec:appendix_other_heads} discusses them qualitatively and clarifies how they relate to the main three-role picture.
-
-
-
-% \paragraph{Functional Coupling in Specialized Heads.}
-\subsection{Functional Coupling in Specialized Heads.}
-Some heads exhibit multiple role signatures within a single attention map, especially combinations of boundary focus with local transmission or of transmission with fact retrieval. We therefore treat Splitting, Transmission, and Fact-Retrieval as coarse descriptive clusters rather than mutually exclusive types. Appendix~\ref{sec:appendix_func_couple} gives qualitative examples of this overlap and shows why the role taxonomy should be read as a useful summary of head behavior, not as a claim that each head performs only one operation.
-% Future work should develop metrics to quantify the degree of functional overlap and investigate whether multi-functional heads differ in causal importance from specialized ones.
+\subsection{Head Taxonomy as a Descriptive Decomposition}
+Beyond the three causally validated roles, two additional observations shape how the taxonomy should be read. First, we also see recurrent descriptive motifs that are \emph{not} part of the validated taxonomy: first-token sink heads, early entity-value binding heads, diagonal self-processing heads, and expression-focused heads in the late middle layers; we treat these as regularities in the attention maps rather than as additional causal claims. Second, some heads in the validated taxonomy exhibit multiple role signatures within a single attention map, combining boundary focus with local transmission, or transmission with fact retrieval. Appendix~\ref{sec:appendix_func_couple} gives qualitative examples. We therefore read Splitting, Transmission, and Fact-Retrieval as a descriptive decomposition of head behavior under this benchmark rather than a claim that each head performs only one operation, consistent with the parallel-circuit caveat noted in §Limitations.
 
 % \subsection{Lazy Reasoning: Information Flow vs. Logical Computation}
 
@@ -881,7 +882,7 @@ Some heads exhibit multiple role signatures within a single attention map, espec
 
 
 \section{Conclusion and Future Work}
-In this paper, we present a mechanistic analysis of propositional logical reasoning in \textit{Qwen3} models, adopting a top-down analytical strategy 
+In this paper, we present a mechanistic analysis of propositional logical reasoning across four LLMs (\textit{Qwen3-8B}, \textit{Qwen3-14B}, \textit{Llama-3.1-8B-Instruct}, and \textit{Mistral-7B-Instruct}), adopting a top-down analytical strategy
 from
 % that effectively bridges the gap between 
 macroscopic patterns 
@@ -892,11 +893,11 @@ Our investigation uncovers a coherent computational architecture: the model orga
 % (\textit{Staged Computation}), 
 routes information through semantic boundary tokens,
 % (\textit{Information Transmission}), 
-maintains active re-access to source facts throughout processing, 
+retains above-floor causal density on fact-value positions into middle and late layers,
 % (\textit{Fact Retrospection}), 
 and implements these strategies through specialized attention heads.
 % (\textit{Specialized Attention Heads}). 
-These four phenomena form an interlocking system where each mechanism supports and validates the others. Furthermore, these patterns generalize across model scales, rule types and reasoning depths, suggesting fundamental computational strategies rather than task-specific shortcuts. By characterizing \textit{how} models reason rather than \textit{which components} are necessary, 
+These four phenomena form an interlocking system where each mechanism supports and validates the others. They recur across four model families, two model scales within Qwen3, 11 propositional rule categories, one-hop and two-hop reasoning depths, and two prompt orders (\texttt{facts\_first} and the \texttt{expr\_first} prompt-order control), suggesting fundamental computational strategies rather than task-specific shortcuts; the families differ along two independent axes of variation, density and sharpness, rather than along a single ``better staging'' ranking. By characterizing \textit{how} models reason rather than \textit{which components} are necessary, 
 % we contribute mechanistic evidence to the debate on whether LLMs implement genuine algorithmic processes or rely solely on pattern matching.
 we contribute mechanistic evidence to the hypothesis that LLMs implement algorithmic processes rather than rely solely on pattern matching.
 
@@ -914,7 +915,15 @@ Finally, analyzing training dynamics would reveal how and when these mechanisms 
 Our analysis has several methodological limitations. 
 First, while we characterize attention head specialization in detail, the internal computations within MLP layers remain largely unexplored. Our MLP patching experiments reveal when MLPs are causally important, but not what specific transformations they perform. Understanding how MLPs encode logical rules, bind variables to truth values, or compute Boolean operations represents a significant open challenge.
 % Second, activation patching establishes causal sufficiency but not necessity??: alternative circuits may implement the same function, and ablating one pathway may simply shift computation to another. Our identified mechanisms represent sufficient components for reasoning, not necessarily the only components involved.
-Second, our analysis characterizes the presence of mechanisms in pre-trained models but does not explain how or when these mechanisms emerge during training. Whether these patterns arise from specific training data, emerge gradually through pretraining, or appear suddenly via phase transitions remains unknown. Finally, while we interpret our findings as evidence for structured computation, we cannot definitively rule out that these patterns reflect sophisticated statistical shortcuts that merely approximate genuine logical algorithms.
+Second, our analysis characterizes the presence of mechanisms in pre-trained models but does not explain how or when these mechanisms emerge during training. Whether these patterns arise from specific training data, emerge gradually through pretraining, or appear suddenly via phase transitions remains unknown.
+
+Third, our head-role discovery pipeline ranks heads by clean-prompt mean-ablation effect and clusters the top candidates by attention-pattern statistics. This procedure is causally validated at the group level by the comparison with the matched \textit{Random-Outside} control, which shows that the ranked-and-clustered heads are not merely a random high-importance set. However, group-level causal validation cannot rule out \textit{parallel circuits}: the possibility that several functionally redundant subsets of heads implement overlapping parts of the same computation, so that ablating one subset merely redirects mass to another. Our top-$k$ sweeps in §\ref{sec:heads} and Appendix~\ref{sec:appendix_extra_heads_gallery} are consistent with this concern (accuracy drops keep growing as $k$ increases), and we therefore treat the taxonomy as a descriptive decomposition rather than a uniqueness claim. We have also not performed individual-head targeted ablation within each role cluster; such within-cluster necessity tests would further sharpen the causal reading beyond the group-level Random-Outside comparison.
+
+Fourth, our analysis is restricted to the implicit (no-CoT) regime in which the model must answer immediately after the query. This regime is methodologically convenient because it forces all reasoning into the residual stream, but it also means our claims should not be read as statements about chain-of-thought reasoning, where intermediate tokens change the computational graph.
+
+Fifth, the late-band density of fact-value positions is numerically small in absolute terms ($\overline{|\mathrm{dPD}|}$ ranging from $0.004$ to $0.029$), and our late-band claim is a \textit{rank-order residual} claim (fact-value is the only non-query category above the background floor in every cell) rather than an agency claim. We have not performed matched clean-vs-incorrect failure-case patching on the late band, and we therefore defer the sharper question of whether this residual is load-bearing for the subset of prompts the model gets wrong to future work.
+
+Finally, while we interpret our findings as evidence for structured computation, we cannot definitively rule out that these patterns reflect sophisticated statistical shortcuts that merely approximate genuine logical algorithms.
 
 
 
@@ -943,13 +952,12 @@ Second, our analysis characterizes the presence of mechanisms in pre-trained mod
 	        \item[\ref{sec:appendix_region_variants}] \hyperref[sec:appendix_region_variants]{Additional Region-Level Ablations}
 	        \item[\ref{sec:appendix_info_converge}] \hyperref[sec:appendix_info_converge]{Information Transmission}
 		        \item[\ref{appendix_heads}] \hyperref[appendix_heads]{Specialized Attention Heads: Robustness and Validation}
-		        \item[\ref{sec:appendix_llama}] \hyperref[sec:appendix_llama]{Cross-Model Extensions: Llama-3.1-8B-Instruct and Mistral-7B-Instruct-v0.1}
+		        \item[\ref{sec:appendix_llama}] \hyperref[sec:appendix_llama]{Cross-Model Extensions: Llama-3.1-8B-Instruct and Mistral-7B-Instruct}
 		        \item[\ref{sec:appendix_synthesis}] \hyperref[sec:appendix_synthesis]{Appendix Synthesis: Relation to the Main Claims}
 		        \item[\ref{sec:failure_analysis}] \hyperref[sec:failure_analysis]{Failure Case Analysis}
 		    \end{itemize}
 	        \item[\ref{sec:appendix_discussion}] \hyperref[sec:appendix_discussion]{Discussion}
     \begin{itemize}
-        \item[\ref{sec:appendix_other_heads}] \hyperref[sec:appendix_other_heads]{Other Attention Head Patterns}
         \item[\ref{sec:appendix_func_couple}] \hyperref[sec:appendix_func_couple]{Functional Coupling in Specialized Heads}
         \item[\ref{sec:appendix_full_accuracy}] \hyperref[sec:appendix_full_accuracy]{Complete Accuracy Tables}
         % \item[\ref{sec:lazy_reasoning}] \hyperref[sec:lazy_reasoning]{Lazy Reasoning}
@@ -1194,8 +1202,7 @@ Absorption
     & \texttt{"A is T, B is F, A and (A or B) is"} \\
 \bottomrule
 \end{tabularx}
-% \caption{\textbf{Rule coverage.} We cover 11 fundamental categories. For rules with dual forms (Identity, Domination, Idempotent), both formulas and example templates are shown with horizontal spacing. For each rule covers its formal Boolean algebra definition and a corresponding template. Variables \{A, B, C\} are instantiated with truth values (True/False). T/F denotes True/False.}
-\caption{\textbf{Rule coverage.} \textit{PropLogic-MI} systematically covers 11 fundamental rule categories. Each rule includes its formal Boolean algebra definition and a corresponding template. Variables \{\texttt{A, B, ..., Z}\} are instantiated with truth values (\texttt{True}/\texttt{False}). T/F denotes \texttt{True}/\texttt{False}.}
+\caption{\textbf{Rule coverage.} \textit{PropLogic-MI} systematically covers 11 fundamental rule categories, each shown with its formal Boolean-algebra definition and an illustrative one-hop prompt template. The example templates use the placeholder letters \{\texttt{A,B,C}\} with truth-value abbreviations \texttt{T}/\texttt{F} for compactness; in the actual corpus, the variable letters are randomly remapped per prompt to fresh uppercase symbols drawn from a pool that excludes \texttt{T} and \texttt{F}, and every prompt terminates with the fixed answer suffix \texttt{"Answer with one word only: True or False."} (Appendix~\ref{sec:appendix_dataset}).}
 \vspace{-1.0em}
 \label{tab:rule_coverage}
 \end{table*}
@@ -1230,7 +1237,7 @@ Absorption
   \color{gray}\textit{\footnotesize $\hookrightarrow$ Chain: $(A \land B) \to C; \quad (C \lor D) \to \text{Ans}$} \\
 \bottomrule
 \end{tabularx}
-\caption{\textbf{Probing prompts across reasoning depths.} We probe the model with queries requiring direct rule application (One-Hop) versus those necessitating intermediate latent variable derivation (Two-Hop).}
+\caption{\textbf{Probing prompts across reasoning depths.} We probe the model with queries requiring direct rule application (One-Hop) versus those necessitating an intermediate derived assignment $M = e_{1}$ that is written inline in the prompt (Two-Hop). The templates above use the compact placeholder letters \{\texttt{A,B,C,D}\} for readability; in the actual corpus, variables are randomly remapped per prompt to fresh uppercase symbols (excluding \texttt{T}/\texttt{F}), and every prompt terminates with the fixed answer suffix \texttt{"Answer with one word only: True or False."} The same logical row is realized under both linearizations $\pi_{\mathrm{FF}}$ and $\pi_{\mathrm{EF}}$ (\S\ref{sec:task}, Appendix~\ref{sec:appendix_dataset}).}
 \label{tab:reasoning_depth}
 \end{table}
 
@@ -1701,9 +1708,9 @@ Random-Outside & 97.2 $\pm$ 0.4 & 92.5 $\pm$ 0.8 & 98.3 $\pm$ 0.2 & 98.2 $\pm$ 0
     \label{fig:counts_14B_comparison}
 \end{figure*}
 
-\subsection{Cross-Model Extensions: Llama-3.1-8B-Instruct and Mistral-7B-Instruct-v0.1}
+\subsection{Cross-Model Extensions: Llama-3.1-8B-Instruct and Mistral-7B-Instruct}
 \label{sec:appendix_llama}
-We also ran the same pipeline on \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct-v0.1}. For both families, the appendix reports behavioral evaluation, token analysis, MLP region ablation, attention-region ablation, joint attention+MLP region ablation, and head analysis under both \texttt{facts\_first} and \texttt{expr\_first}.
+We also ran the same pipeline on \textit{Llama-3.1-8B-Instruct} and \textit{Mistral-7B-Instruct}. For both families, the appendix reports behavioral evaluation, token analysis, MLP region ablation, attention-region ablation, joint attention+MLP region ablation, and head analysis under both \texttt{facts\_first} and \texttt{expr\_first}.
 
 \paragraph{How to compare the cross-model figures.}
 The most reliable comparison is branch-matched rather than figure-matched: compare MLP with MLP, attention with attention, and joint with joint across families before comparing prompt orders. Within each branch, heavier Query mass indicates a more output-position-centered strategy, while cleaner early Facts and middle Expression concentration indicates a sharper staged decomposition. The cross-model gallery figures later in the appendix are organized with exactly this comparison rule in mind.
@@ -1741,7 +1748,7 @@ At the token level, Figures~\ref{fig:token_facts_first_cross_model} and~\ref{fig
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_facts_first_refined/refined_by_stage_sum.png}
-        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{facts\_first}}
+        \caption{\textit{Mistral-7B-Instruct}, \texttt{facts\_first}}
         \label{fig:token_ff_mistral}
     \end{subfigure}
     \caption{\textbf{Cross-model refined token analysis under \texttt{facts\_first}.} Each subfigure corresponds to one model under the same prompt template, following the same grouping rule as the region-patching figures. Across all four models, \texttt{facts\_value} and \texttt{query\_token} remain the dominant categories, but their relative balance differs: Qwen3 concentrates more total mass on fact tokens, whereas Llama and Mistral show comparatively stronger query-region dominance.}
@@ -1898,7 +1905,7 @@ At the head level, the same three roles remain recoverable, but they are not cle
     \label{fig:llama_heads_panel}
 \end{figure*}
 
-\subsubsection{Mistral-7B-Instruct-v0.1}
+\subsubsection{Mistral-7B-Instruct}
 Mistral presents a third behavioral profile. Under \texttt{facts\_first}, it reaches $65.09\%$ clean accuracy and a $35.11\%$ dual-correct rate. Under \texttt{expr\_first}, both numbers rise slightly to $66.73\%$ and $39.98\%$. The improvement is driven entirely by one-hop prompts ($62.88\% \rightarrow 75.69\%$), while two-hop performance drops sharply ($67.09\% \rightarrow 58.59\%$). Front-loading the queried expression therefore helps short-range reasoning but hurts deeper composition.
 
 At the token level, Mistral sits between Qwen3 and Llama. In the refined unsigned totals, \texttt{query\_token} exceeds \texttt{facts\_value} under both prompt orders ($1.04$ vs. $0.75$ for \texttt{facts\_first}; $1.35$ vs. $0.89$ for \texttt{expr\_first}), which already makes it more query-facing than Qwen3. Appendix~\ref{sec:appendix_extra_token_gallery} shows a useful nuance, however: in the signed \texttt{facts\_first} totals, \texttt{query\_token} and \texttt{facts\_value} are almost tied ($0.731$ vs. $0.729$). Mistral is therefore not as uniformly query-dominant as Llama, but it is still less fact-centered than the main Qwen3 models.
@@ -1931,7 +1938,7 @@ At the token level, Mistral sits between Qwen3 and Llama. In the refined unsigne
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{./figures_experiments/reports_mistral/token_analysis_expr_first_refined/refined_by_stage_sum.png}
-        \caption{\textit{Mistral-7B-Instruct-v0.1}, \texttt{expr\_first}}
+        \caption{\textit{Mistral-7B-Instruct}, \texttt{expr\_first}}
         \label{fig:token_ef_mistral}
     \end{subfigure}
     \caption{\textbf{Cross-model refined token analysis under \texttt{expr\_first}.} Each subfigure again corresponds to one model under one prompt template. Prompt reordering suppresses the explicit expression-token categories and shifts more visible mass toward \texttt{query\_token}, \texttt{facts\_value}, and the optional \texttt{derived\_assignment} category. The resulting cross-model comparison shows that the same coarse token-level motifs persist under \texttt{expr\_first}, but with larger differences in how strongly each model concentrates information at the query-facing portion of the prompt.}
@@ -1955,7 +1962,7 @@ At the region level, Mistral still shows a coarse staged profile in the retained
 %        \caption{\texttt{expr\_first}}
 %        \label{fig:mistral_mlp_expr_first}
 %    \end{subfigure}
-%    \caption{\textbf{Mistral-7B-Instruct-v0.1: staged computation under two prompt orders.} Band-level MLP ablation summaries for Mistral. The same broad early-facts / middle-expression / late-query structure remains visible, but the late Query Region is heavier than in Qwen3, consistent with a stronger dependence on final integration.}
+%    \caption{\textbf{Mistral-7B-Instruct: staged computation under two prompt orders.} Band-level MLP ablation summaries for Mistral. The same broad early-facts / middle-expression / late-query structure remains visible, but the late Query Region is heavier than in Qwen3, consistent with a stronger dependence on final integration.}
 %    \label{fig:mistral_mlp_panel}
 %\end{figure*}
 
@@ -2007,7 +2014,7 @@ At the region level, Mistral still shows a coarse staged profile in the retained
 %          \label{fig:mistral_band_ef_attn_mlp}
 %      \end{subfigure}
 %
-%      \caption{\textbf{Mistral-7B-Instruct-v0.1: band-level overviews for all three region-patching analyses under both prompt orders.} Rows correspond to MLP, attention, and joint
+%      \caption{\textbf{Mistral-7B-Instruct: band-level overviews for all three region-patching analyses under both prompt orders.} Rows correspond to MLP, attention, and joint
 %  attention+MLP ablations; columns correspond to \texttt{facts\_first} and \texttt{expr\_first}. Across all six panels, Mistral preserves a coarse staged template, but remains
 %  substantially more query-heavy than the main Qwen3 models. Under one-hop \texttt{facts\_first}, the Query Region late-band BCR rises from $0.155$ in the MLP branch to $0.272$ in
 %  the attention branch, with the joint branch remaining intermediate at $0.233$; meanwhile the Facts and Expression regions remain strongly early-dominant (for example, one-hop
@@ -2052,7 +2059,7 @@ At the head level, Mistral again preserves the same three roles, with $314$ clas
         \caption{\texttt{expr\_first}: validation curve}
         \label{fig:mistral_heads_expr_val}
     \end{subfigure}
-    \caption{\textbf{Mistral-7B-Instruct-v0.1: specialized head roles under two prompt orders.} Top row: layer-wise role distributions for the completed Mistral head-analysis runs. Bottom row: Step 3 validation curves plotting $|\mathrm{dPD}|/|\mathrm{PD}_{\mathrm{clean}}|$ against the number of ablated heads. The three roles remain recoverable, but both role-targeted and random-outside ablations are more damaging than in Qwen3, indicating a highly sensitive yet less cleanly separable head-level substrate.}
+    \caption{\textbf{Mistral-7B-Instruct: specialized head roles under two prompt orders.} Top row: layer-wise role distributions for the completed Mistral head-analysis runs. Bottom row: Step 3 validation curves plotting $|\mathrm{dPD}|/|\mathrm{PD}_{\mathrm{clean}}|$ against the number of ablated heads. The three roles remain recoverable, but both role-targeted and random-outside ablations are more damaging than in Qwen3, indicating a highly sensitive yet less cleanly separable head-level substrate.}
     \label{fig:mistral_heads_panel}
 \end{figure*}
 
@@ -2114,6 +2121,7 @@ The present evidence does not locate the point at which the failure enters the c
 \label{sec:appendix_discussion}
 
 
+\iffalse
 \subsection{Other Attention Head Patterns}
 \label{sec:appendix_other_heads}
 
@@ -2145,12 +2153,13 @@ In layers 18--22, immediately before the strongest query-side convergence observ
   \includegraphics[width=0.24\columnwidth]{./figures/exp-process-l18h2.jpg}
   \includegraphics[width=0.24\columnwidth]{./figures/exp-process-l19h31.jpg}
   \includegraphics[width=0.24\columnwidth]{./figures/exp-process-l21h13.jpg}
-  \caption{Attention patterns of other head types in \textit{Qwen3-8B}. Top row: (a) Idle Head L7H4---attention concentrates on position 0; (b-c) Information Binding Heads L0H1, L0H24---diagonal patterns with local binding; (d) Self-Processing Head L12H20---sharp diagonal. Bottom row: (e) Self-Processing Head L22H12; (f-h) Expression Processing Heads L18H2, L19H31, L21H13---attention concentrated in expression region (lower-right). A weak first-token attention sink is visible in several later-layer examples, especially (g), and becomes a dominant pattern in the idle-head case (a).}
+  \caption{Attention patterns of other head types in \textit{Qwen3-8B}. Top row: (a) Idle Head L7H4, attention concentrates on position 0; (b-c) Information Binding Heads L0H1, L0H24, diagonal patterns with local binding; (d) Self-Processing Head L12H20, sharp diagonal. Bottom row: (e) Self-Processing Head L22H12; (f-h) Expression Processing Heads L18H2, L19H31, L21H13, attention concentrated in expression region (lower-right). A weak first-token attention sink is visible in several later-layer examples, especially (g), and becomes a dominant pattern in the idle-head case (a).}
   \label{fig:other_heads}
 \end{figure}
 
 \paragraph{Relationship to Primary Mechanisms.}
 These additional patterns complement rather than contradict the primary mechanisms. The attention sink is a recurrent background bias that can coexist with more meaningful task structure. Information-binding heads fit naturally with the early fact-encoding stage, and expression-focused heads appear in the same late-middle band where the main analyses place expression processing. Because these patterns are not causally validated here, we use them only as qualitative context for reading the attention maps, not as additional mechanistic claims.
+\fi
 
 
 \subsection{Functional Coupling in Specialized Heads}
@@ -2206,7 +2215,7 @@ Figure~\ref{fig:func_couple} makes one narrow point: the role labels used in the
     \caption{Visualization of attention matrices for three distinct types of heads. The prompt used is \texttt{A is True, B is False, ($\neg$A or $\neg$B) is}. The notation $(x, y)$ denotes the $y$-th head in the $x$-th layer.
     (a) The Splitting heads (early layers) attend predominantly to the comma delimiter.
     (b) The Information Transmission heads (intermediate layers) reveal lower-triangular structures within Fact and Expression regions.
-    (c) The Fact-Retrieval heads (deep layers) show tokens in the Expression Region or Query Token (\texttt{is}) attending to \texttt{True}/\texttt{False} indicators. A weaker first-token attention sink often coexists with these later-layer patterns; Appendix~\ref{sec:appendix_other_heads} discusses this phenomenon and its relation to idle heads in more detail.}
+    (c) The Fact-Retrieval heads (deep layers) show tokens in the Expression Region or Query Token (\texttt{is}) attending to \texttt{True}/\texttt{False} indicators.}
     \label{fig:combined_heads}
     \vspace{-0.5em}
 \end{figure}
@@ -2241,21 +2250,21 @@ L0H19 combines staircase-like boundary attention with elevated within-segment ma
 
 \subsection{Complete Accuracy Tables}
 \label{sec:appendix_full_accuracy}
-For completeness, we collect the full Step 3 accuracy tables at the end of the appendix. This keeps the main analysis sections readable while preserving the full strategy-by-$k$ results for \textit{Qwen3}, \textit{Llama-3.1-8B-Instruct}, and \textit{Mistral-7B-Instruct-v0.1}.
+For completeness, we collect the full Step 3 accuracy tables at the end of the appendix. This keeps the main analysis sections readable while preserving the full strategy-by-$k$ results for \textit{Qwen3}, \textit{Llama-3.1-8B-Instruct}, and \textit{Mistral-7B-Instruct}.
 
 \paragraph{Reading guide.}
-For quick lookup, the four \textit{Qwen3} tables appear in Tables~\ref{tab:qwen3_8b_ff_full_accuracy}--\ref{tab:qwen3_14b_ef_full_accuracy}: \textit{Qwen3-8B} under \texttt{facts\_first} and \texttt{expr\_first} is given in Tables~\ref{tab:qwen3_8b_ff_full_accuracy} and~\ref{tab:qwen3_8b_ef_full_accuracy}, while \textit{Qwen3-14B} is given in Tables~\ref{tab:qwen3_14b_ff_full_accuracy} and~\ref{tab:qwen3_14b_ef_full_accuracy}. The corresponding \textit{Llama-3.1-8B-Instruct} results are reported in Tables~\ref{tab:llama_ff_full_accuracy} and~\ref{tab:llama_ef_full_accuracy}, and the \textit{Mistral-7B-Instruct-v0.1} results are reported in Tables~\ref{tab:mistral_ff_full_accuracy} and~\ref{tab:mistral_ef_full_accuracy}. Within each family, the \texttt{facts\_first} table appears before the \texttt{expr\_first} table so the prompt-order comparison can be read left-to-right at the model level.
+For quick lookup, the four \textit{Qwen3} tables appear in Tables~\ref{tab:qwen3_8b_ff_full_accuracy}--\ref{tab:qwen3_14b_ef_full_accuracy}: \textit{Qwen3-8B} under \texttt{facts\_first} and \texttt{expr\_first} is given in Tables~\ref{tab:qwen3_8b_ff_full_accuracy} and~\ref{tab:qwen3_8b_ef_full_accuracy}, while \textit{Qwen3-14B} is given in Tables~\ref{tab:qwen3_14b_ff_full_accuracy} and~\ref{tab:qwen3_14b_ef_full_accuracy}. The corresponding \textit{Llama-3.1-8B-Instruct} results are reported in Tables~\ref{tab:llama_ff_full_accuracy} and~\ref{tab:llama_ef_full_accuracy}, and the \textit{Mistral-7B-Instruct} results are reported in Tables~\ref{tab:mistral_ff_full_accuracy} and~\ref{tab:mistral_ef_full_accuracy}. Within each family, the \texttt{facts\_first} table appears before the \texttt{expr\_first} table so the prompt-order comparison can be read left-to-right at the model level.
 
 \paragraph{Connection to the main text.}
 These tables are best read together with Section~\ref{sec:heads} and the compact Qwen3 summary in Table~\ref{tab:qwen3_head_accuracy_main}. The main text establishes the headline result, namely that role-targeted ablations are much more damaging than \textit{Random-Outside}. The full appendix tables refine that claim in two ways: first, they show how rapidly each role becomes harmful as the ablation budget $k$ increases; second, they show whether combining roles produces additional damage or instead dilutes the intervention by spreading a fixed budget across less critical heads. This makes the appendix useful not only as a completeness check, but also as a more detailed causal probe of how concentrated each model's head-level mechanism really is.
 
 \paragraph{Interpretation.}
-Taken together, these full tables sharpen the causal contrast between the three model families. In \textit{Qwen3}, role-targeted ablations worsen accuracy in a mostly monotonic way as $k$ grows, with Fact-Retrieval usually producing the largest drop and \textit{Random-Outside} remaining near baseline except at the largest ablation budgets. This is the cleanest evidence for selective head-level specialization: the discovered roles are not only useful labels, but also isolate a comparatively compact set of causally important heads. \textit{Llama-3.1-8B-Instruct} shows a different regime. Many strategy variants collapse to a similar accuracy floor after relatively small $k$, while \textit{Random-Outside} often stays near or slightly above baseline, which suggests that the recovered roles are much less cleanly separated from the rest of the head pool. \textit{Mistral-7B-Instruct-v0.1} lies between these extremes: the discovered roles are highly consequential, but the random control is also substantially destructive at moderate and large $k$, indicating a denser and more globally sensitive head set. Across prompt orders, \texttt{expr\_first} mainly reallocates which heads become important rather than removing the role structure altogether, but the full tables show that this reallocation is handled most cleanly by \textit{Qwen3} and least cleanly by \textit{Llama}.
+Taken together, these full tables sharpen the causal contrast between the three model families. In \textit{Qwen3}, role-targeted ablations worsen accuracy in a mostly monotonic way as $k$ grows, with Fact-Retrieval usually producing the largest drop and \textit{Random-Outside} remaining near baseline except at the largest ablation budgets. This is the cleanest evidence for selective head-level specialization: the discovered roles are not only useful labels, but also isolate a comparatively compact set of causally important heads. \textit{Llama-3.1-8B-Instruct} shows a different regime. Many strategy variants collapse to a similar accuracy floor after relatively small $k$, while \textit{Random-Outside} often stays near or slightly above baseline, which suggests that the recovered roles are much less cleanly separated from the rest of the head pool. \textit{Mistral-7B-Instruct} lies between these extremes: the discovered roles are highly consequential, but the random control is also substantially destructive at moderate and large $k$, indicating a denser and more globally sensitive head set. Across prompt orders, \texttt{expr\_first} mainly reallocates which heads become important rather than removing the role structure altogether, but the full tables show that this reallocation is handled most cleanly by \textit{Qwen3} and least cleanly by \textit{Llama}.
 
 \paragraph{Role-combination effects.}
-The combination rows are especially informative. In \textit{Qwen3}, combining roles is \emph{not} automatically more harmful at a fixed $k$. Under \textit{Qwen3-8B} \texttt{facts\_first}, ablating Fact-Retrieval alone at $k=32$ already reduces accuracy to $57.0\%$, essentially matching Fact-Retrieval+Splitting ($57.6\%$) and Fact-Retrieval+Transmission ($57.4\%$), while \textit{Mixed-All} is actually weaker ($62.0\%$). This suggests that in that setting the dominant causal mass is already concentrated inside the Fact-Retrieval set, so distributing the same budget across multiple roles partly dilutes the intervention. By contrast, in \textit{Qwen3-14B}, especially under \texttt{expr\_first}, pairwise and mixed ablations become more revealing of inter-role dependence: at $k=32$, Fact-Retrieval+Transmission drops accuracy to $67.6\%$, clearly below Fact-Retrieval alone ($77.2\%$) or Transmission alone ($76.6\%$), and \textit{Mixed-All} falls further to $62.0\%$. This is consistent with the main-text picture that mid-layer transmission and late fact re-access work as a coupled pathway rather than as fully separable modules.
+The combination rows are especially informative. In \textit{Qwen3}, combining roles is \emph{not} automatically more harmful at a fixed $k$. Under \textit{Qwen3-8B} \texttt{facts\_first}, ablating Fact-Retrieval alone at $k=32$ already reduces accuracy to $57.0\%$, essentially matching Fact-Retrieval+Splitting ($57.6\%$) and Fact-Retrieval+Transmission ($57.4\%$), while \textit{Mixed-All} is actually weaker ($62.0\%$). This suggests that in that setting the dominant causal mass is already concentrated inside the Fact-Retrieval set, so distributing the same budget across multiple roles partly dilutes the intervention. By contrast, in \textit{Qwen3-14B}, especially under \texttt{expr\_first}, pairwise and mixed ablations become more revealing of inter-role dependence: at $k=32$, Fact-Retrieval+Transmission drops accuracy to $67.6\%$, clearly below Fact-Retrieval alone ($77.2\%$) or Transmission alone ($76.6\%$), and \textit{Mixed-All} falls further to $62.0\%$. This is consistent with the main-text picture that mid-layer transmission and late-layer fact-value causal density (§\ref{sec:retro}) behave as a coupled pathway rather than as fully separable modules.
 
-The same comparison also clarifies the status of Splitting Heads. Pairs that exclude Fact-Retrieval, such as Splitting+Transmission, are usually less harmful than Fact-Retrieval+Transmission at the same $k$, which suggests that boundary-setting is mechanistically important but often less singularly bottlenecked than the later routing-and-retrieval pathway. The cross-model tables reinforce this reading. In \textit{Llama-3.1-8B-Instruct}, most single-role, pairwise, and mixed strategies quickly collapse to nearly the same floor ($55.2\%$ under \texttt{facts\_first}; $58.4\%$ under \texttt{expr\_first}), so combinations reveal little additional structure. In \textit{Mistral-7B-Instruct-v0.1}, combinations accelerate the collapse at small $k$, but by moderate budgets many role-targeted strategies again converge to the same low-$40\%$ floor. The appendix therefore strengthens a broader conclusion already implicit in the main text: \textit{Qwen3} exhibits the cleanest selective division of labor, whereas \textit{Llama} is more diffuse and \textit{Mistral} is more globally fragile.
+The same comparison also clarifies the status of Splitting Heads. Pairs that exclude Fact-Retrieval, such as Splitting+Transmission, are usually less harmful than Fact-Retrieval+Transmission at the same $k$, which suggests that boundary-setting is mechanistically important but often less singularly bottlenecked than the later routing-and-retrieval pathway. The cross-model tables reinforce this reading. In \textit{Llama-3.1-8B-Instruct}, most single-role, pairwise, and mixed strategies quickly collapse to nearly the same floor ($55.2\%$ under \texttt{facts\_first}; $58.4\%$ under \texttt{expr\_first}), so combinations reveal little additional structure. In \textit{Mistral-7B-Instruct}, combinations accelerate the collapse at small $k$, but by moderate budgets many role-targeted strategies again converge to the same low-$40\%$ floor. The appendix therefore strengthens a broader conclusion already implicit in the main text: \textit{Qwen3} exhibits the cleanest selective division of labor, whereas \textit{Llama} is more diffuse and \textit{Mistral} is more globally fragile.
 
 \begin{table}[p]
 \centering
@@ -2749,7 +2758,7 @@ Random-Outside & 64 & 79.5 $\pm$ 1.5 & 19.9 $\pm$ 1.5 \\
 \bottomrule
 \end{tabular}%
 }
-\caption{\textbf{Full Step 3 accuracy table for \textit{Mistral-7B-Instruct-v0.1} with \texttt{facts\_first} prompts.} Base held-out accuracy is $99.4\%$. All values are post-ablation accuracies and accuracy drops in percentage points. Compared with the Qwen3 tables, Mistral exhibits much stronger overall sensitivity: role-targeted ablations collapse quickly toward the low-40\% range, and even the Random-Outside control causes a substantial degradation.}
+\caption{\textbf{Full Step 3 accuracy table for \textit{Mistral-7B-Instruct} with \texttt{facts\_first} prompts.} Base held-out accuracy is $99.4\%$. All values are post-ablation accuracies and accuracy drops in percentage points. Compared with the Qwen3 tables, Mistral exhibits much stronger overall sensitivity: role-targeted ablations collapse quickly toward the low-40\% range, and even the Random-Outside control causes a substantial degradation.}
 \label{tab:mistral_ff_full_accuracy}
 \end{table}
 
@@ -2822,7 +2831,7 @@ Random-Outside & 64 & 77.6 $\pm$ 1.1 & 22.2 $\pm$ 1.1 \\
 \bottomrule
 \end{tabular}%
 }
-\caption{\textbf{Full Step 3 accuracy table for \textit{Mistral-7B-Instruct-v0.1} with \texttt{expr\_first} prompts.} Base held-out accuracy is $99.8\%$. All values are post-ablation accuracies and accuracy drops in percentage points. The same qualitative pattern remains visible as in the \texttt{facts\_first} table: the discovered roles are highly consequential, but the random-outside control is also substantially destructive, indicating a sensitive yet less cleanly isolated head set.}
+\caption{\textbf{Full Step 3 accuracy table for \textit{Mistral-7B-Instruct} with \texttt{expr\_first} prompts.} Base held-out accuracy is $99.8\%$. All values are post-ablation accuracies and accuracy drops in percentage points. The same qualitative pattern remains visible as in the \texttt{facts\_first} table: the discovered roles are highly consequential, but the random-outside control is also substantially destructive, indicating a sensitive yet less cleanly isolated head set.}
 \label{tab:mistral_ef_full_accuracy}
 \end{table}
 
