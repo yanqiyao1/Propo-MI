@@ -1,6 +1,6 @@
 <div align="center">
 
-# PropLogic-MI
+# Towards a Mechanistic Understanding of Propositional Logical Reasoning in Large Language Models
 
 **Experimental code for mechanistic interpretability of propositional logical reasoning in LLMs.**
 
