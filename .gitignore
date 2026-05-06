@@ -1,11 +1,62 @@
-dataset/
-reports/
-artifacts/
+# Local system/editor files
+.DS_Store
+.codex
+.agents/
+.cache/
+.vscode/
+.idea/
+
+# Python caches and local environments
 __pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
 tests/
-artifacts_*/
-reports_*/
+
+# TeX / paper sources and build artifacts
+*.tex
+*.bib
+*.bbl
+*.blg
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.pdf
+.tectonic-cache/
+.tectonic-out/
+.texenv/
+
+# Generated datasets, model outputs, reports, and figures
+dataset/
 dataset_*/
+artifacts/
+artifacts_*/
+reports/
+reports_*/
+figures/
 figures*/
 logs/
-*.pyc
+
+# Large local model/cache directories
+models/
+checkpoints/
+wandb/
+runs/
+
+# Historical local notes superseded by README.md
+/SCRIPT_COMMANDS.md
+/head_analysis.md
+/llama_process.md
+/mistral_process.md
+/plot_commands.md
+/process.md
+/token_patching.md
