@@ -1,29 +1,114 @@
+<div align="center">
+
 # PropLogic-MI
 
-Experimental code for reproducing the mechanistic-interpretability experiments on propositional logical reasoning in large language models.
+**Experimental code for mechanistic interpretability of propositional logical reasoning in LLMs.**
 
-This repository contains the data generator, model evaluation pipeline, activation-patching analyses, attention-head taxonomy, and plotting utilities used for the PropLogic-MI experiments. It intentionally excludes paper sources, compiled PDFs, generated datasets, model outputs, reports, and figures from version control; those files are produced locally by the commands below.
+<p>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white">
+  <img alt="TransformerLens" src="https://img.shields.io/badge/TransformerLens-supported-6A5ACD">
+  <img alt="License" src="https://img.shields.io/badge/Repository-experiment--code-2E8B57">
+</p>
+
+<p>
+  <a href="#quick-start"><b>Quick Start</b></a> ·
+  <a href="#reproduction-guide"><b>Reproduction Guide</b></a> ·
+  <a href="#repository-layout"><b>Repository Layout</b></a> ·
+  <a href="#output-hygiene"><b>Output Hygiene</b></a>
+</p>
+
+</div>
+
+---
+
+This repository contains the data generator, model evaluation pipeline, activation-patching analyses, attention-head taxonomy, and plotting utilities used for the PropLogic-MI experiments. It intentionally tracks **experiment code only**: paper sources, compiled PDFs, generated datasets, model outputs, reports, and figures are excluded from version control and are reproduced locally by the commands below.
+
+<table>
+  <tr>
+    <td><b>Task</b></td>
+    <td>Controlled propositional-logic reasoning without chain-of-thought generation</td>
+  </tr>
+  <tr>
+    <td><b>Data</b></td>
+    <td>11 propositional rule categories, one-hop and two-hop prompts, clean/corrupted pairs</td>
+  </tr>
+  <tr>
+    <td><b>Models</b></td>
+    <td><code>Qwen3-8B</code>, <code>Qwen3-14B</code>, <code>Llama-3.1-8B-Instruct</code>, <code>Mistral-7B-Instruct</code></td>
+  </tr>
+  <tr>
+    <td><b>Prompt orders</b></td>
+    <td><code>facts_first</code> and <code>expr_first</code></td>
+  </tr>
+</table>
 
 ## What This Code Reproduces
 
-PropLogic-MI studies how instruction-tuned LLMs solve controlled propositional-logic prompts without chain-of-thought generation. The experiments are organized around four mechanisms:
+PropLogic-MI studies how instruction-tuned LLMs solve controlled propositional-logic prompts without chain-of-thought generation.
 
-1. **Staged Computation**: region-level MLP, attention, and joint attention+MLP interventions show that facts, expressions, and query integration occupy different layer bands.
-2. **Information Transmission**: token-wise residual-stream patching shows where causal information concentrates across prompt positions and layers.
-3. **Fact Retrospection**: refined token analysis shows that fact-value tokens remain causally relevant beyond the earliest layers.
-4. **Specialized Attention Heads**: head discovery, taxonomy, and validation recover Splitting, Transmission, and Fact-Retrieval head roles.
+<table>
+  <tr>
+    <th>Mechanism</th>
+    <th>Main pipeline</th>
+    <th>Core evidence</th>
+  </tr>
+  <tr>
+    <td><b>Staged Computation</b></td>
+    <td><code>mlp_analysis</code>, <code>attn_analysis</code>, <code>attn_mlp_analysis</code></td>
+    <td>Facts, expressions, and query integration occupy different layer bands.</td>
+  </tr>
+  <tr>
+    <td><b>Information Transmission</b></td>
+    <td><code>token_analysis.activation_patching_dataset</code></td>
+    <td>Token-wise residual patching reveals where causal mass concentrates.</td>
+  </tr>
+  <tr>
+    <td><b>Fact Retrospection</b></td>
+    <td><code>token_analysis.refined_token_analysis</code></td>
+    <td>Fact-value tokens remain causally relevant beyond the earliest layers.</td>
+  </tr>
+  <tr>
+    <td><b>Specialized Attention Heads</b></td>
+    <td><code>heads_analysis.run_all</code></td>
+    <td>Splitting, Transmission, and Fact-Retrieval head roles are discovered and validated.</td>
+  </tr>
+</table>
 
-The main supported models are:
+## Quick Start
 
-- `Qwen/Qwen3-8B`
-- `Qwen/Qwen3-14B`
-- `meta-llama/Llama-3.1-8B-Instruct`
-- `mistralai/Mistral-7B-Instruct-v0.1`
-
-Both prompt orders used in the paper are supported:
-
-- `facts_first`: facts precede the queried expression.
-- `expr_first`: the queried expression is moved before the facts as a prompt-order control.
+<table>
+  <tr>
+    <th>Step</th>
+    <th>Command</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <td>1. Generate data</td>
+    <td><code>bash scripts/dataset_create.sh</code></td>
+    <td><code>dataset/proplogic_mi*.jsonl</code></td>
+  </tr>
+  <tr>
+    <td>2. Run inference</td>
+    <td><code>bash scripts/qwen3_inference.sh</code></td>
+    <td><code>artifacts/*preds*.jsonl</code>, <code>reports/*metrics*.json</code></td>
+  </tr>
+  <tr>
+    <td>3. Region patching</td>
+    <td><code>bash scripts/qwen3_mlp_patching.sh</code></td>
+    <td><code>reports*/mlp_analysis*/</code></td>
+  </tr>
+  <tr>
+    <td>4. Token patching</td>
+    <td><code>bash scripts/qwen3_token_analysis.sh</code></td>
+    <td><code>reports*/token_analysis*/</code></td>
+  </tr>
+  <tr>
+    <td>5. Head analysis</td>
+    <td><code>bash scripts/qwen3_head_analysis.sh</code></td>
+    <td><code>reports*/heads_analysis*/</code></td>
+  </tr>
+</table>
 
 ## Repository Layout
 
