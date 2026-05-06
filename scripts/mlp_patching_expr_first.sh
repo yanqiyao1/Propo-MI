@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+[ -n "${BASH_VERSION:-}" ] || exec bash "$0" "$@"
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+cd "${REPO_ROOT}"
+
 bash scripts/MLP_region_patching.sh \
     --model_id "Qwen/Qwen3-14B" \
     --model_source "huggingface" \
